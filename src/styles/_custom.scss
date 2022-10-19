@@ -1,5 +1,47 @@
 body {
-    font-family: 'Prompt', sans-serif;
-    margin:0;
-    padding:0;
+  font-family: "Prompt", sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #fcfcfc;
+}
+
+p {
+  font-family: "Prompt";
+}
+
+h1 {
+  font-family: "Prompt";
+}
+
+.maincolor {
+  color: #ad68ff;
+}
+
+.fs-60 {
+  font-size: 3.75rem;
+}
+
+.fs-40 {
+  font-size: 2.5rem;
+}
+
+.fs-38 {
+  font-size: 2.375rem;
+}
+
+.fs-25 {
+  font-size: 1.5625rem;
+}
+
+.fw-300 {
+  font-weight: 300;
+}
+
+.fw-500 {
+  font-weight: 500;
+}
+
+.fw-600 {
+  font-weight: 600;
 }

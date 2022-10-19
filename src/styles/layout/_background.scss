@@ -1,41 +1,39 @@
 .background {
-    position: absolute;
-    background-color: #FCFCFC;
-    display: flex;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
 }
 
 .background-triangle-fullscreen {
-    position: fixed;
-    width: 0px;
-    height: 0px;
-    border-bottom: 100vh solid #F8F8F8;
-    border-left: 58vw solid transparent;
-    left: 42vw;
-    top: 0px;
-    display: flex;
+  position: fixed;
+  width: 0px;
+  height: 0px;
+  border-bottom: 100vh solid #f8f8f8;
+  border-left: 58vw solid transparent;
+  left: 42vw;
+  top: 0px;
+  display: flex;
 }
 
 .background-triangle-notfullscreen {
-    position: fixed;
-    width: 0px;
-    height: 0px;
-    border-bottom: 100vh solid #F8F8F8;
-    border-left: 100vw solid transparent;
-    left: 0vw;
-    top: 0px;
-    display: flex;
+  position: fixed;
+  width: 0px;
+  height: 0px;
+  border-bottom: 100vh solid #f8f8f8;
+  border-left: 100vw solid transparent;
+  left: 0vw;
+  top: 0px;
+  display: flex;
 }
 
-
-
 .background-rectangle {
-    position: fixed;
-    width: 42vw;
-    min-height: 100vh;
-    left: 0vw;
-    top: 0px;
-    display: flex;
-    text-align: center;
+  position: fixed;
+  width: 42vw;
+  min-height: 100vh;
+  left: 0vw;
+  top: 0px;
+  display: flex;
+  text-align: center;
 
-    background: #AD68FF;
+  background: #ad68ff;
 }

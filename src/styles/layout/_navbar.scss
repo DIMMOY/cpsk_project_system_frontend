@@ -1,29 +1,25 @@
-$appbar-color: #AD68FF;
-
 .navbar {
-    position: absolute;
-    width: 100vw;
-    height: 90px;
-    left: 0px;
-    top: 0px;
-
-    background: $appbar-color;
+  position: "fixed";
+  width: 100vw;
+  height: 5.625rem;
+  left: 0px;
+  top: 0px;
 }
 
 .default-profile {
-    position: absolute;
-    width: 34px;
-    height: 33px;
-    left: 83vw;
-    top: 28px;
+  position: absolute;
+  width: 34px;
+  height: 33px;
+  left: 83vw;
+  top: 28px;
 
-    background: url('../../assets/images/default_profile.png');
+  background: url("../../assets/images/default_profile.png");
 }
 
 .logo-navbar {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    left: 20px;
-    top: 15px;
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  left: calc(0% + 30px);
+  top: 15px;
 }

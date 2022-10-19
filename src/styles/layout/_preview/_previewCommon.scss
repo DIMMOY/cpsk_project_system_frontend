@@ -1,0 +1,14 @@
+.common-preview-container {
+  position: static;
+  width: calc(100% - 8vw);
+  margin: 0 auto;
+  padding: 1.5rem 4vw 1.5rem 4vw;
+}
+
+.common-preview-button {
+  position: absolute;
+  height: 9rem;
+
+  background: #f3f3f3;
+  border-radius: 20px;
+}
