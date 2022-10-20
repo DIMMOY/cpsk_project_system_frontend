@@ -9,6 +9,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { Box } from '@mui/material'
 import MeetingSchedulePreview from './components/Preview/MeetingSchedulePreview'
 import ScorePreview from './components/Preview/ScorePreview'
+import Routers from './routes'
 
 const THEME = createTheme({
   typography: {
@@ -19,13 +20,7 @@ const THEME = createTheme({
 const App = () => {
   return (
     <ThemeProvider theme={THEME}>
-      {/* <NavBar/> */}
-      <Box>
-        {/* <StudentHomePage hasClassroom={false} hasProject={false}></StudentHomePage> */}
-        <Login></Login>
-        {/* <MeetingSchedulePreview isStudent={true}></MeetingSchedulePreview> */}
-        {/* <ScorePreview isStudent={true}></ScorePreview> */}
-      </Box>
+      <Routers/>
     </ThemeProvider>
   )
 }

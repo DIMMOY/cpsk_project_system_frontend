@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { firebaseAuth, firebaseConfig } from '../config/firebase';
+import { firebaseAuth } from '../config/firebase';
+import applicationStore from '../stores/applicationStore';
 
 export const signInWithGoogle = async () => {
   try {
@@ -32,7 +33,7 @@ export const signInWithGoogle = async () => {
       email: result.user.email,
       lastLoginAt: new Date(),
     }
-    console.log(url)
+    // console.log(url)
     const resAxios = await axios.post(url, reqBody)
       .catch((error) => {
         if (error.response) {
@@ -47,6 +48,8 @@ export const signInWithGoogle = async () => {
         }
       })
 
+    applicationStore.setUser(result.user)
+
     return {
       statusCode: 200,
       message: 'Sign in successfull',
@@ -60,5 +63,26 @@ export const signInWithGoogle = async () => {
       message: 'Authentication error',
       errorMsg: 'การเข้าใช้งานผิดพลาด กรุณาลองใหม่อีกครั้งในภายหลัง'
     };
+  }
+}
+
+export const signOutWithGoogle = async () => {
+  try {
+    const auth = firebaseAuth;
+    await auth.signOut();
+    applicationStore.setUser(null)
+    applicationStore.setIsShowNavBar(false)
+
+    return {
+      statusCode: 200,
+      message: 'Sign out successfull',
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: 'Authentication error',
+      errorMsg: 'ออกจากระบบผิดพลาด กรุณาลองใหม่อีกครั้งในภายหลัง'
+    }
   }
 }

@@ -5,6 +5,7 @@ import { fontFamily, fontWeight, Stack } from '@mui/system'
 import React, { Component } from 'react'
 import { KeyObjectType } from 'crypto'
 import { padding } from '@mui/system/spacing'
+import { Link } from 'react-router-dom'
 
 const exampleDocument = [
   {
@@ -69,14 +70,16 @@ const DocumentPreview = ({ isStudent }: PreviewProps) => {
   return (
     <Box className="common-preview-container" sx={{}}>
       <Box sx={{ display: 'flex', padding: '0 auto' }}>
-        <IconButton
-          disableRipple
-          className={classes.iconSize}
-          sx={{ marginRight: '1.25rem' }}
-          disableFocusRipple
-        >
-          <ArrowBackIosNewIcon fontSize="large" />
-        </IconButton>
+        <Link to="/">
+          <IconButton
+            disableRipple
+            className={classes.iconSize}
+            sx={{ marginRight: '1.25rem' }}
+            disableFocusRipple
+          >
+            <ArrowBackIosNewIcon fontSize="large" />
+          </IconButton>
+        </Link>
         <Typography
           className="fs-30 fw-600 maincolor"
           sx={{ fontSize: '1.875rem', fontWeight: '600' }}
