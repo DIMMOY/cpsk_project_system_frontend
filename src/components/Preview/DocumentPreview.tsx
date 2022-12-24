@@ -59,6 +59,7 @@ interface PreviewProps {
 
 const DocumentPreview = ({ isStudent }: PreviewProps) => {
   const classes = useStyles()
+  const navigate = useNavigate()
   isStudent = true
 
   const statusColorList = {
@@ -66,8 +67,6 @@ const DocumentPreview = ({ isStudent }: PreviewProps) => {
     ส่งช้า: '#FBBC05',
     ยังไม่ส่ง: '#FF5454'
   }
-
-  const navigate = useNavigate();
 
   return (
     <Box className="common-preview-container" sx={{}}>

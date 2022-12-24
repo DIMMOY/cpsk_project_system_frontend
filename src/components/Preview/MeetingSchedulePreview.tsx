@@ -5,7 +5,7 @@ import { fontFamily, fontWeight, Stack } from '@mui/system'
 import React, { Component } from 'react'
 import { KeyObjectType } from 'crypto'
 import { padding } from '@mui/system/spacing'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const exampleDocument = [
   {
@@ -59,6 +59,7 @@ interface PreviewProps {
 
 const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
   const classes = useStyles()
+  const navigate = useNavigate();
   isStudent = true
 
   const statusColorList = {
@@ -89,10 +90,13 @@ const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
         </Typography>
       </Box>
       <Box sx={{ flexDirection: 'column', display: 'flex' }}>
-        {exampleDocument.map((document) => (
+        {exampleDocument.map((mtSchedule) => (
           <Button
-            key={document.id}
+            key={mtSchedule.id}
             className="ml-96 common-preview-button"
+            onClick = {() => {navigate(`/meetingschedule/${mtSchedule.id}`,
+                {replace: true, state: {id: mtSchedule.id, name: mtSchedule.name, status: mtSchedule.status, 
+                statusType: mtSchedule.statusType, dueDate: mtSchedule.dueDate}})}}
             sx={{
               position: 'relative',
               borderRadius: '20px',
@@ -114,7 +118,7 @@ const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
                 fontWeight: 600
               }}
             >
-              {document.name}
+              {mtSchedule.name}
             </Typography>
             <Typography
               sx={{
@@ -126,7 +130,7 @@ const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
                 fontWeight: 600
               }}
             >
-              {document.statusType}
+              {mtSchedule.statusType}
             </Typography>
             <Typography
               sx={{
@@ -138,7 +142,7 @@ const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
                 fontWeight: 600
               }}
             >
-              ภายในวันที่ {document.dueDate}
+              ภายในวันที่ {mtSchedule.dueDate}
             </Typography>
           </Button>
         ))}
