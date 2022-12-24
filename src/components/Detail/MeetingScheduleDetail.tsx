@@ -5,7 +5,8 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import { fontFamily, fontWeight, Stack } from '@mui/system'
 import { KeyObjectType } from 'crypto'
 import { padding } from '@mui/system/spacing'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+import TextField from '@mui/material/TextField'
 
 const exampleDocument = [
   {
@@ -50,8 +51,19 @@ const useStyles = makeStyles({
     '& svg': {
       color: '#AD68FF'
     }
+  },
+  input: {
+    "& .MuiOutlinedInput-root": {
+      padding: "15px 20px 15px 20px",
+      backgroundColor: "#fcfcfc",
+      borderRadius: "20px",
+      fontSize: 20,
+      color: "#686868",
+      fontWeight: 500,
+    },
   }
 })
+
 
 interface PreviewProps {
   isStudent: boolean
@@ -61,16 +73,26 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
   const classes = useStyles()
   isStudent = true
 
+  const location = useLocation();
+  const {name, dueDate, statusType} = location.state
+
+  console.log(location.state)
+
+
   const statusColorList = {
     ส่งแล้ว: '#43BF64',
     ส่งช้า: '#FBBC05',
     ยังไม่ส่ง: '#FF5454'
   }
 
+  const setDescription = (description: string) => {
+    console.log(description)
+  }
+
   return (
     <Box className="common-preview-container" sx={{textAlign: "center",}}>
       <Box sx={{ display: 'flex', padding: '0 auto' }}>
-        <Link to="/">
+        <Link to="/meetingschedule">
           <IconButton
             disableRipple
             className={classes.iconSize}
@@ -80,12 +102,6 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
             <ArrowBackIosNewIcon fontSize="large" />
           </IconButton>
         </Link>
-        <Typography
-          className="fs-30 fw-600 maincolor"
-          sx={{ fontSize: '1.875rem', fontWeight: '600' }}
-        >
-          รายงานการพบอาจารย์ที่ปรึกษา
-        </Typography>
       </Box>
       <Box sx={{ flexDirection: 'column', display: 'flex', justifyContent: "center",}}>
           <Box
@@ -98,6 +114,7 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
               display: 'flex',
               textTransform: 'none',
               color: '#AD68FF',
+              zIndex: '1',
             }}
           >
             <Typography
@@ -111,7 +128,7 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
                 fontWeight: 600
               }}
             >
-              ทดสอบ
+              {name}
             </Typography>
             <Typography
               sx={{
@@ -123,7 +140,7 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
                 fontWeight: 600
               }}
             >
-              ทดสอบ2
+              {statusType}
             </Typography>
             <Typography
               sx={{
@@ -135,7 +152,7 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
                 fontWeight: 600
               }}
             >
-              ทดสอบ3
+              ภายในวันที่ {dueDate}
             </Typography>
           </Box>
 
@@ -143,19 +160,53 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
             sx={{
                 top: "-5rem",
                 position: "relative",
-                height: "400px",
+                height: "23rem",
                 background: "#EBEBEB",
                 borderRadius: "20px",
-                zIndex: '-1',
             }}
           >
+          { isStudent &&
+          <>
+            <TextField
+              id="outlined-multiline-flexible"
+              placeholder="กรุณาใส่ข้อความ"
+              multiline
+              maxRows={4}
+              minRows={4}
+              size="medium"
+              className={classes.input}
+              sx={{
+                top: "7rem",
+                width: "88vw",
+                borderRadius: '20px',
+                left: "0",
+                right: "0",
+                marginLeft: "auto",
+                marginRight: "auto",
+                position: "absolute",
+                "& fieldset": { border: 'none' }
+              }}
+              onChange={e => setDescription(e.target.value)}
+            />
+            
             <Button sx={{
-              top: "100px",
-              background: '#FFFFFF', borderRadius: '10px', color: '#AD68FF', boxShadow: 'none', textTransform: 'none', '&:hover': { background: '#FFFFFF' }}} 
-              disableTouchRipple>
-                LogOut ปุ่มชั่วคราว
-            </Button>
-          </Box>
+              top: "18rem",
+              width: "7rem",
+              height: "2.8rem",
+              fontSize: 20,
+              textAlign: "center",
+              justifyContent: "center",
+              background: '#AD68FF',
+              borderRadius: '10px',
+              color: '#FFFFFF',
+              boxShadow: 'none',
+              textTransform: 'none',
+              '&:hover': { background: '#AD50FF' }
+            }}>
+                ยืนยัน
+              </Button>
+          </> }
+        </Box>
 
           
       </Box>

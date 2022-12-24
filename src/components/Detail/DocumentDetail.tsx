@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { Container, Box, IconButton, Button, Typography } from '@mui/material'
+import { Box, IconButton, Button, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import { fontFamily, fontWeight, Stack } from '@mui/system'
 import { KeyObjectType } from 'crypto'
 import { padding } from '@mui/system/spacing'
 import { Link, useLocation } from 'react-router-dom'
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const exampleDocument = [
   {
@@ -137,7 +138,7 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
               fontWeight: 600
             }}
           >
-            {dueDate}
+            ภายในวันที่ {dueDate}
           </Typography>
         </Box>
 
@@ -145,25 +146,42 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
           sx={{
               top: "-5rem",
               position: "relative",
-              height: "400px",
+              height: "23rem",
               background: "#EBEBEB",
               borderRadius: "20px",
           }}
         >
-          { isStudent && 
-          <Button sx={{
-            top: "21.5rem",
-            width: "7rem",
-            textAlign: "center",
-            justifyContent: "center",
-            background: '#AD68FF', 
-            borderRadius: '10px', 
-            color: '#FFFFFF', 
-            boxShadow: 'none', 
-            textTransform: 'none', 
-            '&:hover': { background: '#AD50FF' }}} >
-              ยืนยัน
-          </Button> }
+          { isStudent &&
+          <>
+            <IconButton sx={{
+              top: "7rem", 
+              display: "flex", 
+              left: "3.5vw", 
+              position: "absolute"
+            }}
+              aria-label="upload" 
+              component="label">
+              <input hidden accept="*" type="file" />
+              <AddCircleIcon sx={{fontSize: "500%", color: '#686868'}}/>
+            </IconButton>
+            
+            <Button sx={{
+              top: "18rem",
+              width: "7rem",
+              height: "2.8rem",
+              fontSize: 20,
+              textAlign: "center",
+              justifyContent: "center",
+              background: '#AD68FF',
+              borderRadius: '10px',
+              color: '#FFFFFF',
+              boxShadow: 'none',
+              textTransform: 'none',
+              '&:hover': { background: '#AD50FF' }
+            }}>
+                ยืนยัน
+              </Button>
+          </> }
         </Box>
       </Box>
       
