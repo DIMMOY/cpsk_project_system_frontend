@@ -1,11 +1,11 @@
+import React, { Component } from 'react'
 import { Container, Box, IconButton, Button, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import { fontFamily, fontWeight, Stack } from '@mui/system'
-import React, { Component } from 'react'
 import { KeyObjectType } from 'crypto'
 import { padding } from '@mui/system/spacing'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const exampleDocument = [
   {
@@ -67,6 +67,8 @@ const DocumentPreview = ({ isStudent }: PreviewProps) => {
     ยังไม่ส่ง: '#FF5454'
   }
 
+  const navigate = useNavigate();
+
   return (
     <Box className="common-preview-container" sx={{}}>
       <Box sx={{ display: 'flex', padding: '0 auto' }}>
@@ -89,57 +91,60 @@ const DocumentPreview = ({ isStudent }: PreviewProps) => {
       </Box>
       <Box sx={{ flexDirection: 'column', display: 'flex' }}>
         {exampleDocument.map((document) => (
-          <Button
-            key={document.id}
-            className="ml-96 common-preview-button"
-            sx={{
-              position: 'relative',
-              borderRadius: '20px',
-              background: '#F3F3F3',
-              margin: '1.25rem 0 1.25rem 0',
-              display: 'flex',
-              textTransform: 'none',
-              color: '#AD68FF'
-            }}
-          >
-            <Typography
-              className="maincolor"
+            <Button
+              key={document.id}
+              className="ml-96 common-preview-button"
+              onClick = {() => {navigate(`/document/${document.id}`,
+                {replace: true, state: {id: document.id, name: document.name, status: document.status, 
+                statusType: document.statusType, dueDate: document.dueDate}})}}
               sx={{
-                top: '1.5rem',
-                left: 'calc(20px + 1vw)',
-                position: 'absolute',
-                fontSize: 'calc(30px + 0.2vw)',
-                fontFamily: 'Prompt',
-                fontWeight: 600
+                position: 'relative',
+                borderRadius: '20px',
+                background: '#F3F3F3',
+                margin: '1.25rem 0 1.25rem 0',
+                display: 'flex',
+                textTransform: 'none',
+                color: '#AD68FF'
               }}
             >
-              {document.name}
-            </Typography>
-            <Typography
-              sx={{
-                top: '1.5rem',
-                right: 'calc(20px + 1vw)',
-                position: 'absolute',
-                fontSize: 'calc(30px + 0.2vw)',
-                color: '#686868',
-                fontWeight: 600
-              }}
-            >
-              {document.statusType}
-            </Typography>
-            <Typography
-              sx={{
-                top: '5rem',
-                left: 'calc(20px + 1vw)',
-                position: 'absolute',
-                fontSize: 'calc(15px + 0.3vw)',
-                color: '#686868',
-                fontWeight: 600
-              }}
-            >
-              ภายในวันที่ {document.dueDate}
-            </Typography>
-          </Button>
+              <Typography
+                className="maincolor"
+                sx={{
+                  top: '1.5rem',
+                  left: 'calc(20px + 1vw)',
+                  position: 'absolute',
+                  fontSize: 'calc(30px + 0.2vw)',
+                  fontFamily: 'Prompt',
+                  fontWeight: 600
+                }}
+              >
+                {document.name}
+              </Typography>
+              <Typography
+                sx={{
+                  top: '1.5rem',
+                  right: 'calc(20px + 1vw)',
+                  position: 'absolute',
+                  fontSize: 'calc(30px + 0.2vw)',
+                  color: '#686868',
+                  fontWeight: 600
+                }}
+              >
+                {document.statusType}
+              </Typography>
+              <Typography
+                sx={{
+                  top: '5rem',
+                  left: 'calc(20px + 1vw)',
+                  position: 'absolute',
+                  fontSize: 'calc(15px + 0.3vw)',
+                  color: '#686868',
+                  fontWeight: 600
+                }}
+              >
+                ภายในวันที่ {document.dueDate}
+              </Typography>
+            </Button>
         ))}
       </Box>
     </Box>
