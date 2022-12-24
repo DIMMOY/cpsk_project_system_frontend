@@ -48,7 +48,7 @@ export const NavBar = observer(() => {
     <AppBar
       position="sticky"
       className="navbar"
-      sx={{ background: '#AD68FF', display: applicationStore.isShowNavBar ?  "block" : "none" }}
+      sx={{ background: '#AD68FF', display: applicationStore.isShowNavBar ?  "block" : "none", minWidth: '30rem' }}
     >
       <Toolbar disableGutters>
         <Link to="/">
