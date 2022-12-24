@@ -9,9 +9,7 @@ const PrivateRoute = observer(
     () => {
         const { user } = applicationStore
         const isLogin = !!user
-        if (isLogin) {
-            applicationStore.setIsShowNavBar(true)
-        }
+        applicationStore.setIsShowNavBar(isLogin)
 
         return isLogin ? <Outlet /> : <Navigate to = "/signin" />
     }

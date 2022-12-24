@@ -9,9 +9,7 @@ const PublicRoute = observer(
     () => {
         const { user } = applicationStore
         const isLogin = !!user
-        if (!isLogin) {
-            applicationStore.setIsShowNavBar(false)
-        }
+        applicationStore.setIsShowNavBar(isLogin)
 
 
         return isLogin ? <Navigate to = "/" /> : <Outlet />

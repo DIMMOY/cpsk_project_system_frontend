@@ -11,6 +11,9 @@ import ProjectPreview from '../components/Preview/ProjectPreview'
 import DocumentPreview from '../components/Preview/DocumentPreview'
 import MeetingSchedulePreview from '../components/Preview/MeetingSchedulePreview'
 import ScorePreview from '../components/Preview/ScorePreview'
+import ClassPreview from '../components/Preview/ClassPreview'
+import AdminProjectPreview from '../components/Admin/AdminProjectPreview'
+import DocumentDetail from '../components/Detail/DocumentDetail'
 
 
 const Routers: React.FC = (): JSX.Element => {
@@ -26,16 +29,12 @@ const Routers: React.FC = (): JSX.Element => {
                     <Route path = '/' element={<ProjectPreview isCommittee={false}/>}/>
                     <Route path = '/home' element={<ProjectPreview isCommittee={false}/>}/>
                     <Route path = '/document' element={<DocumentPreview isStudent={true}/>}/>
+                    <Route path = '/document/:id' element={<DocumentDetail/>}/>
                     <Route path = '/meetingschedule' element={<MeetingSchedulePreview isStudent={true}/>}/>
                     <Route path = '/score' element={<ScorePreview isStudent={true}/>}/>
+                    <Route path = '/test' element={<ClassPreview isAdmin={true}/>}/>
+                    <Route path = '/test2' element={<AdminProjectPreview isAdmin={true}/>}></Route>  
                 </Route>
-                    
-                { /* ========== ชั่วคราว ========== */ }
-                {/* <PrivateRoute exact restricted={false} path={["/", "/home"]} component={ProjectPreview}/> */}
-                {/* <PrivateRoute restricted={false} path="/document" component={DocumentPreview}/> */}
-                {/* <PrivateRoute restricted={false} path="/meetingschedule" component={MeetingSchedulePreview}/> */}
-                {/* <PrivateRoute restricted={false} path="/score" component={ScorePreview}/> */}
-                { /* ============================ */ }
 
             </Routes>
             
