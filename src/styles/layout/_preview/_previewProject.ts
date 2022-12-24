@@ -3,7 +3,7 @@ import Box from "@mui/material/Box"
 
 export const ProjectPreviewDetail = styled(Box)({
     position: 'static',
-    minWidth: '65vw',
+    minWidth: '65.5vw',
     height: '20rem',
     margin: '64px 50px 0 50px',
     background: '#f3f3f3',
