@@ -7,6 +7,7 @@ import { KeyObjectType } from 'crypto'
 import { padding } from '@mui/system/spacing'
 import { Link, useLocation } from 'react-router-dom'
 import TextField from '@mui/material/TextField'
+import { useMediaQuery } from 'react-responsive'
 
 const exampleDocument = [
   {
@@ -52,16 +53,6 @@ const useStyles = makeStyles({
       color: '#AD68FF'
     }
   },
-  input: {
-    "& .MuiOutlinedInput-root": {
-      padding: "15px 20px 15px 20px",
-      backgroundColor: "#fcfcfc",
-      borderRadius: "20px",
-      fontSize: 20,
-      color: "#686868",
-      fontWeight: 500,
-    },
-  }
 })
 
 
@@ -73,7 +64,8 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
   const classes = useStyles()
   isStudent = true
 
-  const location = useLocation();
+  const location = useLocation()
+  const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
   const {name, dueDate, statusType} = location.state
 
   console.log(location.state)
@@ -132,10 +124,10 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
             </Typography>
             <Typography
               sx={{
-                top: '1.5rem',
+                top: isBigScreen ? '1.5rem' : '1.95rem' ,
                 right: 'calc(20px + 1vw)',
                 position: 'absolute',
-                fontSize: 'calc(30px + 0.2vw)',
+                fontSize: isBigScreen ? 'calc(30px + 0.2vw)' : 'calc(15px + 2vw)',
                 color: '#686868',
                 fontWeight: 600
               }}
@@ -174,17 +166,23 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
               maxRows={4}
               minRows={4}
               size="medium"
-              className={classes.input}
               sx={{
                 top: "7rem",
                 width: "88vw",
-                borderRadius: '20px',
                 left: "0",
                 right: "0",
                 marginLeft: "auto",
                 marginRight: "auto",
                 position: "absolute",
-                "& fieldset": { border: 'none' }
+                "& fieldset": { border: 'none' },
+                "& .MuiOutlinedInput-root": {
+                  padding: "1rem 1.25rem 1rem 1.25rem",
+                  backgroundColor: "#fcfcfc",
+                  borderRadius: "20px",
+                  fontSize: 20,
+                  color: "#686868",
+                  fontWeight: 500,
+                },
               }}
               onChange={e => setDescription(e.target.value)}
             />

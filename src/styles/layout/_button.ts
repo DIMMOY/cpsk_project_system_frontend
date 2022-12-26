@@ -14,3 +14,14 @@ export const ProjectPreviewButton = styled(Button, {
   minWidth: '24rem',
   height: '20rem'
 }))
+
+export const ListPreviewButton = styled(Button)({
+  position: 'relative',
+  borderRadius: '20px',
+  background: '#F3F3F3',
+  margin: '1.25rem 0 1.25rem 0',
+  display: 'flex',
+  textTransform: 'none',
+  color: '#AD68FF',
+  height: '9rem',
+})

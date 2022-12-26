@@ -7,6 +7,7 @@ import { KeyObjectType } from 'crypto'
 import { padding } from '@mui/system/spacing'
 import { Link, useLocation } from 'react-router-dom'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { useMediaQuery } from 'react-responsive'
 
 const exampleDocument = [
   {
@@ -74,6 +75,7 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
   }
 
   const location = useLocation();
+  const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
   const {name, dueDate, statusType} = location.state
 
   return (
@@ -118,10 +120,10 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
           </Typography>
           <Typography
             sx={{
-              top: '1.5rem',
+              top: isBigScreen ? '1.5rem' : '1.95rem' ,
               right: 'calc(20px + 1vw)',
               position: 'absolute',
-              fontSize: 'calc(30px + 0.2vw)',
+              fontSize: isBigScreen ? 'calc(30px + 0.2vw)' : 'calc(15px + 2vw)',
               color: '#686868',
               fontWeight: 600
             }}
@@ -162,7 +164,7 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
               aria-label="upload" 
               component="label">
               <input hidden accept="*" type="file" />
-              <AddCircleIcon sx={{fontSize: "500%", color: '#686868'}}/>
+              <AddCircleIcon sx={{fontSize: "450%", color: '#686868'}}/>
             </IconButton>
             
             <Button sx={{

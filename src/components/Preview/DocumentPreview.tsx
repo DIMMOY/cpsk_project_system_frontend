@@ -6,6 +6,8 @@ import { fontFamily, fontWeight, Stack } from '@mui/system'
 import { KeyObjectType } from 'crypto'
 import { padding } from '@mui/system/spacing'
 import { Link, useNavigate } from 'react-router-dom'
+import { useMediaQuery } from 'react-responsive'
+import { ListPreviewButton } from '../../styles/layout/_button'
 
 const exampleDocument = [
   {
@@ -60,6 +62,7 @@ interface PreviewProps {
 const DocumentPreview = ({ isStudent }: PreviewProps) => {
   const classes = useStyles()
   const navigate = useNavigate()
+  const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
   isStudent = true
 
   const statusColorList = {
@@ -90,21 +93,11 @@ const DocumentPreview = ({ isStudent }: PreviewProps) => {
       </Box>
       <Box sx={{ flexDirection: 'column', display: 'flex' }}>
         {exampleDocument.map((document) => (
-            <Button
+            <ListPreviewButton
               key={document.id}
-              className="ml-96 common-preview-button"
               onClick = {() => {navigate(`/document/${document.id}`,
                 {replace: true, state: {id: document.id, name: document.name, status: document.status, 
                 statusType: document.statusType, dueDate: document.dueDate}})}}
-              sx={{
-                position: 'relative',
-                borderRadius: '20px',
-                background: '#F3F3F3',
-                margin: '1.25rem 0 1.25rem 0',
-                display: 'flex',
-                textTransform: 'none',
-                color: '#AD68FF'
-              }}
             >
               <Typography
                 className="maincolor"
@@ -121,10 +114,10 @@ const DocumentPreview = ({ isStudent }: PreviewProps) => {
               </Typography>
               <Typography
                 sx={{
-                  top: '1.5rem',
+                  top: isBigScreen ? '1.5rem' : '1.95rem' ,
                   right: 'calc(20px + 1vw)',
                   position: 'absolute',
-                  fontSize: 'calc(30px + 0.2vw)',
+                  fontSize: isBigScreen ? 'calc(30px + 0.2vw)' : 'calc(15px + 2vw)',
                   color: '#686868',
                   fontWeight: 600
                 }}
@@ -143,7 +136,7 @@ const DocumentPreview = ({ isStudent }: PreviewProps) => {
               >
                 ภายในวันที่ {document.dueDate}
               </Typography>
-            </Button>
+            </ListPreviewButton>
         ))}
       </Box>
     </Box>

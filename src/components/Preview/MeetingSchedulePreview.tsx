@@ -6,6 +6,8 @@ import React, { Component } from 'react'
 import { KeyObjectType } from 'crypto'
 import { padding } from '@mui/system/spacing'
 import { Link, useNavigate } from 'react-router-dom'
+import { useMediaQuery } from 'react-responsive'
+import { ListPreviewButton } from '../../styles/layout/_button'
 
 const exampleDocument = [
   {
@@ -60,6 +62,7 @@ interface PreviewProps {
 const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
   const classes = useStyles()
   const navigate = useNavigate();
+  const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
   isStudent = true
 
   const statusColorList = {
@@ -91,21 +94,11 @@ const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
       </Box>
       <Box sx={{ flexDirection: 'column', display: 'flex' }}>
         {exampleDocument.map((mtSchedule) => (
-          <Button
+          <ListPreviewButton
             key={mtSchedule.id}
-            className="ml-96 common-preview-button"
             onClick = {() => {navigate(`/meetingschedule/${mtSchedule.id}`,
                 {replace: true, state: {id: mtSchedule.id, name: mtSchedule.name, status: mtSchedule.status, 
                 statusType: mtSchedule.statusType, dueDate: mtSchedule.dueDate}})}}
-            sx={{
-              position: 'relative',
-              borderRadius: '20px',
-              background: '#F3F3F3',
-              margin: '1.25rem 0 1.25rem 0',
-              display: 'flex',
-              textTransform: 'none',
-              color: '#AD68FF'
-            }}
           >
             <Typography
               className="maincolor"
@@ -122,10 +115,10 @@ const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
             </Typography>
             <Typography
               sx={{
-                top: '1.5rem',
+                top: isBigScreen ? '1.5rem' : '1.95rem' ,
                 right: 'calc(20px + 1vw)',
                 position: 'absolute',
-                fontSize: 'calc(30px + 0.2vw)',
+                fontSize: isBigScreen ? 'calc(30px + 0.2vw)' : 'calc(15px + 2vw)',
                 color: '#686868',
                 fontWeight: 600
               }}
@@ -144,7 +137,7 @@ const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
             >
               ภายในวันที่ {mtSchedule.dueDate}
             </Typography>
-          </Button>
+          </ListPreviewButton>
         ))}
       </Box>
     </Box>
