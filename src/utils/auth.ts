@@ -17,8 +17,10 @@ export const signInWithGoogle = async () => {
     const result = await signInWithPopup(auth, provider);
 
     if (result.user.email?.indexOf('@ku.th') == -1) {
+      await auth.signOut();
+      applicationStore.setUser(null)
       return {
-        statusCode: 400,
+        statusCode: 403,
         message: 'Authentication error',
         errorMsg: 'กรุณาใช้โดเมน @ku.th ในการเข้าใช้งาน !'
       };
@@ -47,22 +49,40 @@ export const signInWithGoogle = async () => {
           console.log('Error', error.message)
         }
       })
-
+    
     applicationStore.setUser(result.user)
-
     return {
       statusCode: 200,
       message: 'Sign in successfull',
       data: { resAxios, token },
+      result,
       errorMsg
     };
   } catch (error) {
-    console.error(error);
-    return {
-      statusCode: 400,
-      message: 'Authentication error',
-      errorMsg: 'การเข้าใช้งานผิดพลาด กรุณาลองใหม่อีกครั้งในภายหลัง'
-    };
+    // if (error.code && error.code === 'auth/popup-closed-by-user')
+    if (error instanceof Error) {
+      if (error.message === 'Firebase: Error (auth/popup-closed-by-user).') {
+        return {
+          statusCode: 400,
+          message: 'Popup closed by user',
+          errorMsg: ''
+        };
+      } else {
+        console.error(error);
+        return {
+          statusCode: 400,
+          message: 'Authentication error',
+          errorMsg: 'การเข้าใช้งานผิดพลาด กรุณาลองใหม่อีกครั้งในภายหลัง'
+        };
+      }
+    } else {
+      console.error(error);
+      return {
+        statusCode: 400,
+        message: 'Authentication error',
+        errorMsg: 'การเข้าใช้งานผิดพลาด กรุณาลองใหม่อีกครั้งในภายหลัง'
+      };
+    }
   }
 }
 

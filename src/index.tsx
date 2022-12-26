@@ -13,7 +13,7 @@ const root = ReactDOM.createRoot(
 )
 
 onAuthStateChanged(firebaseAuth, async (user) => {
-  if (user) {
+  if (user && user.email?.indexOf('@ku.th') !== -1) {
     applicationStore.setUser(user)
     const reqBody = {
       displayName: user.displayName,

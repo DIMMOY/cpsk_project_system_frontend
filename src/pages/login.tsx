@@ -1,22 +1,22 @@
+import React, { Component, useEffect, useState } from 'react'
 import { Button, Container, Box } from '@mui/material'
 import logo from '../assets/images/logo.png'
 import { useMediaQuery } from 'react-responsive'
-import { useNavigate  } from 'react-router-dom'
 import logoGoogle from '../assets/images/google_logo.png'
 import Typography from '@mui/material/Typography'
-import React, { Component, useEffect, useState } from 'react'
-import axios from 'axios'
 import { signInWithGoogle } from '../utils/auth'
 
 export default function Login () {
   const isBigScreen = useMediaQuery({ query: '(min-width: 850px)' })
-  const navigate = useNavigate()
+  const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const onGoogleLogIn = async () => {
+    setShowErrorMessage(false)
     const res = await signInWithGoogle();
-    console.log(res)
-    if (res.statusCode === 200) {
-      navigate('/home')
+    if (res.statusCode !== 200 && res.errorMsg !== '') {
+      setShowErrorMessage(true)
+      setErrorMessage(res.errorMsg || 'การเข้าใช้งานผิดพลาด กรุณาลองใหม่อีกครั้งในภายหลัง')
     }
   }
 
@@ -73,71 +73,56 @@ export default function Login () {
             ลงทะเบียนเข้าใช้งานเพื่อเริ่มต้นใช้งานเว็บไซต์ CPSK Project System
           </Typography>
           <Typography
-            className="fs-25 fw-500"
             sx={{
               color: '#AD68FF',
-              paddingBottom: '1rem',
+              marginBottom: '2rem',
               fontSize: 25,
-              fontWeight: 500
+              fontWeight: 500,
             }}
           >
             @ku.th เท่านั้น
           </Typography>
-          <Box>
-            {/* <Button
-                sx={{
-                  position: 'absolute',
-                  fontSize: '25px',
-                  fontWeight: '500',
-                  backgroundColor: '#AD68FF',
-                  fontFamily: 'Prompt',
-                  boxShadow:
-                    '0px 0px 2.41919px rgba(0, 0, 0, 0.084), 0px 2.41919px 2.41919px rgba(0, 0, 0, 0.168)',
-                  textTransform: 'none',
-                  top: '17rem',
-                  left: '8px',
-                  padding: '0.625rem'
-                }}
-                disabled
+          <Button
+              sx={{
+                fontSize: '1.56rem',
+                fontWeight: '500',
+                color: 'rgba(0, 0, 0, 0.54)',
+                backgroundColor: '#FFFFFF',
+                fontFamily: 'Prompt',
+                boxShadow:
+                  '0px 0px 2.41919px rgba(0, 0, 0, 0.084), 0px 2.41919px 2.41919px rgba(0, 0, 0, 0.168)',
+                textTransform: 'none',
+                padding: '0.5rem 0.8rem 0.5rem 0.8rem',
+                borderRadius: '0.5rem',
+                marginBottom: '1rem',
+              }}
+              onClick={onGoogleLogIn}
+              disableRipple
+          >
+              <img
+              src={logoGoogle}
+              alt="logo_google"
+              style={{
+                paddingRight: '0.625rem',
+                minHeight: '100%',
+                maxWidth: '100%',
+                height: 'auto',
+              }}
+              ></img>
+              Sign in with Google
+          </Button>
+          {showErrorMessage && 
+            <Typography
+            sx={{
+              color: 'red',
+              paddingBottom: '1rem',
+              fontSize: 20,
+              fontWeight: 400,
+            }}
             >
-                <img
-                src={logoGoogle}
-                alt="logo_google"
-                style={{ paddingRight: '0.625rem', opacity: '0' }}
-                ></img>
-                <Typography sx={{color: '#AD68FF'}}>Sign in with Google</Typography>
-            </Button> */}
-            <Button
-                sx={{
-                  position: 'absolute',
-                  fontSize: '1.56rem',
-                  fontWeight: '500',
-                  color: 'rgba(0, 0, 0, 0.54)',
-                  backgroundColor: '#FFFFFF',
-                  fontFamily: 'Prompt',
-                  boxShadow:
-                    '0px 0px 2.41919px rgba(0, 0, 0, 0.084), 0px 2.41919px 2.41919px rgba(0, 0, 0, 0.168)',
-                  textTransform: 'none',
-                  top: '16.5rem',
-                  left: '0px',
-                  padding: '0.625rem'
-                }}
-                onClick={onGoogleLogIn}
-                disableRipple
-            >
-                <img
-                src={logoGoogle}
-                alt="logo_google"
-                style={{
-                  paddingRight: '0.625rem',
-                  minHeight: '100%',
-                  maxWidth: '100%',
-                  height: 'auto'
-                }}
-                ></img>
-                Sign in with Google
-            </Button>
-            </Box>
+              {errorMessage}
+            </Typography>
+          }
         </Box>
       </Box>
     </Box>
