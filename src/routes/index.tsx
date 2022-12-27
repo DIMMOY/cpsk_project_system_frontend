@@ -15,9 +15,12 @@ import ClassPreview from '../components/Preview/ClassPreview'
 import AdminProjectPreview from '../components/Admin/AdminProjectPreview'
 import DocumentDetail from '../components/Detail/DocumentDetail'
 import MeetingScheduleDetail from '../components/Detail/MeetingScheduleDetail'
+import applicationStore from '../stores/applicationStore'
 
 
 const Routers: React.FC = (): JSX.Element => {
+    const { isAdmin, isTeacher, isStudent } = applicationStore
+
     return (
         <Router>
             <NavBar/>
@@ -27,15 +30,13 @@ const Routers: React.FC = (): JSX.Element => {
                 </Route>
 
                 <Route element={<PrivateRoute/>}>
-                    <Route path = '/' element={<ProjectPreview isCommittee={false}/>}/>
-                    <Route path = '/home' element={<ProjectPreview isCommittee={false}/>}/>
+                    <Route path = '/' element={isAdmin ? <ClassPreview isAdmin={true}></ClassPreview> : <ProjectPreview isCommittee={false}/>}/>
+                    {/* <Route path = '/home' element={<ProjectPreview isCommittee={false}/>}/> */}
                     <Route path = '/document' element={<DocumentPreview isStudent={true}/>}/>
                     <Route path = '/document/:id' element={<DocumentDetail/>}/>
                     <Route path = '/meetingschedule' element={<MeetingSchedulePreview isStudent={true}/>}/>
                     <Route path = '/meetingschedule/:id' element={<MeetingScheduleDetail isStudent={true}/>}/>
                     <Route path = '/score' element={<ScorePreview isStudent={true}/>}/>
-                    <Route path = '/test' element={<ClassPreview isAdmin={true}/>}/>
-                    <Route path = '/test2' element={<AdminProjectPreview isAdmin={true}/>}></Route>  
                 </Route>
 
             </Routes>

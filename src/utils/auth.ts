@@ -29,39 +29,16 @@ export const signInWithGoogle = async () => {
     const credential = await GoogleAuthProvider.credentialFromResult(result);
     const token = credential?.accessToken;
 
-    let errorMsg = null
-    const reqBody = {
-      displayName: result.user.displayName,
-      email: result.user.email,
-      lastLoginAt: new Date(),
-    }
-    // console.log(url)
-    const resAxios = await axios.post(url, reqBody)
-      .catch((error) => {
-        if (error.response) {
-          // Request made and server responded
-          errorMsg = error.response.data.message
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.log(error.request)
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message)
-        }
-      })
-    
     applicationStore.setUser(result.user)
     return {
       statusCode: 200,
       message: 'Sign in successfull',
-      data: { resAxios, token },
       result,
-      errorMsg
     };
   } catch (error) {
     // if (error.code && error.code === 'auth/popup-closed-by-user')
     if (error instanceof Error) {
-      if (error.message === 'Firebase: Error (auth/popup-closed-by-user).') {
+      if (error.message === 'Firebase: Error (auth/popup-closed-by-user).' || error.message === 'Firebase: Error (auth/cancelled-popup-request).') {
         return {
           statusCode: 400,
           message: 'Popup closed by user',
