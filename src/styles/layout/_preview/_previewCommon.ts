@@ -2,7 +2,6 @@ import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box"
 
 export const CommonPreviewContainer = styled(Box)({
-    position: 'static',
     width: 'calc(100% - 8vw)',
     minWidth: '28rem',
     margin: '0 auto',

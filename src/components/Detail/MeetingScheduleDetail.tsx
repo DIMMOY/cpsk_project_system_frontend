@@ -55,7 +55,6 @@ const useStyles = makeStyles({
   },
 })
 
-
 interface PreviewProps {
   isStudent: boolean
 }
