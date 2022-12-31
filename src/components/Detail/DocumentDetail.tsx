@@ -67,16 +67,10 @@ interface PreviewProps {
 const DocumentDetail = ({ isStudent }: PreviewProps) => {
   const classes = useStyles()
   isStudent = true
-
-  const statusColorList = {
-    ส่งแล้ว: '#43BF64',
-    ส่งช้า: '#FBBC05',
-    ยังไม่ส่ง: '#FF5454'
-  }
-
   const location = useLocation();
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
-  const {name, dueDate, statusType} = location.state
+  const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}]
+  const {name, dueDate, status} = location.state
 
   return (
     <Box className="common-preview-container" sx={{textAlign: "center",}}>
@@ -124,11 +118,11 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
               right: 'calc(20px + 1vw)',
               position: 'absolute',
               fontSize: isBigScreen ? 'calc(30px + 0.2vw)' : 'calc(15px + 2vw)',
-              color: '#686868',
+              color: statusList[status].color,
               fontWeight: 600
             }}
           >
-            {statusType}
+            {statusList[status].message}
           </Typography>
           <Typography
             sx={{
