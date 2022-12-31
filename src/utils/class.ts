@@ -8,7 +8,7 @@ export const createClass = async (reqBody: any) => {
         await axios.post(url, reqBody)
         return {
             statusCode: 201,
-            message: 'Create class successfull',
+            message: 'Create class successful',
         };
     } catch (error) {
         console.error(error)
