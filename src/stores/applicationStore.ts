@@ -6,8 +6,11 @@ class applicationStore {
     userDisplayName = ''
     isShowNavBar = false
     isAdmin = false
-    isTeacher = false
+    isAdvisor = false
     isStudent = false
+    currentRole = 0
+    classroom: string | null = null;
+    userId: string | null = null;
 
     constructor() {
         makeAutoObservable(this)
@@ -21,10 +24,22 @@ class applicationStore {
         this.isShowNavBar = isShowNavBar as boolean
     }
 
-    setRole(roles: Array<number>) {
-        this.isAdmin = roles.find((e) => e === 2) ? true : false as boolean
-        this.isTeacher = roles.find((e) => e === 1) ? true : false as boolean
-        this.isStudent = roles.find((e) => e === 0) ? true : false as boolean
+    setRole(roles: Array<any>) {
+        console.log(roles)
+        this.isAdmin = roles.find((e) => e.role == 2) ? true : false as boolean
+        this.isAdvisor = roles.find((e) => e.role == 1) ? true : false as boolean
+        this.isStudent = roles.find((e) => e.role == 0) ? true : false as boolean
+
+        const currentRole = roles.find((e) => e.currentRole)
+        this.currentRole = currentRole.role as number
+
+        if (this.currentRole === 0) this.classroom = 'CPE33'
+
+        this.userId = currentRole.userId as string // สำหรับทดสอบเท่านั้น
+    }
+
+    setCurrentRole(currentRole: number) {
+        this.currentRole = currentRole as number
     }
 }
 
