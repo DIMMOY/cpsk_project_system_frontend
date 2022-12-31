@@ -16,10 +16,10 @@ import AdminProjectPreview from '../components/Admin/AdminProjectPreview'
 import DocumentDetail from '../components/Detail/DocumentDetail'
 import MeetingScheduleDetail from '../components/Detail/MeetingScheduleDetail'
 import applicationStore from '../stores/applicationStore'
+import HomePage from '../pages/home'
 
 
 const Routers: React.FC = (): JSX.Element => {
-    const { isAdmin, isTeacher, isStudent } = applicationStore
 
     return (
         <Router>
@@ -30,8 +30,8 @@ const Routers: React.FC = (): JSX.Element => {
                 </Route>
 
                 <Route element={<PrivateRoute/>}>
-                    <Route path = '/' element={isAdmin ? <ClassPreview isAdmin={true}></ClassPreview> : <ProjectPreview isCommittee={false}/>}/>
-                    {/* <Route path = '/home' element={<ProjectPreview isCommittee={false}/>}/> */}
+                    <Route path = '/' element={<HomePage/>}/>
+                    <Route path = '/class' element={<ClassPreview/>}/>
                     <Route path = '/document' element={<DocumentPreview isStudent={true}/>}/>
                     <Route path = '/document/:id' element={<DocumentDetail/>}/>
                     <Route path = '/meetingschedule' element={<MeetingSchedulePreview isStudent={true}/>}/>
