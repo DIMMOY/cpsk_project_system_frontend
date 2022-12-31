@@ -15,35 +15,35 @@ const exampleDocument = [
     name: 'Proposal',
     dueDate: '2022-10-20 23:59',
     status: 0,
-    statusType: 'ส่งแล้ว'
+    // statusType: 'ยังไม่ส่ง'
   },
   {
     id: 2,
     name: 'Draft 1-2',
     dueDate: '2022-10-18 23:59',
     status: 1,
-    statusType: 'ยังไม่ส่ง'
+    // statusType: 'ส่งแล้ว'
   },
   {
     id: 3,
     name: 'Draft 1-2',
     dueDate: '2022-10-13 23:59',
     status: 2,
-    statusType: 'ส่งช้า'
+    // statusType: 'ส่งช้า'
   },
   {
     id: 4,
     name: 'Draft 1-2',
     dueDate: '2022-10-13 23:59',
     status: 2,
-    statusType: 'ส่งช้า'
+    // statusType: 'ส่งช้า'
   },
   {
     id: 5,
     name: 'Draft 1-2',
     dueDate: '2022-10-13 23:59',
     status: 2,
-    statusType: 'ส่งช้า'
+    // statusType: 'ส่งช้า'
   }
 ]
 
@@ -63,13 +63,8 @@ const DocumentPreview = ({ isStudent }: PreviewProps) => {
   const classes = useStyles()
   const navigate = useNavigate()
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
+  const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}]
   isStudent = true
-
-  const statusColorList = {
-    ส่งแล้ว: '#43BF64',
-    ส่งช้า: '#FBBC05',
-    ยังไม่ส่ง: '#FF5454'
-  }
 
   return (
     <Box className="common-preview-container" sx={{}}>
@@ -97,7 +92,7 @@ const DocumentPreview = ({ isStudent }: PreviewProps) => {
               key={document.id}
               onClick = {() => {navigate(`/document/${document.id}`,
                 {replace: true, state: {id: document.id, name: document.name, status: document.status, 
-                statusType: document.statusType, dueDate: document.dueDate}})}}
+                statusType: statusList[document.status].message, dueDate: document.dueDate}})}}
             >
               <Typography
                 className="maincolor"
@@ -118,11 +113,11 @@ const DocumentPreview = ({ isStudent }: PreviewProps) => {
                   right: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: isBigScreen ? 'calc(30px + 0.2vw)' : 'calc(15px + 2vw)',
-                  color: '#686868',
+                  color: statusList[document.status].color,
                   fontWeight: 600
                 }}
               >
-                {document.statusType}
+                {statusList[document.status].message}
               </Typography>
               <Typography
                 sx={{

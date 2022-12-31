@@ -19,7 +19,7 @@ const useStyles = makeStyles({
 })
 
 
-export default function ProjectPreview (props: { isCommittee: boolean }) {
+const ProjectPreview = (props: { isCommittee: boolean }) => {
   const { isCommittee } = props
   const classes = useStyles()
   const isBigScreen = useMediaQuery({ query: '(min-width: 1440px)' })
@@ -31,9 +31,9 @@ export default function ProjectPreview (props: { isCommittee: boolean }) {
   return (
     <ProjectPreviewContainer>
       <ProjectPreviewDetail>
-        <Typography sx={{fontSize: 50}}>เคยูโปรเจกต์ (ชื่อภาษาไทย)</Typography>
-        <Typography sx={{fontSize: 30}}>KU Project (ชื่อภาษาอังกฤษ)</Typography>
-        <Typography sx={{fontSize: 30}}>คำอธิบายโปรเจกต์</Typography>
+        <Typography sx={{fontSize: 50, fontWeight: 500, color: '#AD68FF'}}>เคยูโปรเจกต์ (ชื่อภาษาไทย)</Typography>
+        <Typography sx={{fontSize: 30, fontWeight: 500, color: '#686868'}}>KU Project (ชื่อภาษาอังกฤษ)</Typography>
+        <Typography sx={{fontSize: 30, fontWeight: 500, color: '#686868'}}>คำอธิบายโปรเจกต์</Typography>
       </ProjectPreviewDetail>
       <Box sx={{textAlign: 'center'}}>
         <Link to = "/document" style={{ textDecoration: 'none' }}>
@@ -72,3 +72,5 @@ export default function ProjectPreview (props: { isCommittee: boolean }) {
     </ProjectPreviewContainer>
   )
 }
+
+export default ProjectPreview 

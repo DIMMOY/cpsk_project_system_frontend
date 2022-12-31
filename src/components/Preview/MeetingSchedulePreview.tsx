@@ -63,6 +63,7 @@ const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
   const classes = useStyles()
   const navigate = useNavigate();
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
+  const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}]
   isStudent = true
 
   const statusColorList = {
@@ -119,11 +120,11 @@ const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
                 right: 'calc(20px + 1vw)',
                 position: 'absolute',
                 fontSize: isBigScreen ? 'calc(30px + 0.2vw)' : 'calc(15px + 2vw)',
-                color: '#686868',
+                color: statusList[mtSchedule.status].color,
                 fontWeight: 600
               }}
             >
-              {mtSchedule.statusType}
+              {statusList[mtSchedule.status].message}
             </Typography>
             <Typography
               sx={{
