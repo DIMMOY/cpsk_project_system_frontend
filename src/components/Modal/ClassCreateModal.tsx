@@ -33,22 +33,21 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
 
     const handleCreateClass = async () => {
         setLoading(true)
-        setTimeout(() => {
-            console.log('Creating...')
-        }, 1000)
+        console.log('Creating...')
         const reqBody = { name: className, endDate: null, complete: false, major: majorSelect }
-        console.log(reqBody);
         const res = await createClass(reqBody);
         if (res.statusCode !== 201) {
         }
-        onClose()
-        refresh()
+        setTimeout(() => {
+            onClose()
+            refresh()
+        }, 1000)
         setTimeout(() => {
             setClassName(null)
             setCanSubmit(false)
             setLoading(false)
             setMajorSelect('ALL')
-        }, 300)
+        }, 1300)
     }
     
     const handleCancel = () => {
@@ -86,40 +85,45 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                 transform: 'translate(-50%, -50%)',
                 'element.style': {transform: 'none'},
             }}>
-                <Typography id="class-title" className='maincolor'
-                sx={{fontSize: 40, fontWeight: 500, marginBottom: 2}}
+                <Typography 
+                    id="class-title" 
+                    className='maincolor'
+                    sx={{fontSize: 40, fontWeight: 500, marginBottom: 2}}
                 >
-                สร้าง Class
+                    สร้าง Class
                 </Typography>
-                <Typography id="class-description"
-                sx={{fontSize: 20, fontWeight: 500, marginBottom: 1, color: '#686868'}}
+                <Typography 
+                    id="class-description"
+                    sx={{fontSize: 20, fontWeight: 500, marginBottom: 1, color: '#686868'}}
                 >
-                ชื่อ Class *
+                    ชื่อ Class *
                 </Typography>
                 <TextField
-                autoFocus
-                required
-                id="class-description"
-                size="medium"
-                fullWidth
-                sx={{
-                    "& fieldset": { border: 'none' },
-                    "& .MuiOutlinedInput-root": {
-                    padding: "0.1rem",
-                    backgroundColor: "#F3F3F3",
-                    borderRadius: "10px",
-                    fontSize: 20,
-                    color: "#686868",
-                    fontWeight: 500,
-                    marginBottom: 2,
-                    },
-                }}
-                onChange={handleClassNameChange}
+                    autoFocus
+                    required
+                    id="class-description"
+                    size="medium"
+                    fullWidth
+                    inputProps={{ maxLength: 50 }}
+                    sx={{
+                        "& fieldset": { border: 'none' },
+                        "& .MuiOutlinedInput-root": {
+                        padding: "0.1rem",
+                        backgroundColor: "#F3F3F3",
+                        borderRadius: "10px",
+                        fontSize: 20,
+                        color: "#686868",
+                        fontWeight: 500,
+                        marginBottom: 2,
+                        },
+                    }}
+                    onChange={handleClassNameChange}
                 />
-                <Typography id="class-description"
-                sx={{fontSize: 20, fontWeight: 500, marginBottom: 1, color: '#686868'}}
+                <Typography 
+                    id="class-description"
+                    sx={{fontSize: 20, fontWeight: 500, marginBottom: 1, color: '#686868'}}
                 >
-                ภาค
+                    ภาค
                 </Typography>
                 <FormControl sx={{marginBottom: 5}}>
                 <Select
@@ -135,47 +139,47 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                 </Select>
                 </FormControl>
                 <Button
-                onClick={handleCancel} 
-                sx={{
-                    width: "7rem",
-                    height: "2.8rem",   
-                    fontSize: 20,
-                    background: '#FCFCFC',
-                    borderRadius: '10px',
-                    color: '#686868',
-                    boxShadow: 'none',
-                    textTransform: 'none',
-                    transform: 'translate(-50%, -50%)',
-                    position: 'absolute',
-                    right: 130,
-                    bottom: 10,
-                    '&:hover': { background: '#F3F3F3' }
-                }}
+                    onClick={handleCancel} 
+                    sx={{
+                        width: "7rem",
+                        height: "2.8rem",   
+                        fontSize: 20,
+                        background: '#FCFCFC',
+                        borderRadius: '10px',
+                        color: '#686868',
+                        boxShadow: 'none',
+                        textTransform: 'none',
+                        transform: 'translate(-50%, -50%)',
+                        position: 'absolute',
+                        right: 130,
+                        bottom: 10,
+                        '&:hover': { background: '#F3F3F3' }
+                    }}
                 >
                     ยกเลิก
                 </Button>
                 <LoadingButton
-                onClick={handleCreateClass}
-                loading={loading} 
-                sx={{
-                    width: "7rem",
-                    height: "2.8rem",   
-                    fontSize: 20,
-                    background: '#FCFCFC',
-                    borderRadius: '10px',
-                    color: '#AD50FF',
-                    boxShadow: 'none',
-                    textTransform: 'none',
-                    transform: 'translateY(-50%)',
-                    position: 'absolute',
-                    right: '3rem',
-                    bottom: 10,
-                    '&:hover': { background: '#F3F3F3' },
-                    "&:disabled": {
-                    backgroundColor: '#FCFCFC',
-                    }
-                }}
-                disabled={!canSubmit}
+                    onClick={handleCreateClass}
+                    loading={loading} 
+                    sx={{
+                        width: "7rem",
+                        height: "2.8rem",   
+                        fontSize: 20,
+                        background: '#FCFCFC',
+                        borderRadius: '10px',
+                        color: '#AD50FF',
+                        boxShadow: 'none',
+                        textTransform: 'none',
+                        transform: 'translateY(-50%)',
+                        position: 'absolute',
+                        right: '3rem',
+                        bottom: 10,
+                        '&:hover': { background: '#F3F3F3' },
+                        "&:disabled": {
+                        backgroundColor: '#FCFCFC',
+                        }
+                    }}
+                    disabled={!canSubmit}
                 >
                     ยืนยัน
                 </LoadingButton>
