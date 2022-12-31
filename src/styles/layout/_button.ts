@@ -24,4 +24,5 @@ export const ListPreviewButton = styled(Button)({
   textTransform: 'none',
   color: '#AD68FF',
   height: '9rem',
+  width: '100%'
 })
