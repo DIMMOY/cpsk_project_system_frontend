@@ -1,24 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Button, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import AddIcon from '@mui/icons-material/Add';
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 import { ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import ClassCreateModal from '../Modal/ClassCreateModal';
 import { listClass } from '../../utils/class';
-import { responsePattern } from '../../constants/responsePattern';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
 import AdminSidebar from '../Sidebar/AdminSidebar';
-
-interface PreviewProps {
-  isAdmin?: boolean
-}
 
 const ClassPreview = () => {
   const navigate = useNavigate()
@@ -78,22 +73,8 @@ const ClassPreview = () => {
     setClasses(result.data as Array<any>);
   }
 
-  const statusColorList = {
-    ส่งแล้ว: '#43BF64',
-    ส่งช้า: '#FBBC05',
-    ยังไม่ส่ง: '#FF5454'
-  }
-
-  const [mobileOpen, setMobileOpen] = useState(false);
-  // const container = window !== undefined ? () => window().document.body : undefined;
-  const drawerWidth = 240;
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
   return (
     <CommonPreviewContainer>
-      {isAdmin ? <AdminSidebar></AdminSidebar> : <></>}
       <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}> 
         <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: isBigScreen ? 'row' : 'column', maxWidth: 700 }}>
           <FormControl  sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
@@ -152,7 +133,7 @@ const ClassPreview = () => {
                     startIcon={<AddIcon sx={{width: 20, height: 20}}></AddIcon>}
                     onClick={handleOpenModal}
                   >
-                    สร้าง Class
+                    สร้างคลาส
                   </Button>
                   <ClassCreateModal
                     open={open} 

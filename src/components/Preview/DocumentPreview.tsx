@@ -47,20 +47,11 @@ const exampleDocument = [
   }
 ]
 
-const useStyles = makeStyles({
-  iconSize: {
-    '& svg': {
-      color: '#AD68FF'
-    }
-  }
-})
-
 interface PreviewProps {
   isStudent: boolean
 }
 
 const DocumentPreview = ({ isStudent }: PreviewProps) => {
-  const classes = useStyles()
   const navigate = useNavigate()
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
   const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}]
@@ -72,8 +63,12 @@ const DocumentPreview = ({ isStudent }: PreviewProps) => {
         <Link to="/">
           <IconButton
             disableRipple
-            className={classes.iconSize}
-            sx={{ marginRight: '1.25rem' }}
+            sx={{ 
+              marginRight: '1.25rem',
+              '& svg': {
+                color: '#AD68FF'
+              } 
+            }}
             disableFocusRipple
           >
             <ArrowBackIosNewIcon fontSize="large" />
