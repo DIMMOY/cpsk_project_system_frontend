@@ -1,76 +1,147 @@
-import React, { Component } from 'react'
-import { Box, IconButton, Typography } from '@mui/material'
-import { makeStyles } from '@mui/styles'
-import DescriptionIcon from '@mui/icons-material/Description'
-import GroupsIcon from '@mui/icons-material/Groups'
-import GradingIcon from '@mui/icons-material/Grading'
-import { ProjectPreviewButton } from '../../styles/layout/_button'
-import { useMediaQuery } from 'react-responsive'
-import { Link } from 'react-router-dom'
-import { ProjectPreviewContainer, ProjectPreviewDetail } from '../../styles/layout/_preview/_previewProject'
+import React, { useEffect, useState } from 'react'
+import { Box, Button, Typography, IconButton } from '@mui/material'
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import AddIcon from '@mui/icons-material/Add';
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
+import { ListPreviewButton } from '../../styles/layout/_button';
+import { useMediaQuery } from 'react-responsive';
+import ClassCreateModal from '../Modal/ClassCreateModal';
+import { listClass } from '../../utils/class';
+import moment from 'moment';
+import applicationStore from '../../stores/applicationStore';
+import AdminSidebar from '../Sidebar/AdminSidebar';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 
-const useStyles = makeStyles({
-  iconSize: {
-    '& svg': {
-      fontSize: '500%',
-      color: '#AD68FF'
-    }
+const ProjectPreview = () => {
+  const navigate = useNavigate()
+  const location = useLocation();
+  const search = new URLSearchParams(location.search);
+  const { isAdmin } = applicationStore
+
+  const classOptions = ['true', 'false', 'all']
+  const sortOptions = ['createdAtDESC', 'createdAtASC', 'name']
+  const majorOptions = ['cpe', 'ske', 'all']
+
+  const classCheck = search.get('select') && classOptions.find((e) => search.get('select')?.toLowerCase() == e) ? search.get('select') : 'all'
+  const sortCheck = search.get('sort') && sortOptions.find((e) => search.get('sort')?.toLowerCase() == e.toLowerCase()) ? search.get('sort') : 'createdAtDESC'
+  const majorCheck = search.get('major') && majorOptions.find((e) => search.get('major')?.toLowerCase() == e) ? search.get('major') : 'all'
+
+  const [classFilter, setClassFilter] = useState<string>(classCheck || 'all')
+  const [sortSelect, setSortSelect] = useState<string>(sortCheck || 'createdAtDESC')
+  const isBigScreen = useMediaQuery({ query: '(min-width: 650px)' })
+  const [classes, setClasses] = useState<Array<any>>([])
+
+  useEffect(() => {
+      async function getData () {
+        const result = await listClass({ sort: sortSelect, select: classFilter})
+        setClasses(result.data as Array<any>);
+      }
+      getData()
+    }, [classFilter, sortSelect] 
+  )
+
+  const handleClassFilterChange = (event: SelectChangeEvent) => {
+    setClassFilter(event.target.value as string);
+    navigate({
+      pathname: '/project',
+      search: `?sort=${sortSelect}&select=${event.target.value}`,
+    });
   }
-})
-
-
-const ProjectPreview = (props: { isCommittee: boolean }) => {
-  const { isCommittee } = props
-  const classes = useStyles()
-  const isBigScreen = useMediaQuery({ query: '(min-width: 1440px)' })
-
-  const scrollTop = () => {
-    window.scrollTo(0, 0);
+  const handleSortChange = (event: SelectChangeEvent) => {
+    setSortSelect(event.target.value as string);
+    navigate({
+      pathname: '/project',
+      search: `?sort=${event.target.value}&select=${classFilter}`,
+    });
   }
 
   return (
-    <ProjectPreviewContainer>
-      <ProjectPreviewDetail>
-        <Typography sx={{fontSize: 50, fontWeight: 500, color: '#AD68FF'}}>เคยูโปรเจกต์ (ชื่อภาษาไทย)</Typography>
-        <Typography sx={{fontSize: 30, fontWeight: 500, color: '#686868'}}>KU Project (ชื่อภาษาอังกฤษ)</Typography>
-        <Typography sx={{fontSize: 30, fontWeight: 500, color: '#686868'}}>คำอธิบายโปรเจกต์</Typography>
-      </ProjectPreviewDetail>
-      <Box sx={{textAlign: 'center'}}>
-        <Link to = "/document" style={{ textDecoration: 'none' }}>
-          <ProjectPreviewButton isBigScreen={isBigScreen}
-            onClick={scrollTop}
-          >
-            ส่งเอกสาร
-            <IconButton className={classes.iconSize} disabled>
-              <DescriptionIcon />
-            </IconButton>
-          </ProjectPreviewButton>
-        </Link>
-        {!isCommittee && (
-          <Link to = "/meetingschedule" style={{ textDecoration: 'none' }}>
-            <ProjectPreviewButton isBigScreen={isBigScreen}
-              onClick={scrollTop}
+    <CommonPreviewContainer>
+      {isAdmin ? <AdminSidebar currentSelect='คลาส'></AdminSidebar> : <></>}
+      <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
+        <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: isBigScreen ? 'row' : 'column', maxWidth: 700 }}>
+          <FormControl  sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
+              <InputLabel id="select-class-label">คลาส</InputLabel>
+              <Select
+                  labelId="select-class-label"
+                  id="select-class"
+                  value={classFilter}
+                  onChange={handleClassFilterChange}
+                  label="คลาส"
+                  sx={{borderRadius: '10px', color: '#ad68ff', height: 45, fontWeight: 500, width: 120}}
+              >
+                  <MenuItem value={'all'}>ทั้งหมด</MenuItem>
+                  <MenuItem value={'false'}>ดำเนินการ</MenuItem>
+                  <MenuItem value={'true'}>เสร็จสิ้น</MenuItem>
+              </Select>
+          </FormControl>
+          <FormControl sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
+            <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
+            <Select
+                labelId="select-sort-label"
+                id="select-sort"
+                value={sortSelect}
+                onChange={handleSortChange}
+                label="จัดเรียงโดย"
+                sx={{borderRadius: '10px', color: '#ad68ff', height: 45, fontWeight: 500, width: 180}}
             >
-              รายงานอาจารย์ที่ปรึกษา
-              <IconButton className={classes.iconSize} disabled>
-                <GroupsIcon />
-              </IconButton>
-            </ProjectPreviewButton>
-          </Link>
-        )}
-        <Link to = "/score" style={{ textDecoration: 'none' }}>
-          <ProjectPreviewButton isBigScreen={isBigScreen}
-            onClick={scrollTop}
-          >
-            คะแนน
-            <IconButton className={classes.iconSize} disabled>
-              <GradingIcon />
-            </IconButton>
-          </ProjectPreviewButton>
-        </Link>
+                <MenuItem value={'createdAtDESC'}>วันที่สร้างล่าสุด</MenuItem>
+                <MenuItem value={'createdAtASC'}>วันที่สร้างเก่าสุด</MenuItem>
+                <MenuItem value={'name'}>ชื่อคลาส</MenuItem>
+            </Select>
+            </FormControl>
+        </Box>
+
+        <Box sx={{ flexDirection: 'column', display: 'flex'}}>
+          {classes.map((c) => (
+            <ListPreviewButton key={c._id}>
+              <Typography
+                className="maincolor"
+                sx={{
+                  top: '1.5rem',
+                  left: 'calc(20px + 1vw)',
+                  position: 'absolute',
+                  fontSize: 'calc(30px + 0.2vw)',
+                  fontFamily: 'Prompt',
+                  fontWeight: 600
+                }}
+              >
+                {c.name}
+              </Typography>
+              <Typography
+                sx={{
+                  top: '1.5rem',
+                  right: 'calc(20px + 1vw)',
+                  position: 'absolute',
+                  fontSize: 'calc(30px + 0.2vw)',
+                  color: '#686868',
+                  fontWeight: 600
+                }}
+              >
+                {c.complete ? 'เสร็จสิ้น' : 'ดำเนินการ'}
+              </Typography>
+              <Typography
+                sx={{
+                  top: '5rem',
+                  left: 'calc(20px + 1vw)',
+                  position: 'absolute',
+                  fontSize: 'calc(15px + 0.3vw)',
+                  color: '#686868',
+                  fontWeight: 600
+                }}
+              >
+                สร้างเมื่อ {moment(c.createdAt).format('DD/MM/YYYY HH:mm')} น.
+              </Typography>
+            </ListPreviewButton>
+          ))}
+        </Box>
       </Box>
-    </ProjectPreviewContainer>
+    </CommonPreviewContainer>
   )
 }
 
-export default ProjectPreview 
+export default ProjectPreview
