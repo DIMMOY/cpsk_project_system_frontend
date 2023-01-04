@@ -97,7 +97,7 @@ const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
         {exampleDocument.map((mtSchedule) => (
           <ListPreviewButton
             key={mtSchedule.id}
-            onClick = {() => {navigate(`/meetingschedule/${mtSchedule.id}`,
+            onClick = {() => {navigate(`/meeting-schedule/${mtSchedule.id}`,
                 {replace: true, state: {id: mtSchedule.id, name: mtSchedule.name, status: mtSchedule.status, 
                 statusType: mtSchedule.statusType, dueDate: mtSchedule.dueDate}})}}
           >

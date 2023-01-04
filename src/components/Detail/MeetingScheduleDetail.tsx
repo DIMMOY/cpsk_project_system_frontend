@@ -72,7 +72,7 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
   return (
     <Box className="common-preview-container" sx={{textAlign: "center",}}>
       <Box sx={{ display: 'flex', padding: '0 auto' }}>
-        <Link to="/meetingschedule">
+        <Link to="/meeting-schedule">
           <IconButton
             disableRipple
             className={classes.iconSize}

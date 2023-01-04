@@ -47,7 +47,7 @@ const ProjectHomePreview = (props: { isCommittee: boolean }) => {
           </ProjectPreviewButton>
         </Link>
         {!isCommittee && (
-          <Link to = "/meetingschedule" style={{ textDecoration: 'none' }}>
+          <Link to = "/meeting-schedule" style={{ textDecoration: 'none' }}>
             <ProjectPreviewButton isBigScreen={isBigScreen}
               onClick={scrollTop}
             >

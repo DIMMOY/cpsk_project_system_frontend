@@ -12,23 +12,28 @@ import ClassIcon from '@mui/icons-material/Class';
 import Typography from '@mui/material/Typography';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 
-
-interface MainProps {
-  currentSelect: string;
-}
-
-const AdminSidebar = ({ currentSelect }: MainProps) => {
-
+const AdminSidebar = () => {
+    const { pathname } = window.location
     const navigate = useNavigate();
+    const params = ['project', 'document', 'meeting-schedule', 'score', 'committee']
+    const menuText = ['โปรเจกต์', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา', 'ประเมิน', 'จับคู่กรรมการคุมสอบ']
+    const [currentSelect, setCurrentSelect] = useState<null | string>(null)
 
     const handleOnClick = (param: string, text: string) => {
       if (text !== currentSelect) {
-        const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
-        navigate(path + param)
+        const path = pathname.substring(0, pathname.lastIndexOf('/'));
+        setCurrentSelect(text)
+        navigate(path + '/' + param)
       }
     }
 
-    const params = ['/project', '/document', '/meeting-schedule', '/score', '/committee']
+    useEffect(() => {
+      const index = params.findIndex((p) => p === pathname.substring(pathname.lastIndexOf('/') + 1))
+      if (index === -1) {
+        navigate('/')
+      }
+      setCurrentSelect(menuText[index])
+    }, [currentSelect])
 
     return (
         <Drawer
@@ -43,9 +48,10 @@ const AdminSidebar = ({ currentSelect }: MainProps) => {
         <Toolbar />
         <Box sx={{ overflow: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '70%', minHeight: '20rem', flexDirection: 'column'}}>
           <List>
-            {['โปรเจกต์', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา', 'ประเมิน', 'จับคู่กรรมการคุมสอบ'].map((text, index) => (
+            {menuText.map((text, index) => (
               <ListItem key={text} disablePadding sx={{fontWeight: 100}}>
-                <ListItemButton onClick={() => handleOnClick(params[index], text)}>
+                {/*ปิดชั่วคราว index >= 3*/}
+                <ListItemButton onClick={() => handleOnClick(params[index], text)} disabled={index >= 3}>
                   <ListItemIcon sx={{color: text === currentSelect ? '#AD68FF' : '#8C8C8C'}}>
                     {
                       text === 'โปรเจกต์' ? <FolderSharedIcon/> : 
@@ -62,7 +68,7 @@ const AdminSidebar = ({ currentSelect }: MainProps) => {
                       sx={{ 
                         color: text === currentSelect ? '#AD68FF' : '#8C8C8C',
                         fontWeight: text === currentSelect ? 500 : 400,
-                        fontSize: text === currentSelect ? 18 : 16,
+                        fontSize: 16,
                         textDecoration: text === currentSelect ? 'underline' : 'none',
                       }}>
                         {text}

@@ -48,7 +48,7 @@ const ProjectPreview = () => {
 
   return (
     <CommonPreviewContainer>
-      {isAdmin ? <AdminSidebar currentSelect='โปรเจกต์'></AdminSidebar> : <></>}
+      {isAdmin ? <AdminSidebar/> : <></> }
       <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
         <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: isBigScreen ? 'row' : 'column', maxWidth: 700 }}>
           <FormControl sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>

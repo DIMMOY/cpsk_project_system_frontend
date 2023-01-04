@@ -1,6 +1,6 @@
 import React from 'react'
 import applicationStore from '../../stores/applicationStore'
-import MeetingSchedulePreview from '../../components/Preview/MeetingSchedulePreview'
+import MeetingSchedulePreview from '../../components/Preview/MeetingScheduleHomePreview'
 import AdminMeetingSchedulePreview from '../../components/Admin/AdminMeetingSchedulePreview'
 
 const MeetingSchedulePage = () => {
