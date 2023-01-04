@@ -13,13 +13,13 @@ import ClassCreateModal from '../Modal/ClassCreateModal';
 import { listClass } from '../../utils/class';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
-import AdminSidebar from '../Sidebar/AdminSidebar';
+import { observer } from 'mobx-react';
 
-const ClassPreview = () => {
+const ClassPreview = observer(() => {
   const navigate = useNavigate()
   const location = useLocation();
   const search = new URLSearchParams(location.search);
-  const { isAdmin } = applicationStore
+  const { isAdmin, currentRole } = applicationStore
 
   const classOptions = ['true', 'false', 'all']
   const sortOptions = ['createdAtDESC', 'createdAtASC', 'name']
@@ -37,6 +37,8 @@ const ClassPreview = () => {
   const [classes, setClasses] = useState<Array<any>>([])
 
   useEffect(() => {
+      if (currentRole == 0) navigate('/')
+      applicationStore.setClassroom(null)
       async function getData () {
         const result = await listClass({ sort: sortSelect, select: classFilter, major: majorFilter})
         setClasses(result.data as Array<any>);
@@ -75,7 +77,13 @@ const ClassPreview = () => {
 
   return (
     <CommonPreviewContainer>
-      <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}> 
+      <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
+        <Typography
+            className="maincolor"
+            sx={{ fontSize: 45, fontWeight: 600 }}
+          >
+          คลาส
+        </Typography> 
         <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: isBigScreen ? 'row' : 'column', maxWidth: 700 }}>
           <FormControl  sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
               <InputLabel id="select-class-label">คลาส</InputLabel>
@@ -147,7 +155,13 @@ const ClassPreview = () => {
 
         <Box sx={{ flexDirection: 'column', display: 'flex'}}>
           {classes.map((c) => (
-            <ListPreviewButton key={c._id}>
+            <ListPreviewButton 
+              key={c._id}
+              onClick={() => {
+                applicationStore.setClassroom(c.name)
+                navigate(`/class/${c._id}/project`)
+              }}
+            >
               <Typography
                 className="maincolor"
                 sx={{
@@ -191,6 +205,6 @@ const ClassPreview = () => {
       </Box>
     </CommonPreviewContainer>
   )
-}
+})
 
 export default ClassPreview

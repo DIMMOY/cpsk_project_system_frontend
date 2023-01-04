@@ -61,6 +61,7 @@ const ProjectHomePreview = (props: { isCommittee: boolean }) => {
         <Link to = "/score" style={{ textDecoration: 'none' }}>
           <ProjectPreviewButton isBigScreen={isBigScreen}
             onClick={scrollTop}
+            disabled
           >
             คะแนน
             <IconButton className={classes.iconSize} disabled>

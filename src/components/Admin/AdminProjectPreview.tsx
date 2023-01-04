@@ -1,13 +1,12 @@
-import React, { Component, useState } from 'react'
+import React, { useState } from 'react'
 import { Box, Button, Typography } from '@mui/material'
-import { makeStyles } from '@mui/styles'
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import AddIcon from '@mui/icons-material/Add';
-import { Link } from 'react-router-dom'
 import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
+import applicationStore from '../../stores/applicationStore';
 
 
 const exampleDocument = [
@@ -48,15 +47,12 @@ const exampleDocument = [
   }
 ]
 
-interface PreviewProps {
-  isAdmin: boolean
-}
 
+export default function AdminProjectPreview () {
 
-export default function AdminProjectPreview ({ isAdmin }: PreviewProps) {
-
-  const [classSelect, setClassSelect] = useState('2');
-  const [sortSelect, setSortSelect] = useState('createdAtDESC');
+  const [classSelect, setClassSelect] = useState('2')
+  const [sortSelect, setSortSelect] = useState('createdAtDESC')
+  const { isAdmin } = applicationStore
 
   const handleSelectChange = (event: SelectChangeEvent) => {
     setClassSelect(event.target.value as string);
@@ -65,12 +61,6 @@ export default function AdminProjectPreview ({ isAdmin }: PreviewProps) {
   const handleSortChange = (event: SelectChangeEvent) => {
     setSortSelect(event.target.value as string);
   };
-
-  const statusColorList = {
-    ส่งแล้ว: '#43BF64',
-    ส่งช้า: '#FBBC05',
-    ยังไม่ส่ง: '#FF5454'
-  }
 
   return (
     <CommonPreviewContainer>

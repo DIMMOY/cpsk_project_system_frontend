@@ -37,6 +37,8 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
         const reqBody = { name: className, endDate: null, complete: false, major: majorSelect }
         const res = await createClass(reqBody);
         if (res.statusCode !== 201) {
+            console.error(res.errorMsg)
+            return
         }
         setTimeout(() => {
             onClose()
@@ -90,13 +92,13 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                     className='maincolor'
                     sx={{fontSize: 40, fontWeight: 500, marginBottom: 2}}
                 >
-                    สร้าง Class
+                    สร้างคลาส
                 </Typography>
                 <Typography 
                     id="class-description"
                     sx={{fontSize: 20, fontWeight: 500, marginBottom: 1, color: '#686868'}}
                 >
-                    ชื่อ Class *
+                    ชื่อคลาส *
                 </Typography>
                 <TextField
                     autoFocus
@@ -108,13 +110,13 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                     sx={{
                         "& fieldset": { border: 'none' },
                         "& .MuiOutlinedInput-root": {
-                        padding: "0.1rem",
-                        backgroundColor: "#F3F3F3",
-                        borderRadius: "10px",
-                        fontSize: 20,
-                        color: "#686868",
-                        fontWeight: 500,
-                        marginBottom: 2,
+                            padding: "0.1rem 0.35rem 0.1rem 0.35rem",
+                            backgroundColor: "#F3F3F3",
+                            borderRadius: "10px",
+                            fontSize: 20,
+                            color: "#686868",
+                            fontWeight: 500,
+                            marginBottom: 2,
                         },
                     }}
                     onChange={handleClassNameChange}

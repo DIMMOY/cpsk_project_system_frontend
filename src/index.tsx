@@ -22,7 +22,6 @@ onAuthStateChanged(firebaseAuth, async (user) => {
     }
     const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/user`
     const resAxios = await axios.post(url, reqBody)
-    console.log(resAxios.data.data)
     const roles = resAxios.data.data
     applicationStore.setRole(roles)
   }

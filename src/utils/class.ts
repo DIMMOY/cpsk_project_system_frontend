@@ -1,10 +1,10 @@
 import axios from "axios"
 import { responsePattern } from "../constants/responsePattern"
 
+const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class`
 
 export const createClass = async (reqBody: any) => {
     try {
-        const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class`
         await axios.post(url, reqBody)
         return {
             statusCode: 201,
@@ -23,7 +23,6 @@ export const createClass = async (reqBody: any) => {
 
 export const listClass = async (reqQuery: any) => {
     try {
-        const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class`
         const resAxios = await axios.get(url, {params: reqQuery})
         return {
             data: resAxios.data.data

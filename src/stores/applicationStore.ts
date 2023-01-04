@@ -25,7 +25,6 @@ class applicationStore {
     }
 
     setRole(roles: Array<any>) {
-        console.log(roles)
         this.isAdmin = roles.find((e) => e.role == 2) ? true : false as boolean
         this.isAdvisor = roles.find((e) => e.role == 1) ? true : false as boolean
         this.isStudent = roles.find((e) => e.role == 0) ? true : false as boolean
@@ -40,6 +39,10 @@ class applicationStore {
 
     setCurrentRole(currentRole: number) {
         this.currentRole = currentRole as number
+    }
+
+    setClassroom(name: string | null) {
+        this.classroom = name as string | null
     }
 }
 

@@ -1,4 +1,4 @@
-import { Typography, Toolbar, Box, AppBar, Menu, Fade, MenuItem, Divider, IconButton, useScrollTrigger, Container } from '@mui/material'
+import { Typography, Toolbar, Box, AppBar, Menu, Fade, MenuItem, Divider, IconButton } from '@mui/material'
 import { observer } from 'mobx-react'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -31,7 +31,7 @@ export const NavBar = observer(() => {
   const responsePadding = isBigScreen ? '1.12rem 3rem 1.12rem 3rem' : '1.12rem 1.5rem 1.12rem 1.5rem'
   const open = Boolean(anchorEl);
   const buttons = ['คลาส', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา']
-  const linkButtons = ['class', 'document', 'meetingschedule']
+  const linkButtons = ['class', 'document', 'meeting-schedule']
   const firstPathname = (window.location.pathname).split('/')
 
   const profile: string | null = applicationStore.user && applicationStore.user.photoURL ? applicationStore.user.photoURL : defaulProfile
@@ -97,40 +97,38 @@ export const NavBar = observer(() => {
             }} src={logo}
             alt="logo"/>
         </Link>
-        { classroom ? <Typography sx={{fontSize: 20, marginLeft: '1vw', fontWeight: 500}}>{'Classroom: ' + classroom}</Typography> : <></> }
+        { classroom && isBigScreen ? <Typography sx={{fontSize: 20, marginLeft: '1vw', fontWeight: 500}}>{'Classroom: ' + classroom}</Typography> : <></> }
         { 
           currentRole === 2 ? 
           <Box sx={{position: 'absolute', left: 0, right: 0, zIndex: 1}}>
             {buttons.map((name, index) => (
               <Tooltip 
-              key={index}
-              title={name}
-              enterNextDelay={500}
-              placement={"bottom"} 
-              componentsProps={{
-              tooltip: {
-                  sx: {
-                    color: "#F8F8F8",
-                    backgroundColor: "#686868",
-                    fontSize: 16,
-                    fontWeight: 300,
-                  }
-                }
-              }}
-            >   
+                key={index}
+                TransitionComponent={Fade}
+                title={name}
+                enterNextDelay={500}
+                placement={"bottom"} 
+                componentsProps={{
+                  tooltip: {
+                      sx: {
+                        color: "#F8F8F8",
+                        backgroundColor: "#686868",
+                        fontSize: 16,
+                        fontWeight: 300,
+                      }
+                    }
+                }}
+              >   
               <span>
                 <Button
                   sx={{
                     padding: responsePadding,
-                    boxSizing: 'border-box',
-                    MozBoxSizing: 'border-box',
-                    WebkitBoxSizing: 'border-box',
                     color: '#F8F8F8', 
                     borderRadius: (firstPathname[1] === linkButtons[index]) || (index === 0 && firstPathname[1] === '') ? 0 : '0.75rem', 
                     '&:hover': {
                       backgroundColor: '#b67bfd',
                     },
-                    marginRight: '1rem',
+                    margin: '0 0.5rem 0 0.5rem',
                     borderBottom: (firstPathname[1] === linkButtons[index]) || (index === 0 && firstPathname[1] === '') ? '5px solid' : 'none'
                   }}
                   disableRipple
