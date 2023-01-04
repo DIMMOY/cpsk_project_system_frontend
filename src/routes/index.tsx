@@ -18,6 +18,8 @@ import MeetingScheduleDetail from '../components/Detail/MeetingScheduleDetail'
 import applicationStore from '../stores/applicationStore'
 import HomePage from '../pages/home'
 import ProjectPreview from '../components/Preview/ProjectPreview'
+import DocumentPage from '../pages/document'
+import MeetingSchedulePage from '../pages/meetingschedule'
 
 
 const Routers: React.FC = (): JSX.Element => {
@@ -33,11 +35,16 @@ const Routers: React.FC = (): JSX.Element => {
                 <Route element={<PrivateRoute/>}>
                     <Route path = '/' element={<HomePage/>}/>
                     <Route path = '/class' element={<ClassPreview/>}/>
+                    <Route path = '/class/:id/project' element={<ProjectPreview/>}/>
+                    <Route path = '/class/:id/document' element={<ProjectPreview/>}/>
+                    <Route path = '/class/:id/meeting-schedule' element={<ProjectPreview/>}/>
+                    <Route path = '/class/:id/score' element={<ProjectPreview/>}/>
+                    <Route path = '/class/:id/committee' element={<ProjectPreview/>}/>
                     <Route path = '/project' element={<ProjectPreview/>}/>
-                    <Route path = '/document' element={<DocumentPreview isStudent={true}/>}/>
+                    <Route path = '/document' element={<DocumentPage/>}/>
                     <Route path = '/document/:id' element={<DocumentDetail/>}/>
-                    <Route path = '/meetingschedule' element={<MeetingSchedulePreview isStudent={true}/>}/>
-                    <Route path = '/meetingschedule/:id' element={<MeetingScheduleDetail isStudent={true}/>}/>
+                    <Route path = '/meeting-schedule' element={<MeetingSchedulePage/>}/>
+                    <Route path = '/meeting-schedule/:id' element={<MeetingScheduleDetail isStudent={true}/>}/>
                     <Route path = '/score' element={<ScorePreview isStudent={true}/>}/>
                 </Route>
 

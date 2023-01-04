@@ -4,8 +4,8 @@ import ClassPreview from '../../components/Preview/ClassPreview'
 import ProjectHomePreview from '../../components/Preview/ProjectHomePreview'
 
 const HomePage = () => {
-    const { currentRole } = applicationStore
-    if (currentRole == 2 || currentRole == 1) return <ClassPreview/>
+    const { currentRole, isAdmin, isAdvisor } = applicationStore
+    if ((currentRole == 2 && isAdmin) || (currentRole == 1 && isAdvisor)) return <ClassPreview/>
     return <ProjectHomePreview isCommittee={false}></ProjectHomePreview>
 }
 
