@@ -59,7 +59,7 @@ interface PreviewProps {
   isStudent: boolean
 }
 
-const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
+const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
   const classes = useStyles()
   const navigate = useNavigate();
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
@@ -145,4 +145,4 @@ const MeetingSchedulePreview = ({ isStudent }: PreviewProps) => {
   )
 }
 
-export default MeetingSchedulePreview
+export default MeetingScheduleHomePreview

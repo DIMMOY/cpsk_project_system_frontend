@@ -8,8 +8,8 @@ import PrivateRoute from './PrivateRoute'
 import { NavBar } from "../components/Navbar/Navbar"
 import Login from '../pages/login'
 import ProjectHomePreview from '../components/Preview/ProjectHomePreview'
-import DocumentPreview from '../components/Preview/DocumentHomePreview'
-import MeetingSchedulePreview from '../components/Preview/MeetingScheduleHomePreview'
+import DocumentHomePreview from '../components/Preview/DocumentHomePreview'
+import MeetingScheduleHomePreview from '../components/Preview/MeetingScheduleHomePreview'
 import ScorePreview from '../components/Preview/ScorePreview'
 import ClassPreview from '../components/Preview/ClassPreview'
 import AdminProjectPreview from '../components/Admin/AdminProjectPreview'
@@ -36,7 +36,7 @@ const Routers: React.FC = (): JSX.Element => {
                     <Route path = '/' element={<HomePage/>}/>
                     <Route path = '/class' element={<ClassPreview/>}/>
                     <Route path = '/class/:id/project' element={<ProjectPreview/>}/>
-                    <Route path = '/class/:id/document' element={<ProjectPreview/>}/>
+                    <Route path = '/class/:id/document' element={<DocumentHomePreview/>}/>
                     <Route path = '/class/:id/meeting-schedule' element={<ProjectPreview/>}/>
                     <Route path = '/class/:id/score' element={<ProjectPreview/>}/>
                     <Route path = '/class/:id/committee' element={<ProjectPreview/>}/>

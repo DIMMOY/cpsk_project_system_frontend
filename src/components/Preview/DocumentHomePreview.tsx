@@ -51,7 +51,7 @@ interface PreviewProps {
   isStudent: boolean
 }
 
-const DocumentPreview = ({ isStudent }: PreviewProps) => {
+const DocumentHomePreview = ({ isStudent }: PreviewProps) => {
   const navigate = useNavigate()
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
   const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}]
@@ -133,4 +133,4 @@ const DocumentPreview = ({ isStudent }: PreviewProps) => {
   )
 }
 
-export default DocumentPreview
+export default DocumentHomePreview
