@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Button, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, IconButton } from '@mui/material'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Icon
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
@@ -19,6 +19,17 @@ interface MainProps {
 
 const AdminSidebar = ({ currentSelect }: MainProps) => {
 
+    const navigate = useNavigate();
+
+    const handleOnClick = (param: string, text: string) => {
+      if (text !== currentSelect) {
+        const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+        navigate(path + param)
+      }
+    }
+
+    const params = ['/project', '/document', '/meeting-schedule', '/score', '/committee']
+
     return (
         <Drawer
         variant="permanent"
@@ -32,12 +43,11 @@ const AdminSidebar = ({ currentSelect }: MainProps) => {
         <Toolbar />
         <Box sx={{ overflow: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '70%', minHeight: '20rem', flexDirection: 'column'}}>
           <List>
-            {['คลาส', 'โปรเจกต์', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา', 'ประเมิน', 'จับคู่กรรมการคุมสอบ'].map((text) => (
+            {['โปรเจกต์', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา', 'ประเมิน', 'จับคู่กรรมการคุมสอบ'].map((text, index) => (
               <ListItem key={text} disablePadding sx={{fontWeight: 100}}>
-                <ListItemButton>
+                <ListItemButton onClick={() => handleOnClick(params[index], text)}>
                   <ListItemIcon sx={{color: text === currentSelect ? '#AD68FF' : '#8C8C8C'}}>
                     {
-                      text === 'คลาส' ? <ClassIcon/> :
                       text === 'โปรเจกต์' ? <FolderSharedIcon/> : 
                       text === 'เอกสาร' ? <DescriptionIcon/> :
                       text === 'รายงานพบอาจารย์ที่ปรึกษา' ? <GroupsIcon/> :
