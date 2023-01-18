@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, useState } from 'react'
 import { Container, Box, IconButton, Button, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
@@ -62,11 +62,12 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
 
   const location = useLocation()
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
+  const [description, setDescription] = useState<string | null>(null)
   const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}]
   const {name, dueDate, status} = location.state
 
-  const setDescription = (description: string) => {
-    console.log(description)
+  const handleOnDescriptionChange = (description: string) => {
+    setDescription(description)
   }
 
   return (
@@ -172,7 +173,7 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
                   fontWeight: 500,
                 },
               }}
-              onChange={e => setDescription(e.target.value)}
+              onChange={e => handleOnDescriptionChange(e.target.value)}
             />
             
             <Button sx={{

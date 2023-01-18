@@ -2,12 +2,14 @@ import { Container, Box, IconButton, Button, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import { fontFamily, fontWeight, Stack } from '@mui/system'
-import React, { Component } from 'react'
+import React, { Component, useEffect, useState } from 'react'
 import { KeyObjectType } from 'crypto'
 import { padding } from '@mui/system/spacing'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
 import { ListPreviewButton } from '../../styles/layout/_button'
+import { listSendMeetingScheduleInClass } from '../../utils/meetingSchedule'
+import moment from 'moment'
 
 const exampleDocument = [
   {
@@ -60,17 +62,24 @@ interface PreviewProps {
 }
 
 const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
+  const [meetingSchedules, setMeetingSchedules] = useState<Array<any>>([])
   const classes = useStyles()
   const navigate = useNavigate();
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
   const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}]
   isStudent = true
 
-  const statusColorList = {
-    ส่งแล้ว: '#43BF64',
-    ส่งช้า: '#FBBC05',
-    ยังไม่ส่ง: '#FF5454'
-  }
+  //ชั่วคราว
+  const classId = '63b133a7529ab2ab1a0606f8'
+  const projectId = '63b5593616aea7a2dd63be34'
+
+  useEffect(() => {
+    async function getData() {
+      const result = await listSendMeetingScheduleInClass({sort: 'createdAtDESC'}, classId, projectId)
+      setMeetingSchedules(result.data as Array<any>)
+    }
+    getData()
+  }, [])
 
   return (
     <Box className="common-preview-container" sx={{}}>
@@ -94,12 +103,12 @@ const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
         </Typography>
       </Box>
       <Box sx={{ flexDirection: 'column', display: 'flex' }}>
-        {exampleDocument.map((mtSchedule) => (
+        {meetingSchedules.map((mtSchedule) => (
           <ListPreviewButton
-            key={mtSchedule.id}
-            onClick = {() => {navigate(`/meeting-schedule/${mtSchedule.id}`,
-                {replace: true, state: {id: mtSchedule.id, name: mtSchedule.name, status: mtSchedule.status, 
-                statusType: mtSchedule.statusType, dueDate: mtSchedule.dueDate}})}}
+            key={mtSchedule._id}
+            onClick = {() => {navigate(`/meeting-schedule/${mtSchedule._id}`,
+                {replace: true, state: {id: mtSchedule._id, name: mtSchedule.name, status: mtSchedule.sendStatus, 
+                statusType: mtSchedule.statusType, dueDate: moment(mtSchedule.endDate).format('DD/MM/YYYY HH:mm')}})}}
           >
             <Typography
               className="maincolor"
@@ -120,11 +129,11 @@ const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
                 right: 'calc(20px + 1vw)',
                 position: 'absolute',
                 fontSize: isBigScreen ? 'calc(30px + 0.2vw)' : 'calc(15px + 2vw)',
-                color: statusList[mtSchedule.status].color,
+                color: statusList[mtSchedule.sendStatus].color,
                 fontWeight: 600
               }}
             >
-              {statusList[mtSchedule.status].message}
+              {statusList[mtSchedule.sendStatus].message}
             </Typography>
             <Typography
               sx={{
@@ -136,7 +145,7 @@ const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
                 fontWeight: 600
               }}
             >
-              ภายในวันที่ {mtSchedule.dueDate}
+              ภายในวันที่ {moment(mtSchedule.endDate).format('DD/MM/YYYY HH:mm')}
             </Typography>
           </ListPreviewButton>
         ))}
