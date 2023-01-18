@@ -20,6 +20,8 @@ import HomePage from '../pages/home'
 import ProjectPreview from '../components/Preview/ProjectPreview'
 import DocumentPage from '../pages/document'
 import MeetingSchedulePage from '../pages/meetingschedule'
+import DocumentPreview from '../components/Preview/DocumentPreview'
+import MeetingSchedulePreview from '../components/Preview/MeetingSchedulePreview'
 
 
 const Routers: React.FC = (): JSX.Element => {
@@ -36,8 +38,8 @@ const Routers: React.FC = (): JSX.Element => {
                     <Route path = '/' element={<HomePage/>}/>
                     <Route path = '/class' element={<ClassPreview/>}/>
                     <Route path = '/class/:id/project' element={<ProjectPreview/>}/>
-                    <Route path = '/class/:id/document' element={<DocumentHomePreview/>}/>
-                    <Route path = '/class/:id/meeting-schedule' element={<ProjectPreview/>}/>
+                    <Route path = '/class/:id/document' element={<DocumentPreview/>}/>
+                    <Route path = '/class/:id/meeting-schedule' element={<MeetingSchedulePreview/>}/>
                     <Route path = '/class/:id/score' element={<ProjectPreview/>}/>
                     <Route path = '/class/:id/committee' element={<ProjectPreview/>}/>
                     <Route path = '/project' element={<ProjectPreview/>}/>

@@ -39,7 +39,7 @@ const AdminDocumentPreview = () => {
     }, [sortSelect] 
   )
 
-  const handleOpenModal = () => setOpen(true);
+  const handleOpenModal = () => setOpen(true)
   const handleCloseModal = () => setOpen(false)
   const handleSortChange = (event: SelectChangeEvent) => {
     setSortSelect(event.target.value as string);

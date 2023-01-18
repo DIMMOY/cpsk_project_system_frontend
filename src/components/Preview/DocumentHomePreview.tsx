@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, useEffect, useState } from 'react'
 import { Container, Box, IconButton, Button, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
@@ -8,6 +8,8 @@ import { padding } from '@mui/system/spacing'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
 import { ListPreviewButton } from '../../styles/layout/_button'
+import { listSendDocumentInClass } from '../../utils/document'
+import moment from 'moment'
 
 const exampleDocument = [
   {
@@ -52,10 +54,23 @@ interface PreviewProps {
 }
 
 const DocumentHomePreview = ({ isStudent }: PreviewProps) => {
+  const [documents, setDocuments] = useState<Array<any>>([])
   const navigate = useNavigate()
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
   const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}]
   isStudent = true
+
+  //ชั่วคราว
+  const classId = '63b133a7529ab2ab1a0606f8'
+  const projectId = '63b5593616aea7a2dd63be34'
+
+  useEffect(() => {
+    async function getData() {
+      const result = await listSendDocumentInClass({sort: 'createdAtDESC'}, classId, projectId)
+      setDocuments(result.data as Array<any>)
+    }
+    getData()
+  }, [])
 
   return (
     <Box className="common-preview-container" sx={{}}>
@@ -82,12 +97,12 @@ const DocumentHomePreview = ({ isStudent }: PreviewProps) => {
         </Typography>
       </Box>
       <Box sx={{ flexDirection: 'column', display: 'flex' }}>
-        {exampleDocument.map((document) => (
+        {documents.map((document) => (
             <ListPreviewButton
-              key={document.id}
-              onClick = {() => {navigate(`/document/${document.id}`,
-                {replace: true, state: {id: document.id, name: document.name, status: document.status, 
-                statusType: statusList[document.status].message, dueDate: document.dueDate}})}}
+              key={document._id}
+              onClick = {() => {navigate(`/document/${document._id}`,
+                {replace: true, state: {id: document._id, name: document.name, status: document.sendStatus, 
+                statusType: statusList[document.sendStatus].message, dueDate: moment(document.endDate).format('DD/MM/YYYY HH:mm')}})}}
             >
               <Typography
                 className="maincolor"
@@ -108,11 +123,11 @@ const DocumentHomePreview = ({ isStudent }: PreviewProps) => {
                   right: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: isBigScreen ? 'calc(30px + 0.2vw)' : 'calc(15px + 2vw)',
-                  color: statusList[document.status].color,
+                  color: statusList[document.sendStatus].color,
                   fontWeight: 600
                 }}
               >
-                {statusList[document.status].message}
+                {statusList[document.sendStatus].message}
               </Typography>
               <Typography
                 sx={{
@@ -124,7 +139,7 @@ const DocumentHomePreview = ({ isStudent }: PreviewProps) => {
                   fontWeight: 600
                 }}
               >
-                ภายในวันที่ {document.dueDate}
+                ภายในวันที่ {moment(document.endDate).format('DD/MM/YYYY HH:mm')}
               </Typography>
             </ListPreviewButton>
         ))}
