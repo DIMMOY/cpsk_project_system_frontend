@@ -1,7 +1,7 @@
 import React from 'react'
 import applicationStore from '../../stores/applicationStore'
-import MeetingScheduleHomePreview from '../../components/Preview/MeetingScheduleHomePreview'
-import AdminMeetingSchedulePreview from '../../components/Admin/AdminMeetingSchedulePreview'
+import MeetingScheduleHomePreview from './MeetingScheduleHomePreview'
+import AdminMeetingSchedulePreview from '../admin/AdminMeetingSchedulePreview'
 
 const MeetingSchedulePage = () => {
     const { currentRole, isAdmin, isAdvisor } = applicationStore

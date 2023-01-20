@@ -1,43 +1,46 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
+import AddIcon from '@mui/icons-material/Add';
 import { useLocation, useNavigate } from 'react-router-dom'
 import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 import { ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
-import { listClass } from '../../utils/class';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
-import AdminSidebar from '../Sidebar/AdminSidebar';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
-import { listProjectInClass } from '../../utils/project';
+import MeetingScheduleCreateModal from '../../components/Modal/MeetingScheduleCreateModal';
+import { listMeetingSchedule } from '../../utils/meetingSchedule';
 
-const ProjectPreview = () => {
-  const navigate = useNavigate()
+const AdminMeetingSchedulePreview = () => {
   const location = useLocation();
   const search = new URLSearchParams(location.search);
-  const { isAdmin } = applicationStore
+  const { isAdmin, currentRole } = applicationStore
 
   const sortOptions = ['createdAtDESC', 'createdAtASC', 'name']
   const sortCheck = search.get('sort') && sortOptions.find((e) => search.get('sort')?.toLowerCase() == e.toLowerCase()) ? search.get('sort') : 'createdAtDESC'
+
   const [sortSelect, setSortSelect] = useState<string>(sortCheck || 'createdAtDESC')
-  
+  const [open, setOpen] = useState<boolean>(false);
   const isBigScreen = useMediaQuery({ query: '(min-width: 650px)' })
-  const [projects, setProjects] = useState<Array<any>>([])
+  const [meetingSchedules, setMeetingSchedules] = useState<Array<any>>([])
+  const navigate = useNavigate()
 
   useEffect(() => {
-      // if (!applicationStore.classroom)
+      if (currentRole == 0) navigate('/')
+      applicationStore.setClassroom(null)
       async function getData () {
-        const result = await listProjectInClass({ sort: sortSelect}, window.location.pathname.split('/')[2])
-        setProjects(result.data as Array<any>);
+        const result = await listMeetingSchedule({ sort: sortSelect })
+        setMeetingSchedules(result.data as Array<any>);
       }
       getData()
     }, [sortSelect] 
   )
 
+  const handleOpenModal = () => setOpen(true);
+  const handleCloseModal = () => setOpen(false)
   const handleSortChange = (event: SelectChangeEvent) => {
     setSortSelect(event.target.value as string);
     navigate({
@@ -45,11 +48,20 @@ const ProjectPreview = () => {
       search: `?sort=${event.target.value}`,
     });
   }
+  const refreshData = async () => {
+    const result = await listMeetingSchedule({ sort: sortSelect } )
+    setMeetingSchedules(result.data as Array<any>);
+  }
 
   return (
     <CommonPreviewContainer>
-      {isAdmin ? <AdminSidebar/> : <></> }
-      <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
+      <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}> 
+        <Typography
+            className="maincolor"
+            sx={{ fontSize: 45, fontWeight: 600 }}
+          >
+          รายงานพบอาจารย์ที่ปรึกษา
+        </Typography>
         <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: isBigScreen ? 'row' : 'column', maxWidth: 700 }}>
           <FormControl sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
             <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
@@ -66,10 +78,31 @@ const ProjectPreview = () => {
                 <MenuItem value={'name'}>ชื่อคลาส</MenuItem>
             </Select>
             </FormControl>
+          {isAdmin 
+              ? 
+                <Box>  
+                  <Button 
+                    sx={{background: '#ad68ff', borderRadius: '10px', color: '#FFFFFF', boxShadow: 'none', 
+                      textTransform: 'none', '&:hover': { background: '#ad68ff' }, height: 45, weight: 42, 
+                      fontSize: isBigScreen ? 16 : 13, padding: isBigScreen ? 1 : 0.5, 
+                      marginRight: '1.5rem'}}
+                    startIcon={<AddIcon sx={{width: 20, height: 20}}></AddIcon>}
+                    onClick={handleOpenModal}
+                  >
+                    สร้างรายการ
+                  </Button>
+                  <MeetingScheduleCreateModal
+                    open={open} 
+                    onClose={handleCloseModal}
+                    refresh={refreshData}>
+                  </MeetingScheduleCreateModal>
+                </Box>
+              :  <></>
+          }
         </Box>
 
         <Box sx={{ flexDirection: 'column', display: 'flex'}}>
-          {projects.map((c) => (
+          {meetingSchedules.map((c) => (
             <ListPreviewButton key={c._id}>
               <Typography
                 className="maincolor"
@@ -82,7 +115,7 @@ const ProjectPreview = () => {
                   fontWeight: 600
                 }}
               >
-                {c.nameTH}
+                {c.name}
               </Typography>
               {/* <Typography
                 sx={{
@@ -106,7 +139,7 @@ const ProjectPreview = () => {
                   fontWeight: 600
                 }}
               >
-                {c.nameEN}
+                สร้างเมื่อ {moment(c.createdAt).format('DD/MM/YYYY HH:mm')} น.
               </Typography>
             </ListPreviewButton>
           ))}
@@ -116,4 +149,4 @@ const ProjectPreview = () => {
   )
 }
 
-export default ProjectPreview
+export default AdminMeetingSchedulePreview

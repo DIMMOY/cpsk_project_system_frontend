@@ -1,7 +1,7 @@
 import React from 'react'
 import applicationStore from '../../stores/applicationStore'
-import ClassPreview from '../../components/Preview/ClassPreview'
-import ProjectHomePreview from '../../components/Preview/ProjectHomePreview'
+import ClassPreview from '../class/ClassPreview'
+import ProjectHomePreview from '../project/ProjectHomePreview'
 
 const HomePage = () => {
     const { currentRole, isAdmin, isAdvisor } = applicationStore

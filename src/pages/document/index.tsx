@@ -1,7 +1,7 @@
 import React from 'react'
 import applicationStore from '../../stores/applicationStore'
-import AdminDocumentPreview from '../../components/Admin/AdminDocumentPreview'
-import DocumentHomePreview from '../../components/Preview/DocumentHomePreview'
+import AdminDocumentPreview from '../admin/AdminDocumentPreview'
+import DocumentHomePreview from './DocumentHomePreview'
 
 const DocumentPage = () => {
     const { currentRole, isAdmin, isAdvisor } = applicationStore

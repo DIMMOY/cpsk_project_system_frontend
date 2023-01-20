@@ -11,7 +11,7 @@ import { ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
-import DocumentCreateModal from '../Modal/DocumentCreateModal';
+import DocumentCreateModal from '../../components/Modal/DocumentCreateModal';
 import { listDocument } from '../../utils/document';
 
 const AdminDocumentPreview = () => {

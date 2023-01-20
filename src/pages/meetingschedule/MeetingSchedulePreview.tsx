@@ -10,11 +10,11 @@ import { ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
-import AdminSidebar from '../Sidebar/AdminSidebar';
+import AdminSidebar from '../../components/Sidebar/AdminSidebar';
 import Button from '@mui/material/Button';
-import DocumentStartModal from '../Modal/DocumentStartModal';
+import DocumentStartModal from '../../components/Modal/DocumentStartModal';
 import { listMeetingScheduleInClass } from '../../utils/meetingSchedule';
-import MeetingScheduleStartModal from '../Modal/MeetingScheduleStartModal';
+import MeetingScheduleStartModal from '../../components/Modal/MeetingScheduleStartModal';
 
 const MeetingSchedulePreview = () => {
     const navigate = useNavigate()

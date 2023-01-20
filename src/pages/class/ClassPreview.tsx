@@ -9,7 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 import { ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
-import ClassCreateModal from '../Modal/ClassCreateModal';
+import ClassCreateModal from '../../components/Modal/ClassCreateModal';
 import { listClass } from '../../utils/class';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';

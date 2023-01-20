@@ -16,25 +16,24 @@ interface ModalProps {
     defaultEndDate: string | null
 }
 
-const MeetingScheduleStartModal = ({ open, meetingScheduleName: documentName, onClose, meetingScheduleId, refresh, defaultStartDate, defaultEndDate }: ModalProps) => {
+const MeetingScheduleStartModal = ({ open, meetingScheduleName, onClose, meetingScheduleId, refresh, defaultStartDate, defaultEndDate }: ModalProps) => {
+  const currentDate = new Date()
   const [canSubmit, setCanSubmit] = useState<boolean>(false) 
   const [loading, setLoading] = useState<boolean>(false)
-  const [startDate, setStartDate] = useState<string | null>(
-    moment(defaultStartDate ? defaultStartDate : new Date()).format('YYYY-MM-DDTHH:mm'),
-  );
-//   console.log(moment(defaultStartDate ? defaultStartDate : new Date()).format('YYYY-MM-DDTHH:mm'))
-//   console.log(startDate)
-  const [endDate, setEndDate] = useState<string | null>(defaultEndDate);
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [endDate, setEndDate] = useState<string | null>(null);
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
 
   const handleStartDateChange = (newDate: string | null) => {
     const date = newDate ? moment(newDate).format('YYYY-MM-DDTHH:mm') : null;
     setStartDate(date)
-    setCanSubmit(date ? true : false)
+    if(defaultEndDate && !endDate) setEndDate(moment(defaultEndDate).format('YYYY-MM-DDTHH:mm'))
+    setCanSubmit(date && (defaultEndDate || endDate) ? true : false)
   };
 
   const handleEndDateChange = (newDate: string | null) => {
     const date = newDate ? moment(newDate).format('YYYY-MM-DDTHH:mm') : null;
+    if(defaultStartDate && !startDate) setStartDate(moment(defaultStartDate).format('YYYY-MM-DDTHH:mm'))
     setEndDate(date);
     setCanSubmit(date ? true : false)
   };
@@ -67,7 +66,6 @@ const MeetingScheduleStartModal = ({ open, meetingScheduleName: documentName, on
             setEndDate(null)
             setCanSubmit(false)
             setLoading(false)
-            console.log(startDate)
         }, 300)
     }
 
@@ -75,8 +73,8 @@ const MeetingScheduleStartModal = ({ open, meetingScheduleName: documentName, on
         <Modal
             open={open}
             onClose={handleCancel}
-            aria-labelledby="document-title"
-            aria-describedby="document-description"
+            aria-labelledby="meeting-schedule-title"
+            aria-describedby="meeting-schedule-description"
             sx={{ display: 'flex', justifyContent: 'center', top: '25%', overflow: 'auto' }}
             disableEnforceFocus
             disableScrollLock
@@ -97,11 +95,11 @@ const MeetingScheduleStartModal = ({ open, meetingScheduleName: documentName, on
                 'element.style': {transform: 'none'},
             }}>
                 <Typography 
-                    id="document-title" 
+                    id="meeting-schedule-title" 
                     className='maincolor'
                     sx={{fontSize: 40, fontWeight: 500, marginBottom: 5}}
                 >
-                    เปิดใช้งาน {documentName}
+                    เปิดใช้งาน {meetingScheduleName}
                 </Typography>
                 <Button
                     onClick={handleCancel} 
@@ -153,7 +151,7 @@ const MeetingScheduleStartModal = ({ open, meetingScheduleName: documentName, on
                         id="start-datetime-local"
                         label="เวลาเริ่มต้น"
                         type="datetime-local"
-                        defaultValue={startDate}
+                        defaultValue={moment(defaultStartDate ? defaultStartDate : currentDate).format('YYYY-MM-DDTHH:mm')}
                         sx={{ width: 250, marginRight: 4 }}
                         InputLabelProps={{
                             shrink: true,
@@ -164,7 +162,7 @@ const MeetingScheduleStartModal = ({ open, meetingScheduleName: documentName, on
                         id="end-datetime-local"
                         label="เวลาสิ้นสุด"
                         type="datetime-local"
-                        defaultValue={endDate}
+                        defaultValue={defaultEndDate ? moment(defaultEndDate).format('YYYY-MM-DDTHH:mm') : null}
                         sx={{ width: 250 }}
                         InputLabelProps={{
                             shrink: true,

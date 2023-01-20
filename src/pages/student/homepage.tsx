@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Box, Container } from '@mui/material'
-import ProjectHomePreview from '../../components/Preview/ProjectHomePreview'
+import ProjectHomePreview from '../project/ProjectHomePreview'
 
 export default function StudentHomePage (props: {
   hasClassroom: boolean

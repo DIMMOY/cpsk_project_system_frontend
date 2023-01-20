@@ -1,10 +1,12 @@
-import React, { Component, useState } from 'react'
-import { Container, Box, IconButton, Button, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { Box, IconButton, Button, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import { Link, useLocation } from 'react-router-dom'
 import TextField from '@mui/material/TextField'
 import { useMediaQuery } from 'react-responsive'
+import { observer } from 'mobx-react'
+import moment from 'moment'
 
 const exampleDocument = [
   {
@@ -56,15 +58,30 @@ interface PreviewProps {
   isStudent: boolean
 }
 
-const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
+const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
   const classes = useStyles()
   isStudent = true
 
   const location = useLocation()
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
   const [description, setDescription] = useState<string | null>(null)
-  const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}]
-  const {name, dueDate, status} = location.state
+  const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}, {color: '#686868', message: "----"}]
+  const [name, setName] = useState<string>('กำลังโหลด...')
+  const [dueDate, setDueDate] = useState<string>('--/--/---- --:--')
+  const [status, setStatus] = useState<number>(3)
+
+  useEffect(() => {
+    if (location.state) {
+      setName(location.state.name)
+      setDueDate(location.state.dueDate)
+      setStatus(location.state.status)
+    } else {
+      // async function getData() {
+      //   const result = await listSendMeetingScheduleInClass({sort: 'createdAtDESC'}, classId, projectId)
+      // }
+      // getData()
+    }
+  }, [])
 
   const handleOnDescriptionChange = (description: string) => {
     setDescription(description)
@@ -199,6 +216,6 @@ const MeetingScheduleDetail = ({ isStudent }: PreviewProps) => {
       </Box>
     </Box>
   )
-}
+})
 
 export default MeetingScheduleDetail

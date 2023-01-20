@@ -10,10 +10,10 @@ import { ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
-import AdminSidebar from '../Sidebar/AdminSidebar';
+import AdminSidebar from '../../components/Sidebar/AdminSidebar';
 import { listDocumentInClass } from '../../utils/document';
 import Button from '@mui/material/Button';
-import DocumentStartModal from '../Modal/DocumentStartModal';
+import DocumentStartModal from '../../components/Modal/DocumentStartModal';
 
 const DocumentPreview = () => {
   const navigate = useNavigate()
@@ -38,7 +38,6 @@ const DocumentPreview = () => {
 
   useEffect(() => {
       // if (!applicationStore.classroom)
-      console.log('test')
       async function getData () {
         const result = await listDocumentInClass({ sort: sortSelect, status: statusSelect }, window.location.pathname.split('/')[2])
         setDocuments(result.data as Array<any>);

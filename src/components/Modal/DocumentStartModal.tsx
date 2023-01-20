@@ -17,24 +17,23 @@ interface ModalProps {
 }
 
 const DocumentStartModal = ({ open, documentName, onClose, documentId, refresh, defaultStartDate, defaultEndDate }: ModalProps) => {
+  const currentDate = new Date()
   const [canSubmit, setCanSubmit] = useState<boolean>(false) 
   const [loading, setLoading] = useState<boolean>(false)
-  const [startDate, setStartDate] = useState<string | null>(
-    moment(defaultStartDate ? defaultStartDate : new Date()).format('YYYY-MM-DDTHH:mm'),
-  );
-//   console.log(moment(defaultStartDate ? defaultStartDate : new Date()).format('YYYY-MM-DDTHH:mm'))
-//   console.log(startDate)
-  const [endDate, setEndDate] = useState<string | null>(defaultEndDate);
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [endDate, setEndDate] = useState<string | null>(null);
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
 
   const handleStartDateChange = (newDate: string | null) => {
     const date = newDate ? moment(newDate).format('YYYY-MM-DDTHH:mm') : null;
     setStartDate(date)
-    setCanSubmit(date ? true : false)
+    if(defaultEndDate && !endDate) setEndDate(moment(defaultEndDate).format('YYYY-MM-DDTHH:mm'))
+    setCanSubmit(date && (defaultEndDate || endDate) ? true : false)
   };
 
   const handleEndDateChange = (newDate: string | null) => {
     const date = newDate ? moment(newDate).format('YYYY-MM-DDTHH:mm') : null;
+    if(defaultStartDate && !startDate) setStartDate(moment(defaultStartDate).format('YYYY-MM-DDTHH:mm'))
     setEndDate(date);
     setCanSubmit(date ? true : false)
   };
@@ -53,7 +52,7 @@ const DocumentStartModal = ({ open, documentName, onClose, documentId, refresh, 
             refresh()
         }, 1000)
         setTimeout(() => {
-            setStartDate(moment(defaultStartDate ? defaultStartDate : new Date()).format('YYYY-MM-DDTHH:mm'))
+            setStartDate(null)
             setEndDate(null)
             setCanSubmit(false)
             setLoading(false)
@@ -63,11 +62,10 @@ const DocumentStartModal = ({ open, documentName, onClose, documentId, refresh, 
     const handleCancel = () => {
         onClose()
         setTimeout(() => {
-            setStartDate(moment(defaultStartDate ? defaultStartDate : new Date()).format('YYYY-MM-DDTHH:mm'))
+            setStartDate(null)
             setEndDate(null)
             setCanSubmit(false)
             setLoading(false)
-            console.log(startDate)
         }, 300)
     }
 
@@ -153,7 +151,7 @@ const DocumentStartModal = ({ open, documentName, onClose, documentId, refresh, 
                         id="start-datetime-local"
                         label="เวลาเริ่มต้น"
                         type="datetime-local"
-                        defaultValue={startDate}
+                        defaultValue={moment(defaultStartDate ? defaultStartDate : currentDate).format('YYYY-MM-DDTHH:mm')}
                         sx={{ width: 250, marginRight: 4 }}
                         InputLabelProps={{
                             shrink: true,
@@ -164,7 +162,7 @@ const DocumentStartModal = ({ open, documentName, onClose, documentId, refresh, 
                         id="end-datetime-local"
                         label="เวลาสิ้นสุด"
                         type="datetime-local"
-                        defaultValue={endDate}
+                        defaultValue={defaultEndDate ? moment(defaultEndDate).format('YYYY-MM-DDTHH:mm') : null}
                         sx={{ width: 250 }}
                         InputLabelProps={{
                             shrink: true,
