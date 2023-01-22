@@ -62,7 +62,7 @@ const DocumentPreview = () => {
     })
   }
 
-  const handleOpenModal = (name: string, id: string, startDate: string, endDate: string) => {
+  const handleOpenModal = (name: string, id: string, startDate: string, endDate: string | null) => {
     setLastDocumentName(name)
     setLastDocumentId(id)
     setStartDate(startDate)
@@ -157,7 +157,8 @@ const DocumentPreview = () => {
                     '&:hover': { background: '#43BF6E' },
                     zIndex: 2
                     }}
-                    onClick={() => handleOpenModal(c.name, c._id, c.startDate, c.endDate)}
+                    onClick={() => 
+                      handleOpenModal(c.name, c._id, moment(new Date()).format('YYYY-MM-DDTHH:mm'), null)}
                 >
                         เปิดใช้งาน
                 </Button> : 
@@ -218,7 +219,7 @@ const DocumentPreview = () => {
                   fontWeight: 600
                 }}
               >
-                {c.statusInClass ? `เปิดใช้งานเมื่อ ${moment(c.openedAt).format('DD/MM/YYYY HH:mm')}` : 'ยังไม่ถูกใช้ในคลาสนี้'} 
+                {c.statusInClass ? `เปิดใช้งานวันที่ ${moment(c.startDate).format('DD/MM/YYYY HH:mm')}` : 'ยังไม่ถูกใช้ในคลาสนี้'} 
               </Typography>
             </ListPreviewButton>
           ))}

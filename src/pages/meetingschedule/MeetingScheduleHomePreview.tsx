@@ -66,7 +66,7 @@ const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
   const classes = useStyles()
   const navigate = useNavigate();
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
-  const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}]
+  const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'รอยืนยัน'}, {color: '#FBBC05', message: 'ส่งช้า'}, {color: '#686868', message: "----"}]
   isStudent = true
 
   //ชั่วคราว
@@ -106,8 +106,8 @@ const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
         {meetingSchedules.map((mtSchedule) => (
           <ListPreviewButton
             key={mtSchedule._id}
-            onClick = {() => {navigate(`/meeting-schedule/${mtSchedule._id}`,
-                {replace: true, state: {id: mtSchedule._id, name: mtSchedule.name, status: mtSchedule.sendStatus, 
+            onClick = {() => {navigate(`/meeting-schedule/${mtSchedule.meetingScheduleId}`,
+                {replace: true, state: {id: mtSchedule._id, name: mtSchedule.name, status: mtSchedule.sendStatus, detail: mtSchedule.detail ? mtSchedule.detail : '',
                 statusType: mtSchedule.statusType, dueDate: moment(mtSchedule.endDate).format('DD/MM/YYYY HH:mm')}})}}
           >
             <Typography

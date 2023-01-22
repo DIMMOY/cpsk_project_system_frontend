@@ -43,9 +43,8 @@ const DocumentStartModal = ({ open, documentName, onClose, documentId, refresh, 
         console.log('Creating...')
         const reqBody = { classId: window.location.pathname.split('/')[2], documentId, startDate, endDate }
         const res = await setDateDocument(reqBody);
-        if (res.statusCode !== 201) {
+        if (res.statusCode !== 200) {
             console.error(res.errorMsg)
-            return
         }
         setTimeout(() => {
             onClose()

@@ -23,17 +23,18 @@ export const createDocument = async (reqBody: any) => {
 
 export const setDateDocument = async (reqBody: any) => {
     try {
-        const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class/${reqBody.classId}/document`
-        await axios.post(url, reqBody)
+        const { startDate, endDate } = reqBody
+        const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class/${reqBody.classId}/document/${reqBody.documentId}/date`
+        await axios.put(url, { startDate, endDate })
         return {
-            statusCode: 201,
-            message: 'Create document successful',
+            statusCode: 200,
+            message: 'Set document due date successful',
         };
     } catch (error) {
         console.error(error)
         return {
             statusCode: 400,
-            message: 'Create document error',
+            message: 'Set document due date error',
             errorMsg: 'สร้างรายการส่งเอกสารผิดพลาด กรุณาลองใหม่ในภายหลัง',
             error
         }

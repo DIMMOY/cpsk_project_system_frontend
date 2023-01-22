@@ -7,44 +7,9 @@ import TextField from '@mui/material/TextField'
 import { useMediaQuery } from 'react-responsive'
 import { observer } from 'mobx-react'
 import moment from 'moment'
-
-const exampleDocument = [
-  {
-    id: 1,
-    name: 'Proposal',
-    dueDate: '2022-10-20 23:59',
-    status: 0,
-    statusType: 'ส่งแล้ว'
-  },
-  {
-    id: 2,
-    name: 'Draft 1-2',
-    dueDate: '2022-10-18 23:59',
-    status: 1,
-    statusType: 'ยังไม่ส่ง'
-  },
-  {
-    id: 3,
-    name: 'Draft 1-2',
-    dueDate: '2022-10-13 23:59',
-    status: 2,
-    statusType: 'ส่งช้า'
-  },
-  {
-    id: 4,
-    name: 'Draft 1-2',
-    dueDate: '2022-10-13 23:59',
-    status: 2,
-    statusType: 'ส่งช้า'
-  },
-  {
-    id: 5,
-    name: 'Draft 1-2',
-    dueDate: '2022-10-13 23:59',
-    status: 2,
-    statusType: 'ส่งช้า'
-  }
-]
+import { cancelSendMeetingSchedule, getSendMeetingScheduleInClass, sendMeetingSchedule } from '../../utils/meetingSchedule'
+import { LoadingButton } from '@mui/lab'
+import CancelModal from '../../components/Modal/CancelModal'
 
 const useStyles = makeStyles({
   iconSize: {
@@ -64,27 +29,72 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
 
   const location = useLocation()
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
-  const [description, setDescription] = useState<string | null>(null)
-  const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}, {color: '#686868', message: "----"}]
+  const [detail, setDetail] = useState<string>('')
+  const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'รอยืนยัน'}, {color: '#FBBC05', message: 'ส่งช้า'}, {color: '#686868', message: "----"}]
+  const [id, setId] = useState<string | null>(null)
   const [name, setName] = useState<string>('กำลังโหลด...')
   const [dueDate, setDueDate] = useState<string>('--/--/---- --:--')
-  const [status, setStatus] = useState<number>(3)
+  const [status, setStatus] = useState<number>(4)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [open, setOpen] = useState<boolean>(false)
+  const [submit, setSubmit] = useState<boolean>(false)
+
+  // ชั่วคราว
+  const classId = '63b133a7529ab2ab1a0606f8'
+  const projectId = '63b5593616aea7a2dd63be34'
+  const meetingScheduleId = window.location.pathname.split('/')[2]
+
+  const getData = async (detail: string) => {
+    const result = await getSendMeetingScheduleInClass(classId, projectId, meetingScheduleId)
+    setName(result.data.meetingSchedule.name)
+    setDueDate(moment(result.data.endDate).format('DD/MM/YYYY HH:mm'))
+    setStatus(result.data.sendStatus)
+    setId(result.data.meetingScheduleId)
+    setDetail(result.data.detail ? result.data.detail : detail)
+    setSubmit(result.data.detail || detail !== '')
+  }
+  
 
   useEffect(() => {
+    window.history.replaceState({}, document.title)
     if (location.state) {
       setName(location.state.name)
       setDueDate(location.state.dueDate)
       setStatus(location.state.status)
+      setId(location.state.id)
+      setDetail(location.state.detail)
+      setSubmit(location.state.detail)
     } else {
-      // async function getData() {
-      //   const result = await listSendMeetingScheduleInClass({sort: 'createdAtDESC'}, classId, projectId)
-      // }
-      // getData()
+      getData('')
     }
   }, [])
 
   const handleOnDescriptionChange = (description: string) => {
-    setDescription(description)
+    if ((description.replace(/(\r\n|\n|\r)/gm, '').replace(/\s/g,'') == '')) setSubmit(false)
+    else setSubmit(true)
+    setDetail(description)
+  }
+
+  const handleOnSubmit = async () => {
+    setLoading(true)
+    const result = await sendMeetingSchedule({ detail }, projectId, meetingScheduleId)
+    if (result.statusCode === 200) {
+      setTimeout(() => {
+        getData('')
+        setLoading(false)
+      }, 1300)
+    }
+    else setLoading(false)
+  }
+
+  const handleOnOpenModal = () => setOpen(true)
+  const handleOnCloseModal = () => setOpen(false)
+
+  const handleOnCancel = async () => {
+    const result = await cancelSendMeetingSchedule(projectId, meetingScheduleId)
+    if (result.statusCode === 200) {
+      getData(detail)
+    }
   }
 
   return (
@@ -167,10 +177,13 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
           <>
             <TextField
               id="outlined-multiline-flexible"
-              placeholder="กรุณาใส่ข้อความ"
+              disabled={status ? true : false}
+              placeholder={`กรุณาใส่ข้อความ`}
+              value={detail}
               multiline
               maxRows={4}
               minRows={4}
+              
               size="medium"
               sx={{
                 top: "7rem",
@@ -189,26 +202,48 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
                   color: "#686868",
                   fontWeight: 500,
                 },
+                "& .MuiInputBase-input.Mui-disabled": {
+                  WebkitTextFillColor: "#686868",
+                },
               }}
               onChange={e => handleOnDescriptionChange(e.target.value)}
             />
+
+            <CancelModal 
+              open={open}
+              onClose={handleOnCloseModal}
+              onSubmit={handleOnCancel}
+              title={`ยกเลิกการส่ง ${name}`}
+              description='เมื่อยกเลิกแล้วจะต้องให้ที่ปรึกษายืนยันใหม่อีกครั้ง'           
+            />
             
-            <Button sx={{
-              top: "18rem",
-              width: "7rem",
-              height: "2.8rem",
-              fontSize: 20,
-              textAlign: "center",
-              justifyContent: "center",
-              background: '#AD68FF',
-              borderRadius: '10px',
-              color: '#FFFFFF',
-              boxShadow: 'none',
-              textTransform: 'none',
-              '&:hover': { background: '#AD50FF' }
-            }}>
-                ยืนยัน
-              </Button>
+            { status != 4 ? 
+              <LoadingButton 
+                loading={loading}
+                sx={{
+                  top: "18rem",
+                  width: "7rem",
+                  height: "2.8rem",
+                  fontSize: 20,
+                  textAlign: "center",
+                  justifyContent: "center",
+                  background: status ? '#FF5454' : '#AD68FF',
+                  borderRadius: '10px',
+                  color: '#FFFFFF',
+                  boxShadow: 'none',
+                  textTransform: 'none',
+                  '&:hover': { background: status ? '#FF545E' : '#AD50FF' },
+                  "&:disabled": {
+                    backgroundColor: '#FCFCFC',
+                }
+                }}
+                onClick={status ? handleOnOpenModal : handleOnSubmit}
+                disabled={!submit}
+              >
+                  {status ? 'ยกเลิก' : 'ยืนยัน'}
+                </LoadingButton> 
+              : <></>
+              }
           </> }
         </Box>
 
