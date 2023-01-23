@@ -13,8 +13,9 @@ import applicationStore from '../../stores/applicationStore';
 import AdminSidebar from '../../components/Sidebar/AdminSidebar';
 import Button from '@mui/material/Button';
 import DocumentStartModal from '../../components/Modal/DocumentStartModal';
-import { listMeetingScheduleInClass } from '../../utils/meetingSchedule';
+import { disabeMeetingScheduleInClass, listMeetingScheduleInClass } from '../../utils/meetingSchedule';
 import MeetingScheduleStartModal from '../../components/Modal/MeetingScheduleStartModal';
+import CancelModal from '../../components/Modal/CancelModal';
 
 const MeetingSchedulePreview = () => {
     const navigate = useNavigate()
@@ -29,6 +30,7 @@ const MeetingSchedulePreview = () => {
     const [sortSelect, setSortSelect] = useState<string>(sortCheck || 'createdAtDESC')
     const [statusSelect, setStatusSelect] = useState<string>(statusCheck || 'all')
     const [openStartDate, setOpenStartDate] = useState<boolean>(false)
+    const [openCancel, setOpenCancel] = useState<boolean>(false)
     const [startDate, setStartDate] = useState<string | null>(null)
     const [endDate, setEndDate] = useState<string | null>(null)
     const [lastMeetingScheduleName, setLastMeetingScheduleName] = useState<string | null>(null)
@@ -36,6 +38,11 @@ const MeetingSchedulePreview = () => {
     
     const isBigScreen = useMediaQuery({ query: '(min-width: 650px)' })
     const [meetingSchedules, setMeetingSchedules] = useState<Array<any>>([])
+
+    const getData = async () => {
+      const result = await listMeetingScheduleInClass({ sort: sortSelect, status: statusSelect }, window.location.pathname.split('/')[2])
+      setMeetingSchedules(result.data as Array<any>);
+    }
   
     useEffect(() => {
         // if (!applicationStore.classroom)
@@ -63,7 +70,7 @@ const MeetingSchedulePreview = () => {
       })
     }
   
-    const handleOpenModal = (name: string, id: string, startDate: string, endDate: string | null) => {
+    const handleOpenSetDateModal = (name: string, id: string, startDate: string, endDate: string | null) => {
       setLastMeetingScheduleName(name)
       setLastMeetingScheduleId(id)
       setStartDate(startDate)
@@ -71,13 +78,22 @@ const MeetingSchedulePreview = () => {
       setOpenStartDate(true)
     }
   
-    const handleCloseModal = () => setOpenStartDate(false)
-  
-    const refreshData = async () => {
-      const result = await listMeetingScheduleInClass({ sort: sortSelect, status: statusSelect }, window.location.pathname.split('/')[2])
-      setMeetingSchedules(result.data as Array<any>);
+    const handleCloseSetDateModal = () => setOpenStartDate(false)
+
+    const handleOpenCancelModal = (name: string, id: string) => {
+      setLastMeetingScheduleName(name)
+      setLastMeetingScheduleId(id)
+      setOpenCancel(true)
     }
-  
+
+    const handleCloseCancelModal = () => setOpenCancel(false)
+
+    const handleCancelSubmit = async () => {
+      const result = await disabeMeetingScheduleInClass(window.location.pathname.split('/')[2], lastMeetingScheduleId as string)
+      if (result.statusCode === 200) {
+        getData()
+      }
+    }
   
     return (
       <CommonPreviewContainer>
@@ -120,11 +136,19 @@ const MeetingSchedulePreview = () => {
             open={openStartDate} 
             meetingScheduleName={lastMeetingScheduleName} 
             meetingScheduleId={lastMeetingScheduleId} 
-            onClose={handleCloseModal} 
-            refresh={refreshData}
+            onClose={handleCloseSetDateModal} 
+            refresh={getData}
             defaultStartDate={startDate}
             defaultEndDate={endDate}
-          ></MeetingScheduleStartModal>
+          />
+
+          <CancelModal
+            open={openCancel}
+            onClose={handleCloseCancelModal}
+            onSubmit={handleCancelSubmit}
+            title={`ปิดการใช้งาน ${lastMeetingScheduleName}`}
+            description='เมื่อปิดใช้งานแล้วนิสิตและที่ปรึกษาจะไม่เห็นในรายการนี้ในคลาส'
+          />
   
           <Box sx={{ flexDirection: 'column', display: 'flex'}}>
             {meetingSchedules.map((c) => (
@@ -159,7 +183,7 @@ const MeetingSchedulePreview = () => {
                       zIndex: 2
                       }}
                       onClick={() => 
-                        handleOpenModal(c.name, c._id, moment(new Date()).format('YYYY-MM-DDTHH:mm'), null)}
+                        handleOpenSetDateModal(c.name, c._id, moment(new Date()).format('YYYY-MM-DDTHH:mm'), null)}
                   >
                           เปิดใช้งาน
                   </Button> : 
@@ -181,7 +205,7 @@ const MeetingSchedulePreview = () => {
                       '&:hover': { background: '#FBBC0E' },
                       zIndex: 2
                       }}
-                      onClick={() => handleOpenModal(c.name, c._id, c.startDate, c.endDate)}
+                      onClick={() => handleOpenSetDateModal(c.name, c._id, c.startDate, c.endDate)}
                   >
                           แก้ไข
                   </Button> : 
@@ -203,7 +227,7 @@ const MeetingSchedulePreview = () => {
                       '&:hover': { background: '#FF545E' },
                       zIndex: 2
                       }}
-                      onClick={() => handleOpenModal(c.name, c._id, c.startDate, c.endDate)}
+                      onClick={() => handleOpenCancelModal(c.name, c._id)}
                   >
                           ปิดใช้งาน
                   </Button> : 

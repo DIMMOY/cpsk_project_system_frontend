@@ -45,7 +45,6 @@ export const setDateMeetingSchedule = async (reqBody: any) => {
     try {
         const { startDate, endDate } = reqBody
         const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class/${reqBody.classId}/meeting-schedule/${reqBody.meetingScheduleId}/date`
-        console.log(url, { startDate, endDate })
         await axios.put(url, { startDate, endDate })
         return {
             statusCode: 200,
@@ -151,4 +150,23 @@ export const cancelSendMeetingSchedule = async (projectId: string, mtId: string)
             error
         }
     }
-} 
+}
+
+export const disabeMeetingScheduleInClass = async (classId: string, mtId: string) => {
+    try {
+        const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class/${classId}/meeting-schedule/${mtId}/date/status`
+        await axios.patch(url, {status: false})
+        return {
+            statusCode: 200,
+            message: 'Disable meeting schedule in class successful',
+        };
+    } catch (error) {
+        console.error(error)
+        return {
+            statusCode: 400,
+            message: 'Disable meeting schedule in class error',
+            errorMsg: 'ยกเลิก meeting schedule ในคลาสผิดพลาด กรุณาลองใหม่ในภายหลัง',
+            error
+        }
+    }
+}
