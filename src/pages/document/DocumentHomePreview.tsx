@@ -11,44 +11,7 @@ import { ListPreviewButton } from '../../styles/layout/_button'
 import { listSendDocumentInClass } from '../../utils/document'
 import moment from 'moment'
 import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
-
-const exampleDocument = [
-  {
-    id: 1,
-    name: 'Proposal',
-    dueDate: '2022-10-20 23:59',
-    status: 0,
-    // statusType: 'ยังไม่ส่ง'
-  },
-  {
-    id: 2,
-    name: 'Draft 1-2',
-    dueDate: '2022-10-18 23:59',
-    status: 1,
-    // statusType: 'ส่งแล้ว'
-  },
-  {
-    id: 3,
-    name: 'Draft 1-2',
-    dueDate: '2022-10-13 23:59',
-    status: 2,
-    // statusType: 'ส่งช้า'
-  },
-  {
-    id: 4,
-    name: 'Draft 1-2',
-    dueDate: '2022-10-13 23:59',
-    status: 2,
-    // statusType: 'ส่งช้า'
-  },
-  {
-    id: 5,
-    name: 'Draft 1-2',
-    dueDate: '2022-10-13 23:59',
-    status: 2,
-    // statusType: 'ส่งช้า'
-  }
-]
+import { theme } from '../../styles/theme'
 
 interface PreviewProps {
   isStudent: boolean
@@ -58,7 +21,13 @@ const DocumentHomePreview = ({ isStudent }: PreviewProps) => {
   const [documents, setDocuments] = useState<Array<any>>([])
   const navigate = useNavigate()
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
-  const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}]
+  const { success, warning, error, secondary } = theme.color.text
+  const statusList 
+    = [{color: error, message: 'ยังไม่ส่ง'}, 
+      {color: success, message: 'ส่งแล้ว'}, 
+      {color: warning, message: 'รอยืนยัน'}, 
+      {color: warning, message: 'ส่งช้า'}, 
+      {color: secondary, message: "----"}]
   isStudent = true
 
   //ชั่วคราว
@@ -82,7 +51,7 @@ const DocumentHomePreview = ({ isStudent }: PreviewProps) => {
             sx={{ 
               marginRight: '1.25rem',
               '& svg': {
-                color: '#AD68FF'
+                color: theme.color.background.primary
               } 
             }}
             disableFocusRipple
@@ -91,8 +60,11 @@ const DocumentHomePreview = ({ isStudent }: PreviewProps) => {
           </IconButton>
         </Link>
         <Typography
-          className="fs-30 fw-600 maincolor"
-          sx={{ fontSize: '1.875rem', fontWeight: '600' }}
+          sx={{ 
+            fontSize: '1.875rem', 
+            fontWeight: '600',
+            color: theme.color.text.primary 
+          }}
         >
           เอกสาร
         </Typography>
@@ -106,14 +78,14 @@ const DocumentHomePreview = ({ isStudent }: PreviewProps) => {
                 statusType: statusList[document.sendStatus].message, dueDate: moment(document.endDate).format('DD/MM/YYYY HH:mm')}})}}
             >
               <Typography
-                className="maincolor"
                 sx={{
                   top: '1.5rem',
                   left: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: 'calc(30px + 0.2vw)',
                   fontFamily: 'Prompt',
-                  fontWeight: 600
+                  fontWeight: 600,
+                  color: theme.color.text.primary
                 }}
               >
                 {document.name}
@@ -136,7 +108,7 @@ const DocumentHomePreview = ({ isStudent }: PreviewProps) => {
                   left: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: 'calc(15px + 0.3vw)',
-                  color: '#686868',
+                  color: theme.color.text.secondary,
                   fontWeight: 600
                 }}
               >

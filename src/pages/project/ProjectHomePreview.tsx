@@ -8,12 +8,13 @@ import { ProjectPreviewButton } from '../../styles/layout/_button'
 import { useMediaQuery } from 'react-responsive'
 import { Link } from 'react-router-dom'
 import { ProjectPreviewContainer, ProjectPreviewDetail } from '../../styles/layout/_preview/_previewProject'
+import { theme } from '../../styles/theme'
 
 const useStyles = makeStyles({
   iconSize: {
     '& svg': {
       fontSize: '500%',
-      color: '#AD68FF'
+      color: theme.color.background.primary
     }
   }
 })
@@ -31,9 +32,9 @@ const ProjectHomePreview = (props: { isCommittee: boolean }) => {
   return (
     <ProjectPreviewContainer>
       <ProjectPreviewDetail>
-        <Typography sx={{fontSize: 50, fontWeight: 500, color: '#AD68FF'}}>เคยูโปรเจกต์ (ชื่อภาษาไทย)</Typography>
-        <Typography sx={{fontSize: 30, fontWeight: 500, color: '#686868'}}>KU Project (ชื่อภาษาอังกฤษ)</Typography>
-        <Typography sx={{fontSize: 30, fontWeight: 500, color: '#686868'}}>คำอธิบายโปรเจกต์</Typography>
+        <Typography sx={{fontSize: 50, fontWeight: 500, color: theme.color.text.primary}}>เคยูโปรเจกต์ (ชื่อภาษาไทย)</Typography>
+        <Typography sx={{fontSize: 30, fontWeight: 500, color: theme.color.text.secondary}}>KU Project (ชื่อภาษาอังกฤษ)</Typography>
+        <Typography sx={{fontSize: 30, fontWeight: 500, color: theme.color.text.secondary}}>คำอธิบายโปรเจกต์</Typography>
       </ProjectPreviewDetail>
       <Box sx={{textAlign: 'center'}}>
         <Link to = "/document" style={{ textDecoration: 'none' }}>

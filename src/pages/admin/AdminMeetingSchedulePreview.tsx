@@ -13,6 +13,7 @@ import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
 import MeetingScheduleCreateModal from '../../components/Modal/MeetingScheduleCreateModal';
 import { listMeetingSchedule } from '../../utils/meetingSchedule';
+import { theme } from '../../styles/theme';
 
 const AdminMeetingSchedulePreview = () => {
   const location = useLocation();
@@ -71,7 +72,12 @@ const AdminMeetingSchedulePreview = () => {
                 value={sortSelect}
                 onChange={handleSortChange}
                 label="จัดเรียงโดย"
-                sx={{borderRadius: '10px', color: '#ad68ff', height: 45, fontWeight: 500, width: 180}}
+                sx={{
+                  borderRadius: '10px', 
+                  color: theme.color.background.primary, 
+                  height: 45, 
+                  fontWeight: 500, 
+                  width: 180}}
             >
                 <MenuItem value={'createdAtDESC'}>วันที่สร้างล่าสุด</MenuItem>
                 <MenuItem value={'createdAtASC'}>วันที่สร้างเก่าสุด</MenuItem>
@@ -82,12 +88,20 @@ const AdminMeetingSchedulePreview = () => {
               ? 
                 <Box>  
                   <Button 
-                    sx={{background: '#ad68ff', borderRadius: '10px', color: '#FFFFFF', boxShadow: 'none', 
-                      textTransform: 'none', '&:hover': { background: '#ad68ff' }, height: 45, weight: 42, 
-                      fontSize: isBigScreen ? 16 : 13, padding: isBigScreen ? 1 : 0.5, 
+                    sx={{
+                      background: theme.color.button.primary, 
+                      color: theme.color.text.default, 
+                      borderRadius: '10px', 
+                      boxShadow: 'none', 
+                      textTransform: 'none', 
+                      '&:hover': { background: '#B07CFF' }, 
+                      height: 45, 
+                      weight: 42, 
+                      fontSize: isBigScreen ? 16 : 13, 
+                      padding: isBigScreen ? 1 : 0.5, 
                       marginRight: '1.5rem'}}
-                    startIcon={<AddIcon sx={{width: 20, height: 20}}></AddIcon>}
-                    onClick={handleOpenModal}
+                      startIcon={<AddIcon sx={{width: 20, height: 20}}></AddIcon>}
+                      onClick={handleOpenModal}
                   >
                     สร้างรายการ
                   </Button>
@@ -105,37 +119,24 @@ const AdminMeetingSchedulePreview = () => {
           {meetingSchedules.map((c) => (
             <ListPreviewButton key={c._id}>
               <Typography
-                className="maincolor"
                 sx={{
                   top: '1.5rem',
                   left: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: 'calc(30px + 0.2vw)',
-                  fontFamily: 'Prompt',
-                  fontWeight: 600
+                  fontWeight: 600,
+                  color: theme.color.text.primary,
                 }}
               >
                 {c.name}
               </Typography>
-              {/* <Typography
-                sx={{
-                  top: '1.5rem',
-                  right: 'calc(20px + 1vw)',
-                  position: 'absolute',
-                  fontSize: 'calc(30px + 0.2vw)',
-                  color: '#686868',
-                  fontWeight: 600
-                }}
-              >
-                {c.complete ? 'เสร็จสิ้น' : 'ดำเนินการ'}
-              </Typography> */}
               <Typography
                 sx={{
                   top: '5rem',
                   left: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: 'calc(15px + 0.3vw)',
-                  color: '#686868',
+                  color: theme.color.text.secondary,
                   fontWeight: 600
                 }}
               >

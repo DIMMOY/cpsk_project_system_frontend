@@ -18,6 +18,7 @@ import ClassIcon from '@mui/icons-material/Class';
 import ClassOutlinedIcon from '@mui/icons-material/ClassOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
+import { theme } from '../../styles/theme'
 
 export const NavBar = observer(() => {
   const navigate = useNavigate()
@@ -76,7 +77,7 @@ export const NavBar = observer(() => {
     <AppBar
       position="sticky"
       sx={{ 
-        background: '#AD68FF', 
+        background: theme.color.background.primary, 
         display: applicationStore.isShowNavBar ?  "flex" : "none", 
         minWidth: '30rem', 
         justifyContent: 'center', 
@@ -111,8 +112,8 @@ export const NavBar = observer(() => {
                 componentsProps={{
                   tooltip: {
                       sx: {
-                        color: "#F8F8F8",
-                        backgroundColor: "#686868",
+                        color: theme.color.text.default,
+                        backgroundColor: theme.color.background.secondary,
                         fontSize: 16,
                         fontWeight: 300,
                       }
@@ -123,10 +124,10 @@ export const NavBar = observer(() => {
                 <Button
                   sx={{
                     padding: responsePadding,
-                    color: '#F8F8F8', 
+                    color: theme.color.text.default, 
                     borderRadius: (firstPathname[1] === linkButtons[index]) || (index === 0 && firstPathname[1] === '') ? 0 : '0.75rem', 
                     '&:hover': {
-                      backgroundColor: '#b67bfd',
+                      backgroundColor: '#B67BFD',
                     },
                     margin: '0 0.5rem 0 0.5rem',
                     borderBottom: (firstPathname[1] === linkButtons[index]) || (index === 0 && firstPathname[1] === '') ? '5px solid' : 'none'

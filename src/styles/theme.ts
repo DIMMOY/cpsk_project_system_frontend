@@ -4,6 +4,7 @@ export const theme = {
             default: "#FCFCFC",
             primary: "#AD68FF",
             secondary: "#686868",
+            tertiary: "#EBEBEB"
         },
         button: {
             default: "#F3F3F3",
@@ -12,6 +13,7 @@ export const theme = {
             success: "#43BF64",
             warning: "#FBBC05",
             error: "#FF5454",
+            disable: "#FCFCFC"
         },
         text: {
             default: "#FCFCFC",

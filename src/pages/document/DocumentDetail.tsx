@@ -9,52 +9,7 @@ import { Link, useLocation } from 'react-router-dom'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useMediaQuery } from 'react-responsive'
 import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
-
-const exampleDocument = [
-  {
-    id: 1,
-    name: 'Proposal',
-    dueDate: '2022-10-20 23:59',
-    status: 0,
-    statusType: 'ส่งแล้ว'
-  },
-  {
-    id: 2,
-    name: 'Draft 1-2',
-    dueDate: '2022-10-18 23:59',
-    status: 1,
-    statusType: 'ยังไม่ส่ง'
-  },
-  {
-    id: 3,
-    name: 'Draft 1-2',
-    dueDate: '2022-10-13 23:59',
-    status: 2,
-    statusType: 'ส่งช้า'
-  },
-  {
-    id: 4,
-    name: 'Draft 1-2',
-    dueDate: '2022-10-13 23:59',
-    status: 2,
-    statusType: 'ส่งช้า'
-  },
-  {
-    id: 5,
-    name: 'Draft 1-2',
-    dueDate: '2022-10-13 23:59',
-    status: 2,
-    statusType: 'ส่งช้า'
-  }
-]
-
-const useStyles = makeStyles({
-  iconSize: {
-    '& svg': {
-      color: '#AD68FF'
-    }
-  }
-})
+import { theme } from '../../styles/theme'
 
 interface PreviewProps {
   isStudent?: boolean
@@ -66,11 +21,16 @@ interface PreviewProps {
 }
 
 const DocumentDetail = ({ isStudent }: PreviewProps) => {
-  const classes = useStyles()
   isStudent = true
   const location = useLocation();
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
-  const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}]
+  const { success, warning, error, secondary } = theme.color.text
+  const statusList 
+    = [{color: error, message: 'ยังไม่ส่ง'}, 
+      {color: success, message: 'ส่งแล้ว'}, 
+      {color: warning, message: 'รอยืนยัน'}, 
+      {color: warning, message: 'ส่งช้า'}, 
+      {color: secondary, message: "----"}]
   const {name, dueDate, status} = location.state
   const [files, setFiles] = useState<Array<any>>([])
 
@@ -86,8 +46,12 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
         <Link to="/document">
           <IconButton
             disableRipple
-            className={classes.iconSize}
-            sx={{ marginRight: '1.25rem' }}
+            sx={{ 
+              marginRight: '1.25rem',
+              '& svg': {
+                color: theme.color.background.primary
+              }
+            }}
             disableFocusRipple
           >
             <ArrowBackIosNewIcon fontSize="large" />
@@ -99,23 +63,22 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
           sx={{
             position: "relative",
             borderRadius: '20px',
-            background: '#F3F3F3',
+            background: theme.color.button.default,
             margin: '1.25rem 0 0 0',
             display: 'flex',
             textTransform: 'none',
-            color: '#AD68FF',
             zIndex: '1'
           }}
         >
           <Typography
-            className="maincolor"
             sx={{
               top: '1.5rem',
               left: 'calc(20px + 1vw)',
               position: 'absolute',
               fontSize: 'calc(30px + 0.2vw)',
               fontFamily: 'Prompt',
-              fontWeight: 600
+              fontWeight: 600,
+              color: theme.color.text.primary
             }}
           >
             {name}
@@ -138,7 +101,7 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
               left: 'calc(20px + 1vw)',
               position: 'absolute',
               fontSize: 'calc(15px + 0.3vw)',
-              color: '#686868',
+              color: theme.color.text.secondary,
               fontWeight: 600
             }}
           >
@@ -150,7 +113,7 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
           sx={{
               top: "-5rem",
               position: "relative",
-              background: "#EBEBEB",
+              background: theme.color.background.tertiary,
               borderRadius: "20px",
               padding: "7rem 2vw 2rem 2vw",
               textAlign: "center"
@@ -163,7 +126,7 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
                   sx={{
                     margin: "1rem 1rem 1rem 1rem", 
                     padding: "0.5rem", 
-                    background: "#F3F3F3", 
+                    background: theme.color.button.default, 
                     borderRadius: "10px",
                     width: '12rem', 
                     height: '10rem'
@@ -191,7 +154,7 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
                   aria-label="upload" 
                   component="label">
                   <input hidden accept="*" type="file" multiple onChange={handleChange}/>
-                  <AddCircleIcon sx={{fontSize: "450%", color: '#686868'}}/>
+                  <AddCircleIcon sx={{fontSize: "450%", color: theme.color.background.secondary}}/>
                 </IconButton> 
               </Box>
               : <></>
@@ -204,12 +167,12 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
               fontSize: 20,
               textAlign: "center",
               justifyContent: "center",
-              background: '#AD68FF',
+              background: theme.color.button.primary,
               borderRadius: '10px',
-              color: '#FFFFFF',
+              color: theme.color.text.default,
               boxShadow: 'none',
               textTransform: 'none',
-              '&:hover': { background: '#AD50FF' },
+              '&:hover': { background: '#B07CFF' },
             }}>
                 ยืนยัน
             </Button>

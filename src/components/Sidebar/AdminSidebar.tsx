@@ -11,6 +11,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import ClassIcon from '@mui/icons-material/Class';
 import Typography from '@mui/material/Typography';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
+import { theme } from '../../styles/theme';
 
 const AdminSidebar = () => {
     const { pathname } = window.location
@@ -42,7 +43,12 @@ const AdminSidebar = () => {
           width: 300,
           position: 'relative',
           flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: 300, boxSizing: 'border-box', background: '#FCFCFC' },
+          [`& .MuiDrawer-paper`]: 
+            { 
+              width: 300, 
+              boxSizing: 'border-box', 
+              background: theme.color.background.default 
+            },
         }}
       >
         <Toolbar />
@@ -52,7 +58,7 @@ const AdminSidebar = () => {
               <ListItem key={text} disablePadding sx={{fontWeight: 100}}>
                 {/*ปิดชั่วคราว index >= 3*/}
                 <ListItemButton onClick={() => handleOnClick(params[index], text)} disabled={index >= 3}>
-                  <ListItemIcon sx={{color: text === currentSelect ? '#AD68FF' : '#8C8C8C'}}>
+                  <ListItemIcon sx={{color: text === currentSelect ? theme.color.text.primary : theme.color.text.secondary }}>
                     {
                       text === 'โปรเจกต์' ? <FolderSharedIcon/> : 
                       text === 'เอกสาร' ? <DescriptionIcon/> :
@@ -66,7 +72,7 @@ const AdminSidebar = () => {
                     primary={
                     <Typography 
                       sx={{ 
-                        color: text === currentSelect ? '#AD68FF' : '#8C8C8C',
+                        color: text === currentSelect ? theme.color.text.primary : theme.color.text.secondary,
                         fontWeight: text === currentSelect ? 500 : 400,
                         fontSize: 16,
                         textDecoration: text === currentSelect ? 'underline' : 'none',

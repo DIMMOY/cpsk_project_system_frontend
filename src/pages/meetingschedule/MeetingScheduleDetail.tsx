@@ -11,27 +11,25 @@ import { cancelSendMeetingSchedule, getSendMeetingScheduleInClass, sendMeetingSc
 import { LoadingButton } from '@mui/lab'
 import CancelModal from '../../components/Modal/CancelModal'
 import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
-
-const useStyles = makeStyles({
-  iconSize: {
-    '& svg': {
-      color: '#AD68FF'
-    }
-  },
-})
+import { theme } from '../../styles/theme'
 
 interface PreviewProps {
   isStudent: boolean
 }
 
 const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
-  const classes = useStyles()
   isStudent = true
 
   const location = useLocation()
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
   const [detail, setDetail] = useState<string>('')
-  const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'รอยืนยัน'}, {color: '#FBBC05', message: 'ส่งช้า'}, {color: '#686868', message: "----"}]
+  const { success, warning, error, secondary } = theme.color.text
+  const statusList 
+    = [{color: error, message: 'ยังไม่ส่ง'}, 
+      {color: success, message: 'ส่งแล้ว'}, 
+      {color: warning, message: 'รอยืนยัน'}, 
+      {color: warning, message: 'ส่งช้า'}, 
+      {color: secondary, message: "----"}]
   const [id, setId] = useState<string | null>(null)
   const [name, setName] = useState<string>('กำลังโหลด...')
   const [dueDate, setDueDate] = useState<string>('--/--/---- --:--')
@@ -105,8 +103,12 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
         <Link to="/meeting-schedule">
           <IconButton
             disableRipple
-            className={classes.iconSize}
-            sx={{ marginRight: '1.25rem' }}
+            sx={{ 
+              marginRight: '1.25rem',
+              '& svg': {
+                color: theme.color.background.primary
+              }
+            }}
             disableFocusRipple
           >
             <ArrowBackIosNewIcon fontSize="large" />
@@ -119,23 +121,22 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
             sx={{
               position: "relative",
               borderRadius: '20px',
-              background: '#F3F3F3',
+              background: theme.color.button.default,
               margin: '1.25rem 0 0 0',
               display: 'flex',
               textTransform: 'none',
-              color: '#AD68FF',
               zIndex: '1',
             }}
           >
             <Typography
-              className="maincolor"
               sx={{
                 top: '1.5rem',
                 left: 'calc(20px + 1vw)',
                 position: 'absolute',
                 fontSize: 'calc(30px + 0.2vw)',
                 fontFamily: 'Prompt',
-                fontWeight: 600
+                fontWeight: 600,
+                color: theme.color.text.primary
               }}
             >
               {name}
@@ -158,7 +159,7 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
                 left: 'calc(20px + 1vw)',
                 position: 'absolute',
                 fontSize: 'calc(15px + 0.3vw)',
-                color: '#686868',
+                color: theme.color.text.secondary,
                 fontWeight: 600
               }}
             >
@@ -171,7 +172,7 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
                 top: "-5rem",
                 position: "relative",
                 height: "23rem",
-                background: "#EBEBEB",
+                background: theme.color.background.tertiary,
                 borderRadius: "20px",
             }}
           >
@@ -198,14 +199,14 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
                 "& fieldset": { border: 'none' },
                 "& .MuiOutlinedInput-root": {
                   padding: "1rem 1.25rem 1rem 1.25rem",
-                  backgroundColor: "#fcfcfc",
+                  backgroundColor: theme.color.background.default,
                   borderRadius: "20px",
                   fontSize: 20,
-                  color: "#686868",
+                  color: theme.color.text.secondary,
                   fontWeight: 500,
                 },
                 "& .MuiInputBase-input.Mui-disabled": {
-                  WebkitTextFillColor: "#686868",
+                  WebkitTextFillColor: theme.color.text.secondary,
                 },
               }}
               onChange={e => handleOnDescriptionChange(e.target.value)}
@@ -229,14 +230,14 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
                   fontSize: 20,
                   textAlign: "center",
                   justifyContent: "center",
-                  background: status ? '#FF5454' : '#AD68FF',
+                  background: status ? theme.color.button.error : theme.color.button.primary,
                   borderRadius: '10px',
-                  color: '#FFFFFF',
+                  color: theme.color.text.default,
                   boxShadow: 'none',
                   textTransform: 'none',
-                  '&:hover': { background: status ? '#FF545E' : '#AD50FF' },
+                  '&:hover': { background: status ? '#FF545E' : '#B07CFF' },
                   "&:disabled": {
-                    backgroundColor: '#FCFCFC',
+                    backgroundColor: theme.color.button.disable,
                 }
                 }}
                 onClick={status ? handleOnOpenModal : handleOnSubmit}

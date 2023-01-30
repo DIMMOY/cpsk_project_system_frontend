@@ -4,6 +4,7 @@ import { LoadingButton } from '@mui/lab';
 import Modal from '@mui/material/Modal';
 import { useMediaQuery } from 'react-responsive';
 import { createDocument } from '../../utils/document';
+import { theme } from '../../styles/theme';
 
 interface ModalProps {
     children: React.ReactNode; 
@@ -75,7 +76,7 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                 height: 500,
                 width: '60vw',
                 minWidth: 350,
-                bgcolor: '#FCFCFC',
+                bgcolor: theme.color.background.default,
                 borderRadius: '20px',
                 boxShadow: 24,
                 padding: '2rem 3rem 2rem 3rem',
@@ -92,7 +93,12 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                 </Typography>
                 <Typography 
                     id="document-description"
-                    sx={{fontSize: 20, fontWeight: 500, marginBottom: 1, color: '#686868'}}
+                    sx={{
+                        fontSize: 20, 
+                        fontWeight: 500, 
+                        marginBottom: 1, 
+                        color: theme.color.text.secondary
+                    }}
                 >
                     ชื่อรายการ *
                 </Typography>
@@ -109,10 +115,10 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                         "& fieldset": { border: 'none' },
                         "& .MuiOutlinedInput-root": {
                             padding: "0.1rem 0.35rem 0.1rem 0.35rem",
-                            backgroundColor: "#F3F3F3",
+                            backgroundColor: theme.color.button.default,
                             borderRadius: "10px",
                             fontSize: 20,
-                            color: "#686868",
+                            color: theme.color.text.secondary,
                             fontWeight: 500,
                             marginBottom: 2,
                         },
@@ -121,7 +127,12 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                 />
                 <Typography 
                     id="document-description"
-                    sx={{fontSize: 20, fontWeight: 500, marginBottom: 1, color: '#686868'}}
+                    sx={{
+                        fontSize: 20, 
+                        fontWeight: 500, 
+                        marginBottom: 1, 
+                        color: theme.color.text.secondary
+                    }}
                 >
                     คำอธิบาย
                 </Typography>
@@ -136,11 +147,11 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                     sx={{
                         "& fieldset": { border: 'none' },
                         "& .MuiOutlinedInput-root": {
-                            backgroundColor: "#F3F3F3",
+                            backgroundColor: theme.color.button.default,
                             borderRadius: "10px",
                             padding: "1rem 1.25rem 1rem 1.25rem",
                             fontSize: 20,
-                            color: "#686868",
+                            color: theme.color.text.secondary,
                             fontWeight: 500,
                             marginBottom: 2,
                         },
@@ -153,16 +164,16 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                         width: "7rem",
                         height: "2.8rem",   
                         fontSize: 20,
-                        background: '#FCFCFC',
+                        background: theme.color.button.disable,
                         borderRadius: '10px',
-                        color: '#686868',
+                        color: theme.color.text.secondary,
                         boxShadow: 'none',
                         textTransform: 'none',
                         transform: 'translate(-50%, -50%)',
                         position: 'absolute',
                         right: 130,
                         bottom: 10,
-                        '&:hover': { background: '#F3F3F3' }
+                        '&:hover': { background: theme.color.button.disable }
                     }}
                 >
                     ยกเลิก
@@ -174,18 +185,18 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                         width: "7rem",
                         height: "2.8rem",   
                         fontSize: 20,
-                        background: '#FCFCFC',
+                        background: theme.color.button.disable,
                         borderRadius: '10px',
-                        color: '#AD50FF',
+                        color: theme.color.text.primary,
                         boxShadow: 'none',
                         textTransform: 'none',
                         transform: 'translateY(-50%)',
                         position: 'absolute',
                         right: '3rem',
                         bottom: 10,
-                        '&:hover': { background: '#F3F3F3' },
+                        '&:hover': { background: theme.color.button.default },
                         "&:disabled": {
-                        backgroundColor: '#FCFCFC',
+                        backgroundColor: theme.color.button.disable,
                         }
                     }}
                     disabled={!canSubmit}

@@ -14,6 +14,7 @@ import { listClass } from '../../utils/class';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
 import { observer } from 'mobx-react';
+import { theme } from '../../styles/theme';
 
 const ClassPreview = observer(() => {
   const navigate = useNavigate()
@@ -93,7 +94,12 @@ const ClassPreview = observer(() => {
                   value={classFilter}
                   onChange={handleClassFilterChange}
                   label="คลาส"
-                  sx={{borderRadius: '10px', color: '#ad68ff', height: 45, fontWeight: 500, width: 120}}
+                  sx={{
+                    borderRadius: '10px', 
+                    color: theme.color.background.primary, 
+                    height: 45, 
+                    fontWeight: 500, 
+                    width: 120}}
               >
                   <MenuItem value={'all'}>ทั้งหมด</MenuItem>
                   <MenuItem value={'false'}>ดำเนินการ</MenuItem>
@@ -108,7 +114,13 @@ const ClassPreview = observer(() => {
                   value={majorFilter}
                   onChange={handleMajorFilterChange}
                   label="ภาค"
-                  sx={{borderRadius: '10px', color: '#ad68ff', height: 45, fontWeight: 500, width: 120}}
+                  sx={{
+                    borderRadius: '10px', 
+                    color: theme.color.background.primary, 
+                    height: 45, 
+                    fontWeight: 500, 
+                    width: 120
+                  }}
               >
                   <MenuItem value={'all'}>ทั้งหมด</MenuItem>
                   <MenuItem value={'cpe'}>CPE</MenuItem>
@@ -123,7 +135,12 @@ const ClassPreview = observer(() => {
                 value={sortSelect}
                 onChange={handleSortChange}
                 label="จัดเรียงโดย"
-                sx={{borderRadius: '10px', color: '#ad68ff', height: 45, fontWeight: 500, width: 180}}
+                sx={{
+                  borderRadius: '10px', 
+                  color: theme.color.background.primary, 
+                  height: 45, 
+                  fontWeight: 500, 
+                  width: 180}}
             >
                 <MenuItem value={'createdAtDESC'}>วันที่สร้างล่าสุด</MenuItem>
                 <MenuItem value={'createdAtASC'}>วันที่สร้างเก่าสุด</MenuItem>
@@ -134,12 +151,20 @@ const ClassPreview = observer(() => {
               ? 
                 <Box>  
                   <Button 
-                    sx={{background: '#ad68ff', borderRadius: '10px', color: '#FCFCFC', boxShadow: 'none', 
-                      textTransform: 'none', '&:hover': { background: '#ad68ff' }, height: 45, weight: 42, 
-                      fontSize: isBigScreen ? 16 : 13, padding: isBigScreen ? 1 : 0.5, 
+                    sx={{
+                      background: theme.color.button.primary, 
+                      color: theme.color.text.default,
+                      borderRadius: '10px', 
+                      boxShadow: 'none', 
+                      textTransform: 'none', 
+                      '&:hover': { background: '#B07CFF' }, 
+                      height: 45, 
+                      weight: 42, 
+                      fontSize: isBigScreen ? 16 : 13, 
+                      padding: isBigScreen ? 1 : 0.5, 
                       marginRight: '1.5rem'}}
-                    startIcon={<AddIcon sx={{width: 20, height: 20}}></AddIcon>}
-                    onClick={handleOpenModal}
+                      startIcon={<AddIcon sx={{width: 20, height: 20}}></AddIcon>}
+                      onClick={handleOpenModal}
                   >
                     สร้างคลาส
                   </Button>
@@ -159,18 +184,17 @@ const ClassPreview = observer(() => {
               key={c._id}
               onClick={() => {
                 applicationStore.setClassroom(c.name)
-                navigate(`/class/${c._id}/project`)
+                navigate(`/class/${c._id as string}/project`)
               }}
             >
               <Typography
-                className="maincolor"
                 sx={{
                   top: '1.5rem',
                   left: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: 'calc(30px + 0.2vw)',
-                  fontFamily: 'Prompt',
-                  fontWeight: 600
+                  fontWeight: 600,
+                  color: theme.color.text.primary
                 }}
               >
                 {c.name}
@@ -181,7 +205,7 @@ const ClassPreview = observer(() => {
                   right: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: 'calc(30px + 0.2vw)',
-                  color: '#686868',
+                  color: theme.color.text.secondary,
                   fontWeight: 600
                 }}
               >
@@ -193,7 +217,7 @@ const ClassPreview = observer(() => {
                   left: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: 'calc(15px + 0.3vw)',
-                  color: '#686868',
+                  color: theme.color.text.secondary,
                   fontWeight: 600
                 }}
               >

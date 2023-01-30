@@ -59,7 +59,12 @@ const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
           <IconButton
             disableRipple
             className={classes.iconSize}
-            sx={{ marginRight: '1.25rem' }}
+            sx={{ 
+              marginRight: '1.25rem',
+              '& svg': {
+                color: theme.color.background.primary
+              }
+            }}
             disableFocusRipple
             href='/'
           >

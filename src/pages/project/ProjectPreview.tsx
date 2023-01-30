@@ -14,6 +14,7 @@ import applicationStore from '../../stores/applicationStore';
 import AdminSidebar from '../../components/Sidebar/AdminSidebar';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import { listProjectInClass } from '../../utils/project';
+import { theme } from '../../styles/theme';
 
 const ProjectPreview = () => {
   const navigate = useNavigate()
@@ -59,7 +60,13 @@ const ProjectPreview = () => {
                 value={sortSelect}
                 onChange={handleSortChange}
                 label="จัดเรียงโดย"
-                sx={{borderRadius: '10px', color: '#ad68ff', height: 45, fontWeight: 500, width: 180}}
+                sx={{
+                  borderRadius: '10px', 
+                  color: theme.color.background.primary, 
+                  height: 45, 
+                  fontWeight: 500, 
+                  width: 180
+                }}
             >
                 <MenuItem value={'createdAtDESC'}>วันที่สร้างล่าสุด</MenuItem>
                 <MenuItem value={'createdAtASC'}>วันที่สร้างเก่าสุด</MenuItem>
@@ -72,37 +79,25 @@ const ProjectPreview = () => {
           {projects.map((c) => (
             <ListPreviewButton key={c._id}>
               <Typography
-                className="maincolor"
                 sx={{
                   top: '1.5rem',
                   left: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: 'calc(30px + 0.2vw)',
                   fontFamily: 'Prompt',
-                  fontWeight: 600
+                  fontWeight: 600,
+                  color: theme.color.text.primary
                 }}
               >
                 {c.nameTH}
               </Typography>
-              {/* <Typography
-                sx={{
-                  top: '1.5rem',
-                  right: 'calc(20px + 1vw)',
-                  position: 'absolute',
-                  fontSize: 'calc(30px + 0.2vw)',
-                  color: '#686868',
-                  fontWeight: 600
-                }}
-              >
-                {c.complete ? 'เสร็จสิ้น' : 'ดำเนินการ'}
-              </Typography> */}
               <Typography
                 sx={{
                   top: '5rem',
                   left: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: 'calc(15px + 0.3vw)',
-                  color: '#686868',
+                  color: theme.color.text.secondary,
                   fontWeight: 600
                 }}
               >

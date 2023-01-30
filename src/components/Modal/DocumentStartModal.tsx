@@ -5,6 +5,7 @@ import Modal from '@mui/material/Modal';
 import { useMediaQuery } from 'react-responsive';
 import { setDateDocument } from '../../utils/document';
 import moment from 'moment';
+import { theme } from '../../styles/theme';
 
 interface ModalProps {
     open: boolean
@@ -85,7 +86,7 @@ const DocumentStartModal = ({ open, documentName, onClose, documentId, refresh, 
                 height: 300,
                 width: '40vw',
                 minWidth: 350,
-                bgcolor: '#FCFCFC',
+                bgcolor: theme.color.background.default,
                 borderRadius: '20px',
                 boxShadow: 24,
                 padding: '2rem 3rem 2rem 3rem',
@@ -106,16 +107,16 @@ const DocumentStartModal = ({ open, documentName, onClose, documentId, refresh, 
                         width: "7rem",
                         height: "2.8rem",   
                         fontSize: 20,
-                        background: '#FCFCFC',
+                        background: theme.color.button.disable,
                         borderRadius: '10px',
-                        color: '#686868',
+                        color: theme.color.text.secondary,
                         boxShadow: 'none',
                         textTransform: 'none',
                         transform: 'translate(-50%, -50%)',
                         position: 'absolute',
                         right: 130,
                         bottom: 10,
-                        '&:hover': { background: '#F3F3F3' }
+                        '&:hover': { background: theme.color.button.default }
                     }}
                 >
                     ยกเลิก
@@ -127,18 +128,18 @@ const DocumentStartModal = ({ open, documentName, onClose, documentId, refresh, 
                         width: "7rem",
                         height: "2.8rem",   
                         fontSize: 20,
-                        background: '#FCFCFC',
+                        background: theme.color.button.disable,
                         borderRadius: '10px',
-                        color: '#AD50FF',
+                        color: theme.color.text.primary,
                         boxShadow: 'none',
                         textTransform: 'none',
                         transform: 'translateY(-50%)',
                         position: 'absolute',
                         right: '3rem',
                         bottom: 10,
-                        '&:hover': { background: '#F3F3F3' },
+                        '&:hover': { background: theme.color.button.default },
                         "&:disabled": {
-                        backgroundColor: '#FCFCFC',
+                        backgroundColor: theme.color.button.disable,
                         }
                     }}
                     disabled={!canSubmit}

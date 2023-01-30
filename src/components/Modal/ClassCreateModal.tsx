@@ -7,6 +7,7 @@ import { LoadingButton } from '@mui/lab';
 import Modal from '@mui/material/Modal';
 import { useMediaQuery } from 'react-responsive';
 import { createClass } from '../../utils/class';
+import { theme } from '../../styles/theme';
 
 interface ModalProps {
     children: React.ReactNode; 
@@ -79,7 +80,7 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                 height: 350,
                 width: '60vw',
                 minWidth: 350,
-                bgcolor: '#FCFCFC',
+                bgcolor: theme.color.background.default,
                 borderRadius: '20px',
                 boxShadow: 24,
                 padding: '2rem 3rem 2rem 3rem',
@@ -89,14 +90,23 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
             }}>
                 <Typography 
                     id="class-title" 
-                    className='maincolor'
-                    sx={{fontSize: 40, fontWeight: 500, marginBottom: 2}}
+                    sx={{
+                        fontSize: 40, 
+                        fontWeight: 500, 
+                        marginBottom: 2,
+                        color: theme.color.text.primary
+                    }}
                 >
                     สร้างคลาส
                 </Typography>
                 <Typography 
                     id="class-description"
-                    sx={{fontSize: 20, fontWeight: 500, marginBottom: 1, color: '#686868'}}
+                    sx={{
+                        fontSize: 20, 
+                        fontWeight: 500, 
+                        marginBottom: 1, 
+                        color: theme.color.text.secondary
+                    }}
                 >
                     ชื่อคลาส *
                 </Typography>
@@ -111,10 +121,10 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                         "& fieldset": { border: 'none' },
                         "& .MuiOutlinedInput-root": {
                             padding: "0.1rem 0.35rem 0.1rem 0.35rem",
-                            backgroundColor: "#F3F3F3",
+                            backgroundColor: theme.color.button.default,
                             borderRadius: "10px",
                             fontSize: 20,
-                            color: "#686868",
+                            color: theme.color.text.secondary,
                             fontWeight: 500,
                             marginBottom: 2,
                         },
@@ -123,7 +133,12 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                 />
                 <Typography 
                     id="class-description"
-                    sx={{fontSize: 20, fontWeight: 500, marginBottom: 1, color: '#686868'}}
+                    sx={{
+                        fontSize: 20, 
+                        fontWeight: 500, 
+                        marginBottom: 1, 
+                        color: theme.color.text.secondary
+                    }}
                 >
                     ภาค
                 </Typography>
@@ -133,7 +148,13 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                     id="select-class"
                     value={majorSelect}
                     onChange={handleMajorSelectChange}
-                    sx={{borderRadius: '10px', color: '#AD68FF', height: "2.8rem", fontWeight: 500, width: isBigScreen ? 300 : '100%', fontSize: 20}}
+                    sx={{
+                        borderRadius: '10px', 
+                        color: theme.color.text.primary, 
+                        height: "2.8rem", 
+                        fontWeight: 500, 
+                        width: isBigScreen ? 300 : '100%', 
+                        fontSize: 20}}
                 >
                     <MenuItem value={'ALL'}>ทั้งหมด</MenuItem>
                     <MenuItem value={'CPE'}>วิศวกรรมคอมพิวเตอร์ (CPE)</MenuItem>
@@ -146,16 +167,16 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                         width: "7rem",
                         height: "2.8rem",   
                         fontSize: 20,
-                        background: '#FCFCFC',
+                        background: theme.color.button.disable,
                         borderRadius: '10px',
-                        color: '#686868',
+                        color: theme.color.text.secondary,
                         boxShadow: 'none',
                         textTransform: 'none',
                         transform: 'translate(-50%, -50%)',
                         position: 'absolute',
                         right: 130,
                         bottom: 10,
-                        '&:hover': { background: '#F3F3F3' }
+                        '&:hover': { background: theme.color.button.default }
                     }}
                 >
                     ยกเลิก
@@ -167,18 +188,18 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                         width: "7rem",
                         height: "2.8rem",   
                         fontSize: 20,
-                        background: '#FCFCFC',
+                        background: theme.color.button.disable,
                         borderRadius: '10px',
-                        color: '#AD50FF',
+                        color: theme.color.text.primary,
                         boxShadow: 'none',
                         textTransform: 'none',
                         transform: 'translateY(-50%)',
                         position: 'absolute',
                         right: '3rem',
                         bottom: 10,
-                        '&:hover': { background: '#F3F3F3' },
+                        '&:hover': { background: theme.color.button.default },
                         "&:disabled": {
-                        backgroundColor: '#FCFCFC',
+                            background: theme.color.button.disable,
                         }
                     }}
                     disabled={!canSubmit}

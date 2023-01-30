@@ -5,6 +5,7 @@ import { useMediaQuery } from 'react-responsive'
 import logoGoogle from '../assets/images/google_logo.png'
 import Typography from '@mui/material/Typography'
 import { signInWithGoogle } from '../utils/auth'
+import { theme } from '../styles/theme'
 
 export default function Login () {
   const isBigScreen = useMediaQuery({ query: '(min-width: 850px)' })
@@ -49,7 +50,7 @@ export default function Login () {
               }}
               alt="logo"
             />
-            <Typography sx={{ color: '#FCFCFC', fontSize: 38, fontWeight: 600 }}>
+            <Typography sx={{ color: theme.color.text.default, fontSize: 38, fontWeight: 600 }}>
               CPSK Project System
             </Typography>
           </Box>
@@ -66,15 +67,29 @@ export default function Login () {
         }}
       >
         <Box position="static">
-          <Typography sx={{ color: '#AD68FF', fontSize: 60, fontWeight: 600, marginBottom: 1 }}>
+          <Typography 
+            sx={{ 
+              color: theme.color.text.primary, 
+              fontSize: 60, 
+              fontWeight: 600, 
+              marginBottom: 1 
+            }}
+          >
             Login
           </Typography>
-          <Typography sx={{ color: '#737373', fontSize: 25, fontWeight: 300, marginBottom: 1 }}>
+          <Typography 
+            sx={{ 
+              color: theme.color.text.secondary, 
+              fontSize: 25, 
+              fontWeight: 300, 
+              marginBottom: 1 
+            }}
+          >
             ลงทะเบียนเข้าใช้งานเพื่อเริ่มต้นใช้งานเว็บไซต์ CPSK Project System
           </Typography>
           <Typography
             sx={{
-              color: '#AD68FF',
+              color: theme.color.text.primary,
               marginBottom: '2rem',
               fontSize: 25,
               fontWeight: 500,
@@ -87,13 +102,13 @@ export default function Login () {
                 fontSize: '1.56rem',
                 fontWeight: '500',
                 color: 'rgba(0, 0, 0, 0.54)',
-                backgroundColor: '#FFFFFF',
+                backgroundColor: 'white',
                 fontFamily: 'Prompt',
                 boxShadow:
                   '0px 0px 2.41919px rgba(0, 0, 0, 0.084), 0px 2.41919px 2.41919px rgba(0, 0, 0, 0.168)',
                 textTransform: 'none',
                 padding: '0.5rem 0.8rem 0.5rem 0.8rem',
-                borderRadius: '0.5rem',
+                borderRadius: '10px',
                 marginBottom: '1rem',
               }}
               onClick={onGoogleLogIn}
@@ -114,7 +129,7 @@ export default function Login () {
           {showErrorMessage && 
             <Typography
             sx={{
-              color: 'red',
+              color: theme.color.text.error,
               paddingBottom: '1rem',
               fontSize: 20,
               fontWeight: 400,

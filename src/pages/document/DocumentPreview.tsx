@@ -14,6 +14,7 @@ import AdminSidebar from '../../components/Sidebar/AdminSidebar';
 import { listDocumentInClass } from '../../utils/document';
 import Button from '@mui/material/Button';
 import DocumentStartModal from '../../components/Modal/DocumentStartModal';
+import { theme } from '../../styles/theme';
 
 const DocumentPreview = () => {
   const navigate = useNavigate()
@@ -91,7 +92,12 @@ const DocumentPreview = () => {
                 value={statusSelect}
                 onChange={handleStatusChange}
                 label="สถานะ"
-                sx={{borderRadius: '10px', color: '#ad68ff', height: 45, fontWeight: 500, width: 160}}
+                sx={{
+                  borderRadius: '10px', 
+                  color: theme.color.background.primary, 
+                  height: 45, 
+                  fontWeight: 500, 
+                  width: 160}}
             >
                 <MenuItem value={'all'}>ทั้งหมด</MenuItem>
                 <MenuItem value={'true'}>เปิดใช้งาน</MenuItem>
@@ -106,7 +112,13 @@ const DocumentPreview = () => {
                 value={sortSelect}
                 onChange={handleSortChange}
                 label="จัดเรียงโดย"
-                sx={{borderRadius: '10px', color: '#ad68ff', height: 45, fontWeight: 500, width: 180}}
+                sx={{
+                  borderRadius: '10px', 
+                  color: theme.color.background.primary, 
+                  height: 45, 
+                  fontWeight: 500, 
+                  width: 180
+                }}
             >
                 <MenuItem value={'createdAtDESC'}>วันที่สร้างล่าสุด</MenuItem>
                 <MenuItem value={'createdAtASC'}>วันที่สร้างเก่าสุด</MenuItem>
@@ -129,14 +141,14 @@ const DocumentPreview = () => {
           {documents.map((c) => (
             <ListPreviewButton key={c._id} sx={{zIndex: 1}}>
               <Typography
-                className="maincolor"
                 sx={{
                   top: '1.5rem',
                   left: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: 'calc(30px + 0.2vw)',
                   fontFamily: 'Prompt',
-                  fontWeight: 600
+                  fontWeight: 600,
+                  color: theme.color.text.primary
                 }}
               >
                 {c.name}
@@ -149,9 +161,9 @@ const DocumentPreview = () => {
                     width: "7rem",
                     height: "2.8rem",
                     fontSize: 20,
-                    background: '#43BF64',
+                    background: theme.color.button.success,
                     borderRadius: '10px',
-                    color: '#FFFFFF',
+                    color: theme.color.text.default,
                     boxShadow: 'none',
                     textTransform: 'none',
                     '&:hover': { background: '#43BF6E' },
@@ -172,9 +184,9 @@ const DocumentPreview = () => {
                     width: "5rem",
                     height: "2.8rem",
                     fontSize: 20,
-                    background: '#FBBC05',
+                    background: theme.color.button.warning,
                     borderRadius: '10px',
-                    color: '#FFFFFF',
+                    color: theme.color.text.default,
                     boxShadow: 'none',
                     textTransform: 'none',
                     '&:hover': { background: '#FBBC0E' },
@@ -194,9 +206,9 @@ const DocumentPreview = () => {
                     width: "7rem",
                     height: "2.8rem",
                     fontSize: 20,
-                    background: '#FF5454',
+                    background: theme.color.button.error,
                     borderRadius: '10px',
-                    color: '#FFFFFF',
+                    color: theme.color.text.default,
                     boxShadow: 'none',
                     textTransform: 'none',
                     '&:hover': { background: '#FF545E' },
@@ -215,7 +227,7 @@ const DocumentPreview = () => {
                   left: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: 'calc(15px + 0.3vw)',
-                  color: c.statusInClass ? '#686868' : '#FF5454',
+                  color: c.statusInClass ? theme.color.text.secondary : theme.color.text.error,
                   fontWeight: 600
                 }}
               >

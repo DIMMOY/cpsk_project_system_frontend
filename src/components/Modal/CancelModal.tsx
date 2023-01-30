@@ -7,6 +7,7 @@ import { LoadingButton } from '@mui/lab';
 import Modal from '@mui/material/Modal';
 import { useMediaQuery } from 'react-responsive';
 import { createClass } from '../../utils/class';
+import { theme } from '../../styles/theme';
 
 interface ModalProps {
     open: boolean
@@ -49,7 +50,7 @@ const CancelModal = ({ open, onClose, onSubmit, title, description }: ModalProps
                 height: 180,
                 width: '50vw',
                 minWidth: 350,
-                bgcolor: '#FCFCFC',
+                bgcolor: theme.color.background.default,
                 borderRadius: '20px',
                 boxShadow: 24,
                 padding: '2rem 3rem 2rem 3rem',
@@ -59,14 +60,23 @@ const CancelModal = ({ open, onClose, onSubmit, title, description }: ModalProps
             }}>
                 <Typography 
                     id="cancel-title" 
-                    className='maincolor'
-                    sx={{fontSize: 40, fontWeight: 500, marginBottom: 2}}
+                    sx={{
+                        fontSize: 40, 
+                        fontWeight: 500, 
+                        marginBottom: 2,
+                        color: theme.color.text.primary
+                    }}
                 >
                     {title}
                 </Typography>
                 <Typography 
                     id="cancel-description"
-                    sx={{fontSize: 20, fontWeight: 500, marginBottom: 1, color: '#686868'}}
+                    sx={{
+                        fontSize: 20, 
+                        fontWeight: 500, 
+                        marginBottom: 1, 
+                        color: theme.color.text.secondary
+                    }}
                 >
                     {description}
                 </Typography>
@@ -76,16 +86,16 @@ const CancelModal = ({ open, onClose, onSubmit, title, description }: ModalProps
                         width: "7rem",
                         height: "2.8rem",   
                         fontSize: 20,
-                        background: '#FCFCFC',
+                        background: theme.color.button.disable,
                         borderRadius: '10px',
-                        color: '#686868',
+                        color: theme.color.text.secondary,
                         boxShadow: 'none',
                         textTransform: 'none',
                         transform: 'translate(-50%, -50%)',
                         position: 'absolute',
                         right: 130,
                         bottom: 10,
-                        '&:hover': { background: '#F3F3F3' }
+                        '&:hover': { background: theme.color.button.default }
                     }}
                 >
                     ยกเลิก
@@ -97,18 +107,18 @@ const CancelModal = ({ open, onClose, onSubmit, title, description }: ModalProps
                         width: "7rem",
                         height: "2.8rem",   
                         fontSize: 20,
-                        background: '#FCFCFC',
+                        background: theme.color.button.disable,
                         borderRadius: '10px',
-                        color: '#AD50FF',
+                        color: theme.color.text.primary,
                         boxShadow: 'none',
                         textTransform: 'none',
                         transform: 'translateY(-50%)',
                         position: 'absolute',
                         right: '3rem',
                         bottom: 10,
-                        '&:hover': { background: '#F3F3F3' },
+                        '&:hover': { background: theme.color.button.default },
                         "&:disabled": {
-                        backgroundColor: '#FCFCFC',
+                        background: theme.color.button.disable,
                         }
                     }}
                 >
