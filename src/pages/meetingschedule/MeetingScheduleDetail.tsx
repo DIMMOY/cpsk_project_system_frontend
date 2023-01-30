@@ -10,6 +10,7 @@ import moment from 'moment'
 import { cancelSendMeetingSchedule, getSendMeetingScheduleInClass, sendMeetingSchedule } from '../../utils/meetingSchedule'
 import { LoadingButton } from '@mui/lab'
 import CancelModal from '../../components/Modal/CancelModal'
+import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 
 const useStyles = makeStyles({
   iconSize: {
@@ -99,7 +100,7 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
   }
 
   return (
-    <Box className="common-preview-container" sx={{textAlign: "center",}}>
+    <CommonPreviewContainer sx={{textAlign: "center"}}>
       <Box sx={{ display: 'flex', padding: '0 auto' }}>
         <Link to="/meeting-schedule">
           <IconButton
@@ -250,7 +251,7 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
 
           
       </Box>
-    </Box>
+    </CommonPreviewContainer>
   )
 })
 

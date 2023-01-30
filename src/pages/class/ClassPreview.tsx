@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import AddIcon from '@mui/icons-material/Add';
 import { useLocation, useNavigate } from 'react-router-dom'
-import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
+import { AdminCommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 import { ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import ClassCreateModal from '../../components/Modal/ClassCreateModal';
@@ -76,7 +76,7 @@ const ClassPreview = observer(() => {
   }
 
   return (
-    <CommonPreviewContainer>
+    <AdminCommonPreviewContainer>
       <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
         <Typography
             className="maincolor"
@@ -134,7 +134,7 @@ const ClassPreview = observer(() => {
               ? 
                 <Box>  
                   <Button 
-                    sx={{background: '#ad68ff', borderRadius: '10px', color: '#FFFFFF', boxShadow: 'none', 
+                    sx={{background: '#ad68ff', borderRadius: '10px', color: '#FCFCFC', boxShadow: 'none', 
                       textTransform: 'none', '&:hover': { background: '#ad68ff' }, height: 45, weight: 42, 
                       fontSize: isBigScreen ? 16 : 13, padding: isBigScreen ? 1 : 0.5, 
                       marginRight: '1.5rem'}}
@@ -203,7 +203,7 @@ const ClassPreview = observer(() => {
           ))}
         </Box>
       </Box>
-    </CommonPreviewContainer>
+    </AdminCommonPreviewContainer>
   )
 })
 

@@ -5,7 +5,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import { useLocation, useNavigate } from 'react-router-dom'
-import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
+import { AdminCommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 import { ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import { listClass } from '../../utils/class';
@@ -47,7 +47,7 @@ const ProjectPreview = () => {
   }
 
   return (
-    <CommonPreviewContainer>
+    <AdminCommonPreviewContainer>
       {isAdmin ? <AdminSidebar/> : <></> }
       <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
         <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: isBigScreen ? 'row' : 'column', maxWidth: 700 }}>
@@ -112,7 +112,7 @@ const ProjectPreview = () => {
           ))}
         </Box>
       </Box>
-    </CommonPreviewContainer>
+    </AdminCommonPreviewContainer>
   )
 }
 

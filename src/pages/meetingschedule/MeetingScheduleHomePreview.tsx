@@ -10,44 +10,8 @@ import { useMediaQuery } from 'react-responsive'
 import { ListPreviewButton } from '../../styles/layout/_button'
 import { listSendMeetingScheduleInClass } from '../../utils/meetingSchedule'
 import moment from 'moment'
-
-const exampleDocument = [
-  {
-    id: 1,
-    name: 'Meeting Schedule 5',
-    dueDate: '2022-10-20 23:59',
-    status: 0,
-    statusType: 'ยังไม่ส่ง'
-  },
-  {
-    id: 2,
-    name: 'Meeting Schedule 4',
-    dueDate: '2022-10-18 23:59',
-    status: 1,
-    statusType: 'ส่งช้า'
-  },
-  {
-    id: 3,
-    name: 'Meeting Schedule 3',
-    dueDate: '2022-10-13 23:59',
-    status: 2,
-    statusType: 'ส่งช้า'
-  },
-  {
-    id: 4,
-    name: 'Meeting Schedule 2',
-    dueDate: '2022-10-13 23:59',
-    status: 2,
-    statusType: 'ส่งแล้ว'
-  },
-  {
-    id: 5,
-    name: 'Meeting Schedule 1',
-    dueDate: '2022-10-13 23:59',
-    status: 2,
-    statusType: 'ส่งแล้ว'
-  }
-]
+import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
+import { theme } from '../../styles/theme'
 
 const useStyles = makeStyles({
   iconSize: {
@@ -66,7 +30,14 @@ const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
   const classes = useStyles()
   const navigate = useNavigate();
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
-  const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'รอยืนยัน'}, {color: '#FBBC05', message: 'ส่งช้า'}, {color: '#686868', message: "----"}]
+  const { success, warning, error, secondary } = theme.color.text
+  const statusList 
+    = [{color: error, message: 'ยังไม่ส่ง'}, 
+      {color: success, message: 'ส่งแล้ว'}, 
+      {color: warning, message: 'รอยืนยัน'}, 
+      {color: warning, message: 'ส่งช้า'}, 
+      {color: secondary, message: "----"}]
+
   isStudent = true
 
   //ชั่วคราว
@@ -82,7 +53,7 @@ const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
   }, [])
 
   return (
-    <Box className="common-preview-container" sx={{}}>
+    <CommonPreviewContainer>
       <Box sx={{ display: 'flex', padding: '0 auto' }}>
         <Link to="/">
           <IconButton
@@ -96,8 +67,11 @@ const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
           </IconButton>
         </Link>
         <Typography
-          className="fs-30 fw-600 maincolor"
-          sx={{ fontSize: '1.875rem', fontWeight: '600' }}
+          sx={{ 
+            fontSize: '1.875rem', 
+            fontWeight: '600', 
+            color: theme.color.text.primary 
+          }}
         >
           รายงานการพบอาจารย์ที่ปรึกษา
         </Typography>
@@ -111,14 +85,14 @@ const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
                 statusType: mtSchedule.statusType, dueDate: moment(mtSchedule.endDate).format('DD/MM/YYYY HH:mm')}})}}
           >
             <Typography
-              className="maincolor"
               sx={{
                 top: '1.5rem',
                 left: 'calc(20px + 1vw)',
                 position: 'absolute',
                 fontSize: 'calc(30px + 0.2vw)',
                 fontFamily: 'Prompt',
-                fontWeight: 600
+                fontWeight: 600,
+                color: theme.color.text.primary
               }}
             >
               {mtSchedule.name}
@@ -141,7 +115,7 @@ const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
                 left: 'calc(20px + 1vw)',
                 position: 'absolute',
                 fontSize: 'calc(15px + 0.3vw)',
-                color: '#686868',
+                color: theme.color.text.secondary,
                 fontWeight: 600
               }}
             >
@@ -150,7 +124,7 @@ const MeetingScheduleHomePreview = ({ isStudent }: PreviewProps) => {
           </ListPreviewButton>
         ))}
       </Box>
-    </Box>
+    </CommonPreviewContainer>
   )
 }
 

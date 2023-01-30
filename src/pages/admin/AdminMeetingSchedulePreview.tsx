@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import AddIcon from '@mui/icons-material/Add';
 import { useLocation, useNavigate } from 'react-router-dom'
-import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
+import { AdminCommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 import { ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
@@ -54,7 +54,7 @@ const AdminMeetingSchedulePreview = () => {
   }
 
   return (
-    <CommonPreviewContainer>
+    <AdminCommonPreviewContainer>
       <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}> 
         <Typography
             className="maincolor"
@@ -145,7 +145,7 @@ const AdminMeetingSchedulePreview = () => {
           ))}
         </Box>
       </Box>
-    </CommonPreviewContainer>
+    </AdminCommonPreviewContainer>
   )
 }
 

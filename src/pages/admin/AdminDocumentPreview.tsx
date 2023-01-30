@@ -6,13 +6,14 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import AddIcon from '@mui/icons-material/Add';
 import { useLocation, useNavigate } from 'react-router-dom'
-import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
+import { AdminCommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 import { ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
 import DocumentCreateModal from '../../components/Modal/DocumentCreateModal';
 import { listDocument } from '../../utils/document';
+import { theme } from '../../styles/theme';
 
 const AdminDocumentPreview = () => {
   const location = useLocation();
@@ -54,11 +55,11 @@ const AdminDocumentPreview = () => {
   }
 
   return (
-    <CommonPreviewContainer>
+    <AdminCommonPreviewContainer>
       <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}> 
         <Typography
             className="maincolor"
-            sx={{ fontSize: 45, fontWeight: 600 }}
+            sx={{ fontSize: 45, fontWeight: 600, color: theme.color.text.primary }}
           >
           เอกสาร
         </Typography>
@@ -71,7 +72,7 @@ const AdminDocumentPreview = () => {
                 value={sortSelect}
                 onChange={handleSortChange}
                 label="จัดเรียงโดย"
-                sx={{borderRadius: '10px', color: '#ad68ff', height: 45, fontWeight: 500, width: 180}}
+                sx={{borderRadius: '10px', color: theme.color.background.primary, height: 45, fontWeight: 500, width: 180}}
             >
                 <MenuItem value={'createdAtDESC'}>วันที่สร้างล่าสุด</MenuItem>
                 <MenuItem value={'createdAtASC'}>วันที่สร้างเก่าสุด</MenuItem>
@@ -133,7 +134,7 @@ const AdminDocumentPreview = () => {
           ))}
         </Box>
       </Box>
-    </CommonPreviewContainer>
+    </AdminCommonPreviewContainer>
   )
 }
 

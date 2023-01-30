@@ -34,7 +34,7 @@ export const NavBar = observer(() => {
   const linkButtons = ['class', 'document', 'meeting-schedule']
   const firstPathname = (window.location.pathname).split('/')
 
-  const profile: string | null = applicationStore.user && applicationStore.user.photoURL ? applicationStore.user.photoURL : defaulProfile
+  const [profile, setProfile] = useState<string>(applicationStore.user && applicationStore.user.photoURL ? applicationStore.user.photoURL : defaulProfile)
 
   const onGoogleLogOut = async () => {
     setAnchorEl(null);

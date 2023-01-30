@@ -10,6 +10,7 @@ import { useMediaQuery } from 'react-responsive'
 import { ListPreviewButton } from '../../styles/layout/_button'
 import { listSendDocumentInClass } from '../../utils/document'
 import moment from 'moment'
+import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 
 const exampleDocument = [
   {
@@ -73,7 +74,7 @@ const DocumentHomePreview = ({ isStudent }: PreviewProps) => {
   }, [])
 
   return (
-    <Box className="common-preview-container" sx={{}}>
+    <CommonPreviewContainer>
       <Box sx={{ display: 'flex', padding: '0 auto' }}>
         <Link to="/">
           <IconButton
@@ -144,7 +145,7 @@ const DocumentHomePreview = ({ isStudent }: PreviewProps) => {
             </ListPreviewButton>
         ))}
       </Box>
-    </Box>
+    </CommonPreviewContainer>
   )
 }
 

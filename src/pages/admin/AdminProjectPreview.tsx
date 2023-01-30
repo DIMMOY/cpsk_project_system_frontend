@@ -5,7 +5,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import AddIcon from '@mui/icons-material/Add';
-import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
+import { AdminCommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 import applicationStore from '../../stores/applicationStore';
 
 
@@ -63,7 +63,7 @@ export default function AdminProjectPreview () {
   };
 
   return (
-    <CommonPreviewContainer>
+    <AdminCommonPreviewContainer>
       <Box sx={{ display: 'flex', padding: '0 auto', maxWidth: 700, margin: '1.25rem 0 1.25rem 0' }}>
         <FormControl  sx={{marginRight: '1rem'}}>
             <InputLabel id="select-class-label">คลาส</InputLabel>
@@ -118,7 +118,6 @@ export default function AdminProjectPreview () {
               margin: '1.25rem 0 1.25rem 0',
               display: 'flex',
               textTransform: 'none',
-              color: '#AD68FF'
             }}
           >
             <Typography
@@ -127,6 +126,7 @@ export default function AdminProjectPreview () {
                 top: '1.5rem',
                 left: 'calc(20px + 1vw)',
                 position: 'absolute',
+                color: '#AD68FF',
                 fontSize: 'calc(30px + 0.2vw)',
                 fontFamily: 'Prompt',
                 fontWeight: 600
@@ -161,6 +161,6 @@ export default function AdminProjectPreview () {
           </Button>
         ))}
       </Box>
-    </CommonPreviewContainer>
+    </AdminCommonPreviewContainer>
   )
 }

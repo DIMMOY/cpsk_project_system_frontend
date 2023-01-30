@@ -22,7 +22,12 @@ export const ListPreviewButton = styled(Button)({
   margin: '1.25rem 0 1.25rem 0',
   display: 'flex',
   textTransform: 'none',
-  color: '#AD68FF',
   height: '9rem',
   width: '100%'
+})
+
+export const CommonPreviewButton = styled(Button)({
+  height: '9rem',
+  background: '#F3F3F3',
+  borderRadius: '20px',
 })

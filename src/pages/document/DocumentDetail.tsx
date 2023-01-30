@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, SetStateAction, useState } from 'react'
 import { Box, IconButton, Button, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
@@ -8,6 +8,7 @@ import { padding } from '@mui/system/spacing'
 import { Link, useLocation } from 'react-router-dom'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useMediaQuery } from 'react-responsive'
+import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 
 const exampleDocument = [
   {
@@ -71,9 +72,16 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
   const statusList = [{color: '#FF5454', message: 'ยังไม่ส่ง'}, {color: '#43BF64', message: 'ส่งแล้ว'}, {color: '#FBBC05', message: 'ส่งช้า'}]
   const {name, dueDate, status} = location.state
+  const [files, setFiles] = useState<Array<any>>([])
+
+  const handleChange = (e: any) => {
+    setFiles(Array.from(e.target.files));
+  }
+
+  console.log(files)
 
   return (
-    <Box className="common-preview-container" sx={{textAlign: "center",}}>
+    <CommonPreviewContainer>
       <Box sx={{ display: 'flex', padding: '0 auto' }}>
         <Link to="/document">
           <IconButton
@@ -142,27 +150,55 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
           sx={{
               top: "-5rem",
               position: "relative",
-              height: "23rem",
               background: "#EBEBEB",
               borderRadius: "20px",
+              padding: "7rem 2vw 2rem 2vw",
+              textAlign: "center"
           }}
         >
-          { isStudent &&
-          <>
-            <IconButton sx={{
-              top: "7rem", 
-              display: "flex", 
-              left: "3.5vw", 
-              position: "absolute"
-            }}
-              aria-label="upload" 
-              component="label">
-              <input hidden accept="*" type="file" />
-              <AddCircleIcon sx={{fontSize: "450%", color: '#686868'}}/>
-            </IconButton>
+
+          <Box sx={{marginBottom: "2rem", display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+            {files.map((file, index) => (
+                <Box key={`file-${index}`} 
+                  sx={{
+                    margin: "1rem 1rem 1rem 1rem", 
+                    padding: "0.5rem", 
+                    background: "#F3F3F3", 
+                    borderRadius: "10px",
+                    width: '12rem', 
+                    height: '10rem'
+                  }}>
+                  {file.type.startsWith('image/') ? (
+                    <img style={{ width: '12rem', height: '8rem', borderRadius: "10px" }} src={URL.createObjectURL(file)} alt="" />
+                  ) : (
+                    <a href={URL.createObjectURL(file)}>{file.name.length <= 20 ? file.name : file.name.slice(0, 19) + '...'}</a>
+                  )}
+                  <Typography>{file.name.length <= 20 ? file.name : file.name.slice(0, 19) + '...'}</Typography>
+                </Box>
+            ))}
+            { isStudent ?
+              <Box
+                sx={{
+                  margin: "1rem 1rem 1rem 1rem", 
+                  padding: "0.5rem",
+                  width: '12rem', 
+                  height: '10rem',
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}>
+                <IconButton sx={{width: '8rem', height: '8rem'}}
+                  aria-label="upload" 
+                  component="label">
+                  <input hidden accept="*" type="file" multiple onChange={handleChange}/>
+                  <AddCircleIcon sx={{fontSize: "450%", color: '#686868'}}/>
+                </IconButton> 
+              </Box>
+              : <></>
+            }
+            </Box>
             
             <Button sx={{
-              top: "18rem",
               width: "7rem",
               height: "2.8rem",
               fontSize: 20,
@@ -173,13 +209,12 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
               color: '#FFFFFF',
               boxShadow: 'none',
               textTransform: 'none',
-              '&:hover': { background: '#AD50FF' }
+              '&:hover': { background: '#AD50FF' },
             }}>
                 ยืนยัน
-              </Button>
-          </> }
+            </Button>
         </Box>
-      </Box>
+      </CommonPreviewContainer>
       
   )
 }
