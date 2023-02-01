@@ -7,6 +7,7 @@ import InputLabel from '@mui/material/InputLabel';
 import AddIcon from '@mui/icons-material/Add';
 import { AdminCommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 import applicationStore from '../../stores/applicationStore';
+import { theme } from '../../styles/theme';
 
 
 const exampleDocument = [
@@ -121,15 +122,14 @@ export default function AdminProjectPreview () {
             }}
           >
             <Typography
-              className="maincolor"
               sx={{
                 top: '1.5rem',
                 left: 'calc(20px + 1vw)',
                 position: 'absolute',
-                color: '#AD68FF',
                 fontSize: 'calc(30px + 0.2vw)',
                 fontFamily: 'Prompt',
-                fontWeight: 600
+                fontWeight: 600, 
+                color: theme.color.text.primary
               }}
             >
               {document.name}

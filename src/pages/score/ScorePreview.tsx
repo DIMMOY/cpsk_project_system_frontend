@@ -6,6 +6,7 @@ import { fontFamily, fontWeight, Stack } from '@mui/system'
 import { KeyObjectType } from 'crypto'
 import { padding } from '@mui/system/spacing'
 import { Link } from 'react-router-dom'
+import { theme } from '../../styles/theme'
 
 const exampleScore = [
   {
@@ -71,8 +72,7 @@ const ScorePreview = ({ isStudent }: PreviewProps) => {
           </IconButton>
         </Link>
         <Typography
-          className="fs-30 fw-600 maincolor"
-          sx={{ fontSize: '1.875rem', fontWeight: '600' }}
+          sx={{ fontSize: '1.875rem', fontWeight: '600', color: theme.color.text.primary }}
         >
           คะแนน
         </Typography>
@@ -93,13 +93,13 @@ const ScorePreview = ({ isStudent }: PreviewProps) => {
             }}
           >
             <Typography
-              className="maincolor"
               sx={{
                 left: 'calc(20px + 1vw)',
                 position: 'absolute',
                 fontSize: 'calc(30px + 0.2vw)',
                 fontFamily: 'Prompt',
-                fontWeight: 600
+                fontWeight: 600,
+                color: theme.color.text.primary
               }}
             >
               {document.name}

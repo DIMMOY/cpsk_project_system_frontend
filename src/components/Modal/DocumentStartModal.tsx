@@ -96,8 +96,7 @@ const DocumentStartModal = ({ open, documentName, onClose, documentId, refresh, 
             }}>
                 <Typography 
                     id="document-title" 
-                    className='maincolor'
-                    sx={{fontSize: 40, fontWeight: 500, marginBottom: 5}}
+                    sx={{fontSize: 40, fontWeight: 500, marginBottom: 5, color: theme.color.text.primary}}
                 >
                     เปิดใช้งาน {documentName}
                 </Typography>

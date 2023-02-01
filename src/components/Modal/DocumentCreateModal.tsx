@@ -86,8 +86,7 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
             }}>
                 <Typography 
                     id="document-title" 
-                    className='maincolor'
-                    sx={{fontSize: 40, fontWeight: 500, marginBottom: 2}}
+                    sx={{fontSize: 40, fontWeight: 500, marginBottom: 2, color: theme.color.text.primary}}
                 >
                     สร้างรายการส่งเอกสาร
                 </Typography>

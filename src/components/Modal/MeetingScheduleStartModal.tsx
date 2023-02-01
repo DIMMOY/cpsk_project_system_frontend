@@ -97,8 +97,7 @@ const MeetingScheduleStartModal = ({ open, meetingScheduleName, onClose, meeting
             }}>
                 <Typography 
                     id="meeting-schedule-title" 
-                    className='maincolor'
-                    sx={{fontSize: 40, fontWeight: 500, marginBottom: 5}}
+                    sx={{fontSize: 40, fontWeight: 500, marginBottom: 5, color: theme.color.text.primary}}
                 >
                     เปิดใช้งาน {meetingScheduleName}
                 </Typography>

@@ -80,8 +80,7 @@ const ClassPreview = observer(() => {
     <AdminCommonPreviewContainer>
       <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
         <Typography
-            className="maincolor"
-            sx={{ fontSize: 45, fontWeight: 600 }}
+            sx={{ fontSize: 45, fontWeight: 600, color: theme.color.text.primary }}
           >
           คลาส
         </Typography> 
