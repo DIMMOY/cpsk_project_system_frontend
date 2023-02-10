@@ -113,7 +113,7 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                     sx={{
                         "& fieldset": { border: 'none' },
                         "& .MuiOutlinedInput-root": {
-                            padding: "0.1rem 0.35rem 0.1rem 0.35rem",
+                            padding: "0.25rem",
                             backgroundColor: theme.color.button.default,
                             borderRadius: "10px",
                             fontSize: 20,
@@ -143,12 +143,12 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                     maxRows={4}
                     minRows={4}
                     size="medium"
+                    inputProps={{ style: {padding: "0.25rem"}}}
                     sx={{
                         "& fieldset": { border: 'none' },
                         "& .MuiOutlinedInput-root": {
                             backgroundColor: theme.color.button.default,
                             borderRadius: "10px",
-                            padding: "1rem 1.25rem 1rem 1.25rem",
                             fontSize: 20,
                             color: theme.color.text.secondary,
                             fontWeight: 500,

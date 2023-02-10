@@ -186,6 +186,7 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
               multiline
               maxRows={4}
               minRows={4}
+              inputProps={{ style: { padding: "0.25rem" }}}
               
               size="medium"
               sx={{
@@ -198,7 +199,6 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
                 position: "absolute",
                 "& fieldset": { border: 'none' },
                 "& .MuiOutlinedInput-root": {
-                  padding: "1rem 1.25rem 1rem 1.25rem",
                   backgroundColor: theme.color.background.default,
                   borderRadius: "20px",
                   fontSize: 20,

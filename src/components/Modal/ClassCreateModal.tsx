@@ -36,7 +36,7 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
         setLoading(true)
         console.log('Creating...')
         const reqBody = { name: className, endDate: null, complete: false, major: majorSelect }
-        const res = await createClass(reqBody);
+        const res = await createClass(reqBody)
         if (res.statusCode !== 201) {
             console.error(res.errorMsg)
             return
@@ -120,7 +120,7 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                     sx={{
                         "& fieldset": { border: 'none' },
                         "& .MuiOutlinedInput-root": {
-                            padding: "0.1rem 0.35rem 0.1rem 0.35rem",
+                            padding: "0.25rem",
                             backgroundColor: theme.color.button.default,
                             borderRadius: "10px",
                             fontSize: 20,

@@ -11,11 +11,12 @@ import { ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
-import MeetingScheduleCreateModal from '../../components/Modal/MeetingScheduleCreateModal';
-import { listMeetingSchedule } from '../../utils/meetingSchedule';
+import { listDocument } from '../../utils/document';
 import { theme } from '../../styles/theme';
+import { listAssessment } from '../../utils/assessment';
+import AssessmentEdit from '../assessment/AssessmentEdit';
 
-const AdminMeetingSchedulePreview = () => {
+const AdminAssessmentPreview = () => {
   const location = useLocation();
   const search = new URLSearchParams(location.search);
   const { isAdmin, currentRole } = applicationStore
@@ -24,24 +25,21 @@ const AdminMeetingSchedulePreview = () => {
   const sortCheck = search.get('sort') && sortOptions.find((e) => search.get('sort')?.toLowerCase() == e.toLowerCase()) ? search.get('sort') : 'createdAtDESC'
 
   const [sortSelect, setSortSelect] = useState<string>(sortCheck || 'createdAtDESC')
-  const [open, setOpen] = useState<boolean>(false);
+  const [assessments, setAssessments] = useState<Array<any>>([])
   const isBigScreen = useMediaQuery({ query: '(min-width: 650px)' })
-  const [meetingSchedules, setMeetingSchedules] = useState<Array<any>>([])
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
       if (currentRole == 0) navigate('/')
       applicationStore.setClassroom(null)
       async function getData () {
-        const result = await listMeetingSchedule({ sort: sortSelect })
-        setMeetingSchedules(result.data as Array<any>);
+        const result = await listAssessment({ sort: sortSelect })
+        setAssessments(result.data as Array<any>);
       }
       getData()
     }, [sortSelect] 
   )
 
-  const handleOpenModal = () => setOpen(true);
-  const handleCloseModal = () => setOpen(false)
   const handleSortChange = (event: SelectChangeEvent) => {
     setSortSelect(event.target.value as string);
     navigate({
@@ -49,18 +47,26 @@ const AdminMeetingSchedulePreview = () => {
       search: `?sort=${event.target.value}`,
     });
   }
-  const refreshData = async () => {
-    const result = await listMeetingSchedule({ sort: sortSelect } )
-    setMeetingSchedules(result.data as Array<any>);
+
+  const handleOnCreate = () => {
+    navigate('/assessment/create')
+  }
+
+  const handleOnEdit = (assessment: any) =>  {
+    navigate('/assessment/edit', { state: { assessment }})
   }
 
   return (
     <AdminCommonPreviewContainer>
       <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}> 
         <Typography
-            sx={{ fontSize: 45, fontWeight: 600, color: theme.color.text.primary }}
+            sx={{ 
+              fontSize: 45, 
+              fontWeight: 600, 
+              color: theme.color.text.primary 
+            }}
           >
-          รายงานพบอาจารย์ที่ปรึกษา
+          แบบฟอร์มประเมิน
         </Typography>
         <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: 'row', maxWidth: 700, flexWrap: "wrap" }}>
           <FormControl sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
@@ -76,11 +82,12 @@ const AdminMeetingSchedulePreview = () => {
                   color: theme.color.background.primary, 
                   height: 45, 
                   fontWeight: 500, 
-                  width: 180}}
+                  width: 180
+                }}
             >
                 <MenuItem value={'createdAtDESC'}>วันที่สร้างล่าสุด</MenuItem>
                 <MenuItem value={'createdAtASC'}>วันที่สร้างเก่าสุด</MenuItem>
-                <MenuItem value={'name'}>ชื่อคลาส</MenuItem>
+                <MenuItem value={'name'}>ชื่อแบบฟอร์ม</MenuItem>
             </Select>
             </FormControl>
           {isAdmin 
@@ -88,9 +95,9 @@ const AdminMeetingSchedulePreview = () => {
                 <Box>  
                   <Button 
                     sx={{
+                      borderRadius: '10px', 
                       background: theme.color.button.primary, 
                       color: theme.color.text.default, 
-                      borderRadius: '10px', 
                       boxShadow: 'none', 
                       textTransform: 'none', 
                       '&:hover': { background: '#B07CFF' }, 
@@ -100,31 +107,26 @@ const AdminMeetingSchedulePreview = () => {
                       padding: isBigScreen ? 1 : 0.5, 
                       marginRight: '1.5rem'}}
                       startIcon={<AddIcon sx={{width: 20, height: 20}}></AddIcon>}
-                      onClick={handleOpenModal}
+                      onClick={handleOnCreate}
                   >
-                    สร้างรายการ
+                    สร้างฟอร์ม
                   </Button>
-                  <MeetingScheduleCreateModal
-                    open={open} 
-                    onClose={handleCloseModal}
-                    refresh={refreshData}>
-                  </MeetingScheduleCreateModal>
                 </Box>
               :  <></>
           }
         </Box>
 
         <Box sx={{ flexDirection: 'column', display: 'flex'}}>
-          {meetingSchedules.map((c) => (
-            <ListPreviewButton key={c._id}>
+          {assessments.map((c) => (
+            <ListPreviewButton key={c._id} onClick={() => handleOnEdit(c)}>
               <Typography
                 sx={{
                   top: '1.5rem',
                   left: 'calc(20px + 1vw)',
                   position: 'absolute',
                   fontSize: 'calc(30px + 0.2vw)',
-                  fontWeight: 600,
                   color: theme.color.text.primary,
+                  fontWeight: 600,
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -155,4 +157,4 @@ const AdminMeetingSchedulePreview = () => {
   )
 }
 
-export default AdminMeetingSchedulePreview
+export default AdminAssessmentPreview

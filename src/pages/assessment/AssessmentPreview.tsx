@@ -7,6 +7,7 @@ import { KeyObjectType } from 'crypto'
 import { padding } from '@mui/system/spacing'
 import { Link } from 'react-router-dom'
 import { theme } from '../../styles/theme'
+import { AdminCommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 
 const exampleScore = [
   {
@@ -48,7 +49,7 @@ interface PreviewProps {
   isStudent: boolean
 }
 
-const ScorePreview = ({ isStudent }: PreviewProps) => {
+const AssessmentPreview = ({ isStudent }: PreviewProps) => {
   const classes = useStyles()
   isStudent = true
 
@@ -59,7 +60,7 @@ const ScorePreview = ({ isStudent }: PreviewProps) => {
   }
 
   return (
-    <Box className="common-preview-container" sx={{}}>
+    <AdminCommonPreviewContainer>
       <Box sx={{ display: 'flex', padding: '0 auto' }}>
         <Link to="/">
           <IconButton
@@ -118,8 +119,8 @@ const ScorePreview = ({ isStudent }: PreviewProps) => {
           </Button>
         ))}
       </Box>
-    </Box>
+    </AdminCommonPreviewContainer>
   )
 }
 
-export default ScorePreview
+export default AssessmentPreview

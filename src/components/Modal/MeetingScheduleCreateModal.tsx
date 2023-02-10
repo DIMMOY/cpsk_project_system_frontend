@@ -112,7 +112,7 @@ const MeetingScheduleCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                     sx={{
                         "& fieldset": { border: 'none' },
                         "& .MuiOutlinedInput-root": {
-                            padding: "0.1rem 0.35rem 0.1rem 0.35rem",
+                            padding: "0.25rem",
                             backgroundColor: theme.color.button.default,
                             borderRadius: "10px",
                             fontSize: 20,

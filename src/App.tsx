@@ -8,7 +8,7 @@ import DocumentHomePreview from './pages/document/DocumentHomePreview'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { Box } from '@mui/material'
 import MeetingScheduleHomePreview from './pages/meetingschedule/MeetingScheduleHomePreview'
-import ScorePreview from './pages/score/ScorePreview'
+import AssessmentPreview from './pages/assessment/AssessmentPreview'
 import Routers from './routes'
 
 const THEME = createTheme({

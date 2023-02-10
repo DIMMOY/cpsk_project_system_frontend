@@ -34,7 +34,7 @@ const ClassPreview = observer(() => {
   const [sortSelect, setSortSelect] = useState<string>(sortCheck || 'createdAtDESC')
   const [majorFilter, setMajorFilter] = useState<string>(majorCheck || 'all')
   const [open, setOpen] = useState<boolean>(false);
-  const isBigScreen = useMediaQuery({ query: '(min-width: 650px)' })
+  const isBigScreen = useMediaQuery({ query: '(min-width: 700px)' })
   const [classes, setClasses] = useState<Array<any>>([])
 
   useEffect(() => {
@@ -84,8 +84,8 @@ const ClassPreview = observer(() => {
           >
           คลาส
         </Typography> 
-        <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: isBigScreen ? 'row' : 'column', maxWidth: 700 }}>
-          <FormControl  sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
+        <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: 'row', maxWidth: 700, flexWrap: "wrap" }}>
+          <FormControl  sx={{margin: '0 1.5rem 1.5rem 0', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
               <InputLabel id="select-class-label">คลาส</InputLabel>
               <Select
                   labelId="select-class-label"
@@ -193,7 +193,13 @@ const ClassPreview = observer(() => {
                   position: 'absolute',
                   fontSize: 'calc(30px + 0.2vw)',
                   fontWeight: 600,
-                  color: theme.color.text.primary
+                  color: theme.color.text.primary,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  display: "inline-block",
+                  textAlign: "left",
+                  width: "60%"
                 }}
               >
                 {c.name}

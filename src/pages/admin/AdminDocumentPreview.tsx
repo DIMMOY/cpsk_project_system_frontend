@@ -66,7 +66,7 @@ const AdminDocumentPreview = () => {
           >
           เอกสาร
         </Typography>
-        <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: isBigScreen ? 'row' : 'column', maxWidth: 700 }}>
+        <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: 'row', maxWidth: 700, flexWrap: "wrap" }}>
           <FormControl sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
             <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
             <Select
@@ -129,7 +129,13 @@ const AdminDocumentPreview = () => {
                   position: 'absolute',
                   fontSize: 'calc(30px + 0.2vw)',
                   color: theme.color.text.primary,
-                  fontWeight: 600
+                  fontWeight: 600,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  display: "inline-block",
+                  textAlign: "left",
+                  width: "90%"
                 }}
               >
                 {c.name}

@@ -10,7 +10,7 @@ import Login from '../pages/login'
 import ProjectHomePreview from '../pages/project/ProjectHomePreview'
 import DocumentHomePreview from '../pages/document/DocumentHomePreview'
 import MeetingScheduleHomePreview from '../pages/meetingschedule/MeetingScheduleHomePreview'
-import ScorePreview from '../pages/score/ScorePreview'
+import AssessmentPreview from '../pages/assessment/AssessmentPreview'
 import ClassPreview from '../pages/class/ClassPreview'
 import AdminProjectPreview from '../pages/admin/AdminProjectPreview'
 import DocumentDetail from '../pages/document/DocumentDetail'
@@ -22,6 +22,8 @@ import DocumentPage from '../pages/document'
 import MeetingSchedulePage from '../pages/meetingschedule'
 import DocumentPreview from '../pages/document/DocumentPreview'
 import MeetingSchedulePreview from '../pages/meetingschedule/MeetingSchedulePreview'
+import AssessmentPage from '../pages/assessment'
+import AssessmentEdit from '../pages/assessment/AssessmentEdit'
 
 
 const Routers: React.FC = (): JSX.Element => {
@@ -42,12 +44,20 @@ const Routers: React.FC = (): JSX.Element => {
                     <Route path = '/class/:id/meeting-schedule' element={<MeetingSchedulePreview/>}/>
                     <Route path = '/class/:id/score' element={<ProjectPreview/>}/>
                     <Route path = '/class/:id/committee' element={<ProjectPreview/>}/>
+
                     <Route path = '/project' element={<ProjectPreview/>}/>
+
                     <Route path = '/document' element={<DocumentPage/>}/>
                     <Route path = '/document/:id' element={<DocumentDetail/>}/>
+
                     <Route path = '/meeting-schedule' element={<MeetingSchedulePage/>}/>
                     <Route path = '/meeting-schedule/:id' element={<MeetingScheduleDetail isStudent={true}/>}/>
-                    <Route path = '/score' element={<ScorePreview isStudent={true}/>}/>
+
+                    <Route path = '/score' element={<AssessmentPreview isStudent={true}/>}/>
+
+                    <Route path = '/assessment' element={<AssessmentPage/>}/>
+                    <Route path = '/assessment/create' element={<AssessmentEdit newForm={true}/>}/>
+                    <Route path = '/assessment/edit' element={<AssessmentEdit newForm={false}/>}/>
                 </Route>
 
             </Routes>

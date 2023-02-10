@@ -18,6 +18,8 @@ import ClassIcon from '@mui/icons-material/Class';
 import ClassOutlinedIcon from '@mui/icons-material/ClassOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
+import GradingIcon from '@mui/icons-material/Grading'
+import GradingOutlinedIcon from '@mui/icons-material/GradingOutlined'
 import { theme } from '../../styles/theme'
 
 export const NavBar = observer(() => {
@@ -31,8 +33,8 @@ export const NavBar = observer(() => {
   const isBigScreen = useMediaQuery({ query: '(min-width: 900px)' })
   const responsePadding = isBigScreen ? '1.12rem 3rem 1.12rem 3rem' : '1.12rem 1.5rem 1.12rem 1.5rem'
   const open = Boolean(anchorEl);
-  const buttons = ['คลาส', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา']
-  const linkButtons = ['class', 'document', 'meeting-schedule']
+  const buttons = ['คลาส', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา', 'ประเมิน']
+  const linkButtons = ['class', 'document', 'meeting-schedule', 'assessment']
   const firstPathname = (window.location.pathname).split('/')
 
   const [profile, setProfile] = useState<string>(applicationStore.user && applicationStore.user.photoURL ? applicationStore.user.photoURL : defaulProfile)
@@ -140,7 +142,9 @@ export const NavBar = observer(() => {
                 >
                     {index === 0 ? ((firstPathname[1] === linkButtons[index]) || (index === 0 && firstPathname[1] === '') ? <ClassIcon sx={{fontSize: 30}}/> : <ClassOutlinedIcon sx={{fontSize: 30}}/>) :
                      index === 1 ? ((firstPathname[1] === linkButtons[index]) ? <DescriptionIcon sx={{fontSize: 30}}/> : <DescriptionOutlinedIcon sx={{fontSize: 30}}/>) :
-                     (firstPathname[1] === linkButtons[index]) ? <GroupsIcon sx={{fontSize: 30}}/> : <GroupsOutlinedIcon sx={{fontSize: 30}}/>}
+                     index === 2 ? ((firstPathname[1] === linkButtons[index]) ? <GroupsIcon sx={{fontSize: 30}}/> : <GroupsOutlinedIcon sx={{fontSize: 30}}/>) :
+                     (firstPathname[1] === linkButtons[index]) ? <GradingIcon sx={{fontSize: 30}}/> : <GradingOutlinedIcon sx={{fontSize: 30}}/>
+                     }
                 </Button>
               </span>
             </Tooltip>
