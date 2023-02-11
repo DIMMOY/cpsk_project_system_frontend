@@ -20,7 +20,7 @@ const ProjectPreview = () => {
   const navigate = useNavigate()
   const location = useLocation();
   const search = new URLSearchParams(location.search);
-  const { isAdmin } = applicationStore
+  const { isAdmin, currentRole } = applicationStore
 
   const sortOptions = ['createdAtDESC', 'createdAtASC', 'name']
   const sortCheck = search.get('sort') && sortOptions.find((e) => search.get('sort')?.toLowerCase() == e.toLowerCase()) ? search.get('sort') : 'createdAtDESC'
@@ -49,10 +49,10 @@ const ProjectPreview = () => {
 
   return (
     <AdminCommonPreviewContainer>
-      {isAdmin ? <AdminSidebar/> : <></> }
+      {<AdminSidebar/>}
       <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
         <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: isBigScreen ? 'row' : 'column', maxWidth: 700 }}>
-          <FormControl sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
+          <FormControl sx={{marginRight: '1.5rem', position: 'relative'}}>
             <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
             <Select
                 labelId="select-sort-label"

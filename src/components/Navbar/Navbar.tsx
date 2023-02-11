@@ -20,6 +20,7 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import GradingIcon from '@mui/icons-material/Grading'
 import GradingOutlinedIcon from '@mui/icons-material/GradingOutlined'
+import MenuIcon from '@mui/icons-material/Menu';
 import { theme } from '../../styles/theme'
 
 export const NavBar = observer(() => {
@@ -100,6 +101,20 @@ export const NavBar = observer(() => {
             }} src={logo}
             alt="logo"/>
         </Link>
+        { !isBigScreen ? 
+          <IconButton 
+            color="inherit"
+            aria-label="open drawer"
+            onClick={() => {
+              applicationStore.setIsShowSideBar(true)
+              console.log(applicationStore.isShowSideBar)
+            }}
+            edge="start"
+            sx={{marginLeft: '2vw'}}> 
+              <MenuIcon fontSize='large'></MenuIcon>
+          </IconButton> : 
+          <></>
+        }
         { classroom && isBigScreen ? <Typography sx={{fontSize: 20, marginLeft: '1vw', fontWeight: 500}}>{'Classroom: ' + classroom}</Typography> : <></> }
         { 
           currentRole === 2 ? 

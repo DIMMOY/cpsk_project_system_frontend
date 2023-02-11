@@ -5,6 +5,7 @@ class applicationStore {
     user: User | null = null
     userDisplayName = ''
     isShowNavBar = false
+    isShowSideBar = false
     isAdmin = false
     isAdvisor = false
     isStudent = false
@@ -22,6 +23,10 @@ class applicationStore {
 
     setIsShowNavBar(isShowNavBar: boolean) {
         this.isShowNavBar = isShowNavBar as boolean
+    }
+
+    setIsShowSideBar(isShowSideBar: boolean) {
+        this.isShowSideBar = isShowSideBar as boolean
     }
 
     setRole(roles: Array<any>) {

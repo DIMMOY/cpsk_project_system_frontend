@@ -146,7 +146,7 @@ const ClassPreview = observer(() => {
                 <MenuItem value={'name'}>ชื่อคลาส</MenuItem>
             </Select>
             </FormControl>
-          {isAdmin 
+          {currentRole === 2 
               ? 
                 <Box>  
                   <Button 
