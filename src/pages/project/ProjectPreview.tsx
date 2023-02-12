@@ -15,8 +15,9 @@ import AdminSidebar from '../../components/Sidebar/AdminSidebar';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import { listProjectInClass } from '../../utils/project';
 import { theme } from '../../styles/theme';
+import { observer } from 'mobx-react';
 
-const ProjectPreview = () => {
+const ProjectPreview = observer(() => {
   const navigate = useNavigate()
   const location = useLocation();
   const search = new URLSearchParams(location.search);
@@ -31,6 +32,7 @@ const ProjectPreview = () => {
 
   useEffect(() => {
       // if (!applicationStore.classroom)
+      applicationStore.setIsShowMenuSideBar(true)
       async function getData () {
         const result = await listProjectInClass({ sort: sortSelect}, window.location.pathname.split('/')[2])
         setProjects(result.data as Array<any>);
@@ -109,6 +111,6 @@ const ProjectPreview = () => {
       </Box>
     </AdminCommonPreviewContainer>
   )
-}
+})
 
 export default ProjectPreview

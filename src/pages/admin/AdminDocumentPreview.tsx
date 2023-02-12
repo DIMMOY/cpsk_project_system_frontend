@@ -14,8 +14,9 @@ import applicationStore from '../../stores/applicationStore';
 import DocumentCreateModal from '../../components/Modal/DocumentCreateModal';
 import { listDocument } from '../../utils/document';
 import { theme } from '../../styles/theme';
+import { observer } from 'mobx-react';
 
-const AdminDocumentPreview = () => {
+const AdminDocumentPreview = observer(() => {
   const location = useLocation();
   const search = new URLSearchParams(location.search);
   const { isAdmin, currentRole } = applicationStore
@@ -32,6 +33,8 @@ const AdminDocumentPreview = () => {
   useEffect(() => {
       if (currentRole == 0) navigate('/')
       applicationStore.setClassroom(null)
+      applicationStore.setIsShowSideBar(false)
+      applicationStore.setIsShowMenuSideBar(false)
       async function getData () {
         const result = await listDocument({ sort: sortSelect })
         setDocuments(result.data as Array<any>);
@@ -158,6 +161,6 @@ const AdminDocumentPreview = () => {
       </Box>
     </AdminCommonPreviewContainer>
   )
-}
+})
 
 export default AdminDocumentPreview

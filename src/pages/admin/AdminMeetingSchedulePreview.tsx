@@ -14,8 +14,9 @@ import applicationStore from '../../stores/applicationStore';
 import MeetingScheduleCreateModal from '../../components/Modal/MeetingScheduleCreateModal';
 import { listMeetingSchedule } from '../../utils/meetingSchedule';
 import { theme } from '../../styles/theme';
+import { observer } from 'mobx-react';
 
-const AdminMeetingSchedulePreview = () => {
+const AdminMeetingSchedulePreview = observer(() => {
   const location = useLocation();
   const search = new URLSearchParams(location.search);
   const { isAdmin, currentRole } = applicationStore
@@ -32,6 +33,8 @@ const AdminMeetingSchedulePreview = () => {
   useEffect(() => {
       if (currentRole == 0) navigate('/')
       applicationStore.setClassroom(null)
+      applicationStore.setIsShowSideBar(false)
+      applicationStore.setIsShowMenuSideBar(false)
       async function getData () {
         const result = await listMeetingSchedule({ sort: sortSelect })
         setMeetingSchedules(result.data as Array<any>);
@@ -153,6 +156,6 @@ const AdminMeetingSchedulePreview = () => {
       </Box>
     </AdminCommonPreviewContainer>
   )
-}
+})
 
 export default AdminMeetingSchedulePreview

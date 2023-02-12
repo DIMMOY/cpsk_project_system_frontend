@@ -26,11 +26,11 @@ const ClassPreview = observer(() => {
   const sortOptions = ['createdAtDESC', 'createdAtASC', 'name']
   const majorOptions = ['cpe', 'ske', 'all']
 
-  const classCheck = search.get('select') && classOptions.find((e) => search.get('select')?.toLowerCase() == e) ? search.get('select') : 'all'
+  const classCheck = search.get('select') && classOptions.find((e) => search.get('select')?.toLowerCase() == e) ? search.get('select') : 'false'
   const sortCheck = search.get('sort') && sortOptions.find((e) => search.get('sort')?.toLowerCase() == e.toLowerCase()) ? search.get('sort') : 'createdAtDESC'
   const majorCheck = search.get('major') && majorOptions.find((e) => search.get('major')?.toLowerCase() == e) ? search.get('major') : 'all'
 
-  const [classFilter, setClassFilter] = useState<string>(classCheck || 'all')
+  const [classFilter, setClassFilter] = useState<string>(classCheck || 'false')
   const [sortSelect, setSortSelect] = useState<string>(sortCheck || 'createdAtDESC')
   const [majorFilter, setMajorFilter] = useState<string>(majorCheck || 'all')
   const [open, setOpen] = useState<boolean>(false);
@@ -40,6 +40,8 @@ const ClassPreview = observer(() => {
   useEffect(() => {
       if (currentRole == 0) navigate('/')
       applicationStore.setClassroom(null)
+      applicationStore.setIsShowSideBar(false)
+      applicationStore.setIsShowMenuSideBar(false)
       async function getData () {
         const result = await listClass({ sort: sortSelect, select: classFilter, major: majorFilter})
         setClasses(result.data as Array<any>);

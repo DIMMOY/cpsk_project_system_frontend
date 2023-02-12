@@ -22,6 +22,7 @@ import GradingIcon from '@mui/icons-material/Grading'
 import GradingOutlinedIcon from '@mui/icons-material/GradingOutlined'
 import MenuIcon from '@mui/icons-material/Menu';
 import { theme } from '../../styles/theme'
+import { getClassById } from '../../utils/class'
 
 export const NavBar = observer(() => {
   const navigate = useNavigate()
@@ -32,6 +33,7 @@ export const NavBar = observer(() => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [menuItems, setMenuItems] = useState<Array<any>>([])
   const isBigScreen = useMediaQuery({ query: '(min-width: 900px)' })
+  const isBigScreenTooltip = useMediaQuery({ query: '(min-width: 1100px)' })
   const responsePadding = isBigScreen ? '1.12rem 3rem 1.12rem 3rem' : '1.12rem 1.5rem 1.12rem 1.5rem'
   const open = Boolean(anchorEl);
   const buttons = ['คลาส', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา', 'ประเมิน']
@@ -70,11 +72,24 @@ export const NavBar = observer(() => {
   useEffect(() => {
     console.log('การเปลี่ยน role นี้เป็นการใช้วิธีชั่วคราวโดยการส่ง userId ไปโดยตรง กรุณากลับมาแก้ไขถ้าพร้อมแล้ว')
     const menuItems = []
-    if (isAdmin && currentRole !== 2) menuItems.push({name: "เปลี่ยนโหมด 'ผู้ดูแลระบบ'" as string, role: 2 as number})
-    if (isAdvisor && currentRole !== 1) menuItems.push({name: "เปลี่ยนโหมด 'อาจารย์ที่ปรึกษา'" as string, role: 1 as number})
     if (isStudent && currentRole !== 0) menuItems.push({name: "เปลี่ยนโหมด 'นิสิต'" as string, role: 0 as number})
+    if (isAdvisor && currentRole !== 1) menuItems.push({name: "เปลี่ยนโหมด 'อาจารย์ที่ปรึกษา'" as string, role: 1 as number})
+    if (isAdmin && currentRole !== 2) menuItems.push({name: "เปลี่ยนโหมด 'ผู้ดูแลระบบ'" as string, role: 2 as number})
     setMenuItems(menuItems)
+
+    const pathname = window.location.pathname.split('/');
+    async function getData() {
+      if (pathname[1] === 'class' && pathname[2]) {
+        const classroom = await getClassById(pathname[2])
+        applicationStore.setClassroom(classroom.data.name)
+      }
+    }
+    getData()
   }, [])
+
+  useEffect(() => {
+    if (isBigScreen) applicationStore.setIsShowSideBar(false)
+  }, [isBigScreen])
 
   return (
     <AppBar
@@ -83,16 +98,15 @@ export const NavBar = observer(() => {
         background: theme.color.background.primary, 
         display: applicationStore.isShowNavBar ?  "flex" : "none", 
         minWidth: '30rem', 
-        justifyContent: 'center', 
         textAlign: 'center',
-        height: '4.5rem',
+        height: isBigScreenTooltip || currentRole !== 2 ? '4.5rem' : '9rem',
         paddingLeft: '4vw',
         paddingRight: '4vw',
         zIndex: (theme) => theme.zIndex.drawer + 1,
         flex: {flex: 1},
       }}
     >
-      <Toolbar disableGutters>
+      <Toolbar disableGutters sx={{height: '4.5rem'}}>
         <Link to="/">
           <img 
             style={{
@@ -101,24 +115,35 @@ export const NavBar = observer(() => {
             }} src={logo}
             alt="logo"/>
         </Link>
-        { !isBigScreen ? 
+        { !isBigScreen && applicationStore.isShowMenuSideBar && currentRole !== 0 ? 
           <IconButton 
-            color="inherit"
             aria-label="open drawer"
-            onClick={() => {
-              applicationStore.setIsShowSideBar(true)
-              console.log(applicationStore.isShowSideBar)
-            }}
+            onClick={() => applicationStore.setIsShowSideBar(true)}
             edge="start"
-            sx={{marginLeft: '2vw'}}> 
+            sx={{
+              marginLeft: '1.5vw', 
+              color: theme.color.text.default,
+              zIndex: 2
+            }}> 
               <MenuIcon fontSize='large'></MenuIcon>
           </IconButton> : 
           <></>
         }
-        { classroom && isBigScreen ? <Typography sx={{fontSize: 20, marginLeft: '1vw', fontWeight: 500}}>{'Classroom: ' + classroom}</Typography> : <></> }
+        { classroom && isBigScreen ? 
+          <Typography 
+            sx={{
+              fontSize: 20, 
+              marginLeft: '1.5vw', 
+              fontWeight: 500
+            }}
+          >
+            {'Classroom: ' + classroom}
+          </Typography> : 
+          <></> 
+        }
         { 
           currentRole === 2 ? 
-          <Box sx={{position: 'absolute', left: 0, right: 0, zIndex: 1}}>
+          <Box sx={{position: 'absolute', left: 0, right: 0, zIndex: 1, top: isBigScreenTooltip ? 0 : '4.5rem'}}>
             {buttons.map((name, index) => (
               <Tooltip 
                 key={index}

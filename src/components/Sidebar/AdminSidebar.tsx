@@ -58,7 +58,6 @@ const AdminSidebar = observer(() => {
     }, [currentSelect])
 
     useEffect(() => {
-      console.log("TEST")
       setShow(applicationStore.isShowSideBar)
     }, [applicationStore.isShowSideBar])
 

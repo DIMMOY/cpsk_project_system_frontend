@@ -15,8 +15,9 @@ import { listDocument } from '../../utils/document';
 import { theme } from '../../styles/theme';
 import { listAssessment } from '../../utils/assessment';
 import AssessmentEdit from '../assessment/AssessmentEdit';
+import { observer } from 'mobx-react';
 
-const AdminAssessmentPreview = () => {
+const AdminAssessmentPreview = observer(() => {
   const location = useLocation();
   const search = new URLSearchParams(location.search);
   const { isAdmin, currentRole } = applicationStore
@@ -32,6 +33,8 @@ const AdminAssessmentPreview = () => {
   useEffect(() => {
       if (currentRole == 0) navigate('/')
       applicationStore.setClassroom(null)
+      applicationStore.setIsShowSideBar(false)
+      applicationStore.setIsShowMenuSideBar(false)
       async function getData () {
         const result = await listAssessment({ sort: sortSelect })
         setAssessments(result.data as Array<any>);
@@ -155,6 +158,6 @@ const AdminAssessmentPreview = () => {
       </Box>
     </AdminCommonPreviewContainer>
   )
-}
+})
 
 export default AdminAssessmentPreview

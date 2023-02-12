@@ -58,7 +58,7 @@ const DocumentStartModal = ({ open, documentName, onClose, documentId, refresh, 
             setLoading(false)
         }, 1300)
     }
-    
+
     const handleCancel = () => {
         onClose()
         setTimeout(() => {

@@ -17,12 +17,13 @@ import { disabeMeetingScheduleInClass, listMeetingScheduleInClass } from '../../
 import MeetingScheduleStartModal from '../../components/Modal/MeetingScheduleStartModal';
 import CancelModal from '../../components/Modal/CancelModal';
 import { theme } from '../../styles/theme';
+import { observer } from 'mobx-react';
 
-const MeetingSchedulePreview = () => {
+const MeetingSchedulePreview = observer(() => {
     const navigate = useNavigate()
     const location = useLocation();
     const search = new URLSearchParams(location.search);
-    const { isAdmin } = applicationStore
+    const { isAdmin, isAdvisor, currentRole } = applicationStore
   
     const sortOptions = ['createdAtDESC', 'createdAtASC', 'name']
     const statisOptions = ['all', 'true', 'false']
@@ -41,16 +42,18 @@ const MeetingSchedulePreview = () => {
     const [meetingSchedules, setMeetingSchedules] = useState<Array<any>>([])
 
     const getData = async () => {
-      const result = await listMeetingScheduleInClass({ sort: sortSelect, status: statusSelect }, window.location.pathname.split('/')[2])
-      setMeetingSchedules(result.data as Array<any>);
+      if (isAdmin && currentRole === 2) {
+        const result = await listMeetingScheduleInClass({ sort: sortSelect, status: statusSelect }, window.location.pathname.split('/')[2])
+        setMeetingSchedules(result.data as Array<any>);
+      } else if (isAdvisor && currentRole === 1) {
+        const result = await listMeetingScheduleInClass({ sort: sortSelect, status: 'true' }, window.location.pathname.split('/')[2])
+        setMeetingSchedules(result.data as Array<any>);
+      }
     }
   
     useEffect(() => {
         // if (!applicationStore.classroom)
-        async function getData () {
-          const result = await listMeetingScheduleInClass({ sort: sortSelect, status: statusSelect }, window.location.pathname.split('/')[2])
-          setMeetingSchedules(result.data as Array<any>);
-        }
+        applicationStore.setIsShowMenuSideBar(true)
         getData()
       }, [sortSelect, statusSelect] 
     )
@@ -98,31 +101,34 @@ const MeetingSchedulePreview = () => {
   
     return (
       <AdminCommonPreviewContainer>
-        {isAdmin ? <AdminSidebar/> : <></> }
+        <AdminSidebar/>
         <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
-          <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: isBigScreen ? 'row' : 'column', maxWidth: 700 }}>
-            <FormControl sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
-              <InputLabel id="select-status-label">สถานะ</InputLabel>
-              <Select
-                  labelId="select-status-label"
-                  id="select-status"
-                  value={statusSelect}
-                  onChange={handleStatusChange}
-                  label="สถานะ"
-                  sx={{
-                    borderRadius: '10px', 
-                    color: theme.color.background.primary, 
-                    height: 45, 
-                    fontWeight: 500, 
-                    width: 160
-                  }}
-              >
-                  <MenuItem value={'all'}>ทั้งหมด</MenuItem>
-                  <MenuItem value={'true'}>เปิดใช้งาน</MenuItem>
-                  <MenuItem value={'false'}>ยังไม่เปิดใช้งาน</MenuItem>
+          <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: 'row', maxWidth: 700, flexWrap: 'wrap' }}>
+            { isAdmin && currentRole === 2 ?
+              <FormControl sx={{marginRight: '1.5rem', position: 'relative'}}>
+                <InputLabel id="select-status-label">สถานะ</InputLabel>
+                <Select
+                    labelId="select-status-label"
+                    id="select-status"
+                    value={statusSelect}
+                    onChange={handleStatusChange}
+                    label="สถานะ"
+                    sx={{
+                      borderRadius: '10px', 
+                      color: theme.color.background.primary, 
+                      height: 45, 
+                      fontWeight: 500, 
+                      width: 160
+                    }}
+                  >
+                    <MenuItem value={'all'}>ทั้งหมด</MenuItem>
+                    <MenuItem value={'true'}>เปิดใช้งาน</MenuItem>
+                    <MenuItem value={'false'}>ยังไม่เปิดใช้งาน</MenuItem>
               </Select>
-            </FormControl>
-            <FormControl sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
+              </FormControl> : 
+              <></>
+            }
+            <FormControl sx={{marginRight: '1.5rem', position: 'relative'}}>
               <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
               <Select
                   labelId="select-sort-label"
@@ -159,7 +165,7 @@ const MeetingSchedulePreview = () => {
             onClose={handleCloseCancelModal}
             onSubmit={handleCancelSubmit}
             title={`ปิดการใช้งาน ${lastMeetingScheduleName}`}
-            description='เมื่อปิดใช้งานแล้วนิสิตและที่ปรึกษาจะไม่เห็นในรายการนี้ในคลาส'
+            description='เมื่อปิดใช้งานแล้วนิสิตและที่ปรึกษาจะไม่เห็นรายการนี้ในคลาส'
           />
   
           <Box sx={{ flexDirection: 'column', display: 'flex'}}>
@@ -179,7 +185,7 @@ const MeetingSchedulePreview = () => {
                   {c.name}
                 </Typography>
                 {
-                  !c.statusInClass ? 
+                  !c.statusInClass && isAdmin && currentRole === 2 ? 
                   <Button sx={{
                       position: 'absolute',
                       right: 'calc(20px + 1vw)',
@@ -202,7 +208,7 @@ const MeetingSchedulePreview = () => {
                   <></>
               }
               {
-                  c.statusInClass ? 
+                  c.statusInClass && isAdmin && currentRole === 2 ? 
                   <Button sx={{
                       position: 'absolute',
                       right: 'calc(150px + 1vw)',
@@ -224,7 +230,7 @@ const MeetingSchedulePreview = () => {
                   <></>
               }
               {
-                  c.statusInClass ? 
+                  c.statusInClass && isAdmin && currentRole === 2 ? 
                   <Button sx={{
                       position: 'absolute',
                       right: 'calc(20px + 1vw)',
@@ -256,7 +262,13 @@ const MeetingSchedulePreview = () => {
                     fontWeight: 600
                   }}
                 >
-                  {c.statusInClass ? `เปิดใช้งานวันที่ ${moment(c.startDate).format('DD/MM/YYYY HH:mm')}` : 'ยังไม่ถูกใช้ในคลาสนี้'} 
+                  { 
+                    isAdmin && currentRole === 2 ? 
+                      c.statusInClass ?
+                      `เปิดใช้งานวันที่ ${moment(c.startDate).format('DD/MM/YYYY HH:mm')}` : 
+                      'ยังไม่ถูกใช้ในคลาสนี้' :
+                    `กำหนดส่งภายในวันที่ ${moment(c.endDate).format('DD/MM/YYYY HH:mm')}`
+                  } 
                 </Typography>
               </ListPreviewButton>
             ))}
@@ -264,6 +276,6 @@ const MeetingSchedulePreview = () => {
         </Box>
       </AdminCommonPreviewContainer>
     )
-}
+})
 
 export default MeetingSchedulePreview
