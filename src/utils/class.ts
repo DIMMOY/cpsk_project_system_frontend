@@ -37,3 +37,20 @@ export const listClass = async (reqQuery: any) => {
         }
     }
 }
+
+export const getClassById = async (id: string) => {
+    try {
+        const resAxios = await axios.get(`${url}/${id}`)
+        return {
+            data: resAxios.data.data
+        }
+    } catch (error) {
+        console.error(error)
+        return {
+            statusCode: 400,
+            message: 'Get class error',
+            errorMsg: 'ค้นหา Class ผิดพลาด กรุณาลองใหม่ในภายหลัง',
+            error
+        }
+    }
+}

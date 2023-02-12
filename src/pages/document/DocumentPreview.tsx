@@ -11,16 +11,18 @@ import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
 import AdminSidebar from '../../components/Sidebar/AdminSidebar';
-import { listDocumentInClass } from '../../utils/document';
+import { disabeDocumentInClass, listDocumentInClass, listSendDocumentInClass } from '../../utils/document';
 import Button from '@mui/material/Button';
 import DocumentStartModal from '../../components/Modal/DocumentStartModal';
 import { theme } from '../../styles/theme';
+import { observer } from 'mobx-react';
+import CancelModal from '../../components/Modal/CancelModal';
 
-const DocumentPreview = () => {
+const DocumentPreview = observer(() => {
   const navigate = useNavigate()
   const location = useLocation();
   const search = new URLSearchParams(location.search);
-  const { isAdmin } = applicationStore
+  const { isAdmin, currentRole } = applicationStore
 
   const sortOptions = ['createdAtDESC', 'createdAtASC', 'name']
   const statisOptions = ['all', 'true', 'false']
@@ -29,6 +31,7 @@ const DocumentPreview = () => {
   const [sortSelect, setSortSelect] = useState<string>(sortCheck || 'createdAtDESC')
   const [statusSelect, setStatusSelect] = useState<string>(statusCheck || 'all')
   const [openStartDate, setOpenStartDate] = useState<boolean>(false)
+  const [openCancel, setOpenCancel] = useState<boolean>(false)
   const [startDate, setStartDate] = useState<string | null>(null)
   const [endDate, setEndDate] = useState<string | null>(null)
   const [lastDocumentName, setLastDocumentName] = useState<string | null>(null)
@@ -37,12 +40,19 @@ const DocumentPreview = () => {
   const isBigScreen = useMediaQuery({ query: '(min-width: 650px)' })
   const [documents, setDocuments] = useState<Array<any>>([])
 
+  const getData = async () => {
+    if (currentRole === 2) {
+      const result = await listDocumentInClass({ sort: sortSelect, status: statusSelect }, window.location.pathname.split('/')[2])
+      setDocuments(result.data as Array<any>);
+    } else if (currentRole === 1) {
+      const result = await listDocumentInClass({ sort: sortSelect, status: 'true' }, window.location.pathname.split('/')[2])
+      setDocuments(result.data as Array<any>);
+    }
+  }
+
   useEffect(() => {
       // if (!applicationStore.classroom)
-      async function getData () {
-        const result = await listDocumentInClass({ sort: sortSelect, status: statusSelect }, window.location.pathname.split('/')[2])
-        setDocuments(result.data as Array<any>);
-      }
+      applicationStore.setIsShowMenuSideBar(true)
       getData()
     }, [sortSelect, statusSelect] 
   )
@@ -63,7 +73,7 @@ const DocumentPreview = () => {
     })
   }
 
-  const handleOpenModal = (name: string, id: string, startDate: string, endDate: string | null) => {
+  const handleOpenSetDateModal = (name: string, id: string, startDate: string, endDate: string | null) => {
     setLastDocumentName(name)
     setLastDocumentId(id)
     setStartDate(startDate)
@@ -71,40 +81,52 @@ const DocumentPreview = () => {
     setOpenStartDate(true)
   }
 
-  const handleCloseModal = () => setOpenStartDate(false)
+  const handleCloseSetDateModal = () => setOpenStartDate(false)
 
-  const refreshData = async () => {
-    const result = await listDocumentInClass({ sort: sortSelect, status: statusSelect }, window.location.pathname.split('/')[2])
-    setDocuments(result.data as Array<any>);
+  const handleOpenCancelModal = (name: string, id: string) => {
+    setLastDocumentName(name)
+    setLastDocumentId(id)
+    setOpenCancel(true)
   }
 
+  const handleCloseCancelModal = () => setOpenCancel(false)
+
+  const handleCancelSubmit = async () => {
+    const result = await disabeDocumentInClass(window.location.pathname.split('/')[2], lastDocumentId as string)
+    if (result.statusCode === 200) {
+      getData()
+    }
+  }
 
   return (
     <AdminCommonPreviewContainer>
-      {isAdmin ? <AdminSidebar/> : <></> }
+      <AdminSidebar/>
       <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
-        <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: isBigScreen ? 'row' : 'column', maxWidth: 700 }}>
-          <FormControl sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
-            <InputLabel id="select-status-label">สถานะ</InputLabel>
-            <Select
-                labelId="select-status-label"
-                id="select-status"
-                value={statusSelect}
-                onChange={handleStatusChange}
-                label="สถานะ"
-                sx={{
-                  borderRadius: '10px', 
-                  color: theme.color.background.primary, 
-                  height: 45, 
-                  fontWeight: 500, 
-                  width: 160}}
-            >
-                <MenuItem value={'all'}>ทั้งหมด</MenuItem>
-                <MenuItem value={'true'}>เปิดใช้งาน</MenuItem>
-                <MenuItem value={'false'}>ยังไม่เปิดใช้งาน</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
+        <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: 'row', maxWidth: 700, flexWrap: 'wrap' }}>
+          {currentRole === 2 ? 
+            <FormControl sx={{marginRight: '1.5rem', position: 'relative'}}>
+              <InputLabel id="select-status-label">สถานะ</InputLabel>
+              <Select
+                  labelId="select-status-label"
+                  id="select-status"
+                  value={statusSelect}
+                  onChange={handleStatusChange}
+                  label="สถานะ"
+                  sx={{
+                    borderRadius: '10px', 
+                    color: theme.color.background.primary, 
+                    height: 45, 
+                    fontWeight: 500, 
+                    width: 160}}
+              >
+                  <MenuItem value={'all'}>ทั้งหมด</MenuItem>
+                  <MenuItem value={'true'}>เปิดใช้งาน</MenuItem>
+                  <MenuItem value={'false'}>ยังไม่เปิดใช้งาน</MenuItem>
+              </Select>
+            </FormControl> : 
+            <></>
+          }
+          <FormControl sx={{marginRight: '1.5rem', position: 'relative'}}>
             <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
             <Select
                 labelId="select-sort-label"
@@ -131,11 +153,19 @@ const DocumentPreview = () => {
           open={openStartDate} 
           documentName={lastDocumentName} 
           documentId={lastDocumentId} 
-          onClose={handleCloseModal} 
-          refresh={refreshData}
+          onClose={handleCloseSetDateModal} 
+          refresh={getData}
           defaultStartDate={startDate}
           defaultEndDate={endDate}
         ></DocumentStartModal>
+
+        <CancelModal
+          open={openCancel}
+          onClose={handleCloseCancelModal}
+          onSubmit={handleCancelSubmit}
+          title={`ปิดการใช้งาน ${lastDocumentName}`}
+          description='เมื่อปิดใช้งานแล้วนิสิตและที่ปรึกษาจะไม่เห็นรายการนี้ในคลาส'
+        />
 
         <Box sx={{ flexDirection: 'column', display: 'flex'}}>
           {documents.map((c) => (
@@ -154,7 +184,7 @@ const DocumentPreview = () => {
                 {c.name}
               </Typography>
               {
-                !c.statusInClass ? 
+                !c.statusInClass && isAdmin && currentRole === 2 ? 
                 <Button sx={{
                     position: 'absolute',
                     right: 'calc(20px + 1vw)',
@@ -170,14 +200,14 @@ const DocumentPreview = () => {
                     zIndex: 2
                     }}
                     onClick={() => 
-                      handleOpenModal(c.name, c._id, moment(new Date()).format('YYYY-MM-DDTHH:mm'), null)}
+                      handleOpenSetDateModal(c.name, c._id, moment(new Date()).format('YYYY-MM-DDTHH:mm'), null)}
                 >
                         เปิดใช้งาน
                 </Button> : 
                 <></>
             }
             {
-                c.statusInClass ? 
+                c.statusInClass && isAdmin && currentRole === 2 ? 
                 <Button sx={{
                     position: 'absolute',
                     right: 'calc(150px + 1vw)',
@@ -192,14 +222,14 @@ const DocumentPreview = () => {
                     '&:hover': { background: '#FBBC0E' },
                     zIndex: 2
                     }}
-                    onClick={() => handleOpenModal(c.name, c._id, c.startDate, c.endDate)}
+                    onClick={() => handleOpenSetDateModal(c.name, c._id, c.startDate, c.endDate)}
                 >
                         แก้ไข
                 </Button> : 
                 <></>
             }
             {
-                c.statusInClass ? 
+                c.statusInClass && isAdmin && currentRole === 2 ? 
                 <Button sx={{
                     position: 'absolute',
                     right: 'calc(20px + 1vw)',
@@ -214,7 +244,7 @@ const DocumentPreview = () => {
                     '&:hover': { background: '#FF545E' },
                     zIndex: 2
                     }}
-                    onClick={() => handleOpenModal(c.name, c._id, c.startDate, c.endDate)}
+                    onClick={() => handleOpenCancelModal(c.name, c._id)}
                 >
                         ปิดใช้งาน
                 </Button> : 
@@ -231,7 +261,13 @@ const DocumentPreview = () => {
                   fontWeight: 600
                 }}
               >
-                {c.statusInClass ? `เปิดใช้งานวันที่ ${moment(c.startDate).format('DD/MM/YYYY HH:mm')}` : 'ยังไม่ถูกใช้ในคลาสนี้'} 
+                { 
+                  isAdmin && currentRole === 2 ? 
+                    c.statusInClass ?
+                    `เปิดใช้งานวันที่ ${moment(c.startDate).format('DD/MM/YYYY HH:mm')}` : 
+                    'ยังไม่ถูกใช้ในคลาสนี้' :
+                  `กำหนดส่งภายในวันที่ ${moment(c.endDate).format('DD/MM/YYYY HH:mm')}`
+                }
               </Typography>
             </ListPreviewButton>
           ))}
@@ -239,6 +275,6 @@ const DocumentPreview = () => {
       </Box>
     </AdminCommonPreviewContainer>
   )
-}
+})
 
 export default DocumentPreview

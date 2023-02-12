@@ -93,3 +93,22 @@ export const listSendDocumentInClass = async (reqQuery: any, classId: string, pr
         }
     } 
 }
+
+export const disabeDocumentInClass = async (classId: string, documentId: string) => {
+    try {
+        const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class/${classId}/document/${documentId}/date/status`
+        await axios.patch(url, {status: false})
+        return {
+            statusCode: 200,
+            message: 'Disable document in class successful',
+        };
+    } catch (error) {
+        console.error(error)
+        return {
+            statusCode: 400,
+            message: 'Disable document in class error',
+            errorMsg: 'ยกเลิก document ในคลาสผิดพลาด กรุณาลองใหม่ในภายหลัง',
+            error
+        }
+    }
+}
