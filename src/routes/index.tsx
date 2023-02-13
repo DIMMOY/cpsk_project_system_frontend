@@ -25,6 +25,7 @@ import MeetingSchedulePreview from '../pages/meetingschedule/MeetingSchedulePrev
 import AssessmentPage from '../pages/assessment'
 import AssessmentEdit from '../pages/assessment/AssessmentEdit'
 import ClassJoining from '../pages/class/ClassJoining'
+import ProjectEdit from '../pages/project/ProjectEdit'
 
 
 const Routers: React.FC = (): JSX.Element => {
@@ -60,7 +61,7 @@ const Routers: React.FC = (): JSX.Element => {
                     <Route path = '/assessment/create' element={<AssessmentEdit newForm={true}/>}/>
                     <Route path = '/assessment/edit' element={<AssessmentEdit newForm={false}/>}/>
 
-                    <Route path = '/test' element={<ClassJoining></ClassJoining>}/>
+                    <Route path = '/test' element={<ProjectEdit newProject={true}></ProjectEdit>}/>
                 </Route>
 
             </Routes>

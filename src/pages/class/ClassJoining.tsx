@@ -1,24 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Button, Typography, TextField } from '@mui/material'
-import { SelectChangeEvent } from '@mui/material/Select';
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Box, Typography, TextField } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
-import { useMediaQuery } from 'react-responsive';
-import { listClass } from '../../utils/class';
-
 import applicationStore from '../../stores/applicationStore';
 import { observer } from 'mobx-react';
 import { theme } from '../../styles/theme';
-import { display } from '@mui/system/Box/Box';
 import { LoadingButton } from '@mui/lab';
 import { joinClass } from '../../utils/user';
 
 const ClassJoining = observer(() => {
   const navigate = useNavigate()
-  const location = useLocation();
-  const search = new URLSearchParams(location.search);
-  const { isAdmin, currentRole } = applicationStore
-
   const [inviteCode, setInviteCode] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -36,8 +27,16 @@ const ClassJoining = observer(() => {
 
   const handleOnSubmit = async () => {
     setLoading(true)
-    const res = await joinClass({})
-
+    const res = await joinClass({ inviteCode })
+    if (res.statusCode !== 200) {
+      console.error(res.errorMsg)
+      setLoading(false)
+      return
+    }
+    setTimeout(() => {
+      setLoading(false)
+      navigate(0)
+    }, 1300)
   }
 
   return (
@@ -83,8 +82,8 @@ const ClassJoining = observer(() => {
             }}
             onChange={(e) => onInviteCodeChange(e.target.value)}
             onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                    //Submit
+                if (e.key === 'Enter' && inviteCode.length === 6) {
+                  handleOnSubmit()
                 }
             }}
         />
@@ -108,7 +107,7 @@ const ClassJoining = observer(() => {
                 }
             }}
             disabled={inviteCode.length !== 6}
-            // onClick={handleOnSubmit}
+            onClick={handleOnSubmit}
             >
                 ยืนยัน
         </LoadingButton>  
