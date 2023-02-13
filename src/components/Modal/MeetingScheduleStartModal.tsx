@@ -34,7 +34,6 @@ const MeetingScheduleStartModal = ({ open, meetingScheduleName, onClose, meeting
 
   const handleEndDateChange = (newDate: string | null) => {
     const date = newDate ? moment(newDate).format('YYYY-MM-DDTHH:mm') : null;
-    console.log(defaultStartDate)
     if(defaultStartDate && !startDate) setStartDate(moment(defaultStartDate).format('YYYY-MM-DDTHH:mm'))
     setEndDate(date);
     setCanSubmit(date ? true : false)
@@ -42,7 +41,6 @@ const MeetingScheduleStartModal = ({ open, meetingScheduleName, onClose, meeting
 
     const handleSetDate = async () => {
         setLoading(true)
-        console.log('Creating...')
         const reqBody = { classId: window.location.pathname.split('/')[2], meetingScheduleId, startDate, endDate }
         const res = await setDateMeetingSchedule(reqBody);
         if (res.statusCode !== 200) {

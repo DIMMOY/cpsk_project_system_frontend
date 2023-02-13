@@ -93,7 +93,6 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
     setLoading(true)
     const reqBody = { name, description, form, feedBack, assessBy, score, autoCalculate }
     if (newForm) {
-      console.log('Creating...')
       const res = await createAssessment(reqBody)
       if (res.statusCode !== 201) {
         console.error(res.errorMsg)
@@ -102,7 +101,6 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
       }
     } else {
       if (id) {
-        console.log('Updating...')
         const res = await updateAssessment(id as string, reqBody)
         if (res.statusCode !== 201) {
           console.error(res.errorMsg)
@@ -110,13 +108,13 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
           return
         }  
       } else {
-        console.error('assessment id not found')
+        console.error('Assessment id not found')
         setLoading(false)
         return
       }
     }
     setTimeout(() => {
-      setLoading(true)
+      setLoading(false)
       navigate('/assessment')
     }, 1300)
   }

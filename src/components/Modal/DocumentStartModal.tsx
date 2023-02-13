@@ -41,7 +41,6 @@ const DocumentStartModal = ({ open, documentName, onClose, documentId, refresh, 
 
     const handleSetDate = async () => {
         setLoading(true)
-        console.log('Creating...')
         const reqBody = { classId: window.location.pathname.split('/')[2], documentId, startDate, endDate }
         const res = await setDateDocument(reqBody);
         if (res.statusCode !== 200) {

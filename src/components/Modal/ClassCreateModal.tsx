@@ -34,7 +34,6 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
 
     const handleCreateClass = async () => {
         setLoading(true)
-        console.log('Creating...')
         const reqBody = { name: className, endDate: null, complete: false, major: majorSelect }
         const res = await createClass(reqBody)
         if (res.statusCode !== 201) {

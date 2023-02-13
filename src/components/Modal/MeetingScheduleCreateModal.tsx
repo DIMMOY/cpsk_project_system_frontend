@@ -28,7 +28,6 @@ const MeetingScheduleCreateModal = ({ open, onClose, refresh }: ModalProps) => {
     }
     const handleCreateClass = async () => {
         setLoading(true)
-        console.log('Creating...')
         const reqBody = { name: meetingScheduleName }
         const res = await createMeetingSchedule(reqBody);
         if (res.statusCode !== 201) {

@@ -32,7 +32,6 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
 
     const handleCreateDocument = async () => {
         setLoading(true)
-        console.log('Creating...')
         const reqBody = { name: documentName, description }
         const res = await createDocument(reqBody);
         if (res.statusCode !== 201) {
