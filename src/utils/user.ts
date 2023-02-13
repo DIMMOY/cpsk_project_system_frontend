@@ -26,7 +26,11 @@ export const changeCurrentRole = async (reqBody: any) => {
 export const joinClass = async (reqBody: any) => {
   try {
     await getToken();
-    return await axios.post(`${url}/join`, reqBody)
+    await axios.post(`${url}/class/join`, reqBody)
+    return {
+      statusCode: 200,
+      message: 'Join class Successful',
+  };
   } catch (error) {
     console.error(error);
     return {

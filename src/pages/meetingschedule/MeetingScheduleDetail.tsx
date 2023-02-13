@@ -45,7 +45,6 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
 
   const getData = async (detail: string) => {
     const result = await getSendMeetingScheduleInClass(classId, projectId, meetingScheduleId)
-    console.log(result.data)
     setName(result.data.meetingSchedule.name)
     setDueDate(moment(result.data.endDate).format('DD/MM/YYYY HH:mm'))
     setStatus(result.data.sendStatus)
