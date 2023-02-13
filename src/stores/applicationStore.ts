@@ -3,15 +3,17 @@ import { makeAutoObservable } from "mobx";
 
 class applicationStore {
     user: User | null = null
-    userDisplayName = ''
+    userDisplayName: string | null = ''
+    projectId: string | null = null
+    classroom: any | null = null;
+    userId: string | null = null;
     isShowNavBar = false
     isShowSideBar = false
+    isShowMenuSideBar = true
     isAdmin = false
     isAdvisor = false
     isStudent = false
     currentRole = 0
-    classroom: string | null = null;
-    userId: string | null = null;
 
     constructor() {
         makeAutoObservable(this)
@@ -21,12 +23,20 @@ class applicationStore {
         this.user = user as User
     }
 
+    setProjectId(projectId: string) {
+        this.projectId = projectId as string
+    }
+
     setIsShowNavBar(isShowNavBar: boolean) {
         this.isShowNavBar = isShowNavBar as boolean
     }
 
     setIsShowSideBar(isShowSideBar: boolean) {
         this.isShowSideBar = isShowSideBar as boolean
+    }
+
+    setIsShowMenuSideBar(isShowMenuSideBar: boolean) {
+        this.isShowMenuSideBar = isShowMenuSideBar as boolean
     }
 
     setRole(roles: Array<any>) {

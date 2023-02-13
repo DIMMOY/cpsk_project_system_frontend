@@ -1,10 +1,12 @@
 import axios from "axios"
 import { responsePattern } from "../constants/responsePattern"
+import { getToken } from "./auth"
 
 const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/meeting-schedule`
 
 export const createMeetingSchedule = async (reqBody: any) => {
     try {
+        await getToken()
         await axios.post(url, reqBody)
         return {
             statusCode: 201,
@@ -23,6 +25,7 @@ export const createMeetingSchedule = async (reqBody: any) => {
 
 export const sendMeetingSchedule = async (reqBody: any, projectId: string, mtId: string) => {
     try {
+        await getToken()
         const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/project/${projectId}/meeting-schedule/${mtId}`
         await axios.post(url, reqBody)
         return {
@@ -43,6 +46,7 @@ export const sendMeetingSchedule = async (reqBody: any, projectId: string, mtId:
 
 export const setDateMeetingSchedule = async (reqBody: any) => {
     try {
+        await getToken()
         const { startDate, endDate } = reqBody
         const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class/${reqBody.classId}/meeting-schedule/${reqBody.meetingScheduleId}/date`
         await axios.put(url, { startDate, endDate })
@@ -63,6 +67,7 @@ export const setDateMeetingSchedule = async (reqBody: any) => {
 
 export const listMeetingSchedule = async (reqQuery: any) => {
     try {
+        await getToken()
         const resAxios = await axios.get(url, {params: reqQuery})
         return {
             data: resAxios.data.data
@@ -80,6 +85,7 @@ export const listMeetingSchedule = async (reqQuery: any) => {
 
 export const listMeetingScheduleInClass = async (reqQuery: any, classId: string) => {
     try {
+        await getToken()
         const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class/${classId}/meeting-schedule`
         const resAxios = await axios.get(url, {params: reqQuery})
         return {
@@ -98,6 +104,7 @@ export const listMeetingScheduleInClass = async (reqQuery: any, classId: string)
 
 export const listSendMeetingScheduleInClass = async (reqQuery: any, classId: string, projectId: string) => {
     try {
+        await getToken()
         const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class/${classId}/project/${projectId}/meeting-schedule`
         const resAxios = await axios.get(url, {params: reqQuery})
         return {
@@ -116,6 +123,7 @@ export const listSendMeetingScheduleInClass = async (reqQuery: any, classId: str
 
 export const getSendMeetingScheduleInClass = async (classId: string, projectId: string, mtId: string) => {
     try {
+        await getToken()
         const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class/${classId}/project/${projectId}/meeting-schedule/${mtId}/detail`
         const resAxios = await axios.get(url)
         return {
@@ -134,6 +142,7 @@ export const getSendMeetingScheduleInClass = async (classId: string, projectId: 
 
 export const cancelSendMeetingSchedule = async (projectId: string, mtId: string) => {
     try {
+        await getToken()
         const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/project/${projectId}/meeting-schedule/${mtId}`
         await axios.delete(url)
         return {
@@ -154,6 +163,7 @@ export const cancelSendMeetingSchedule = async (projectId: string, mtId: string)
 
 export const disabeMeetingScheduleInClass = async (classId: string, mtId: string) => {
     try {
+        await getToken()
         const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class/${classId}/meeting-schedule/${mtId}/date/status`
         await axios.patch(url, {status: false})
         return {

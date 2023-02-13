@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { firebaseAuth } from '../config/firebase';
 import applicationStore from '../stores/applicationStore';
 
@@ -82,4 +82,14 @@ export const signOutWithGoogle = async () => {
       errorMsg: 'ออกจากระบบผิดพลาด กรุณาลองใหม่อีกครั้งในภายหลัง'
     }
   }
+}
+
+export const getToken = async () => {
+  onAuthStateChanged(firebaseAuth, async (user) => {
+    if (user && user.email?.indexOf('@ku.th') !== -1) {
+      const accessToken = await user.getIdToken()
+      axios.defaults.headers.common['Authorization'] = accessToken;
+      applicationStore.setUser(user)
+    }
+  })
 }

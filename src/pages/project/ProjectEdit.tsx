@@ -14,10 +14,10 @@ import { LoadingButton } from '@mui/lab';
 import { createAssessment, updateAssessment } from '../../utils/assessment';
 
 interface PreviewProps {
-  newForm: boolean
+  newProject: boolean
 }
 
-const AssessmentEdit = ({ newForm }: PreviewProps) => {
+const ProjectEdit = ({ newProject }: PreviewProps) => {
   const { isAdmin, currentRole } = applicationStore
 
   const location = useLocation()
@@ -30,7 +30,7 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
   const [feedBack, setFeedBack] = useState<boolean>(true)
   const [assessBy, setAssessBy] = useState<number>(0)
   const [score, setScore] = useState<number>(5)
-  const [autoCalculate, setAutoCalculate] = useState<boolean>(true)
+  const [autoScore, setAutoScore] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const [form, setForm] = useState<Array<any>>([{ question: '', description: '', weight: 1, limitScore: 5, type: 1 }])
   const [scrollToBottom, setScrollToBottom] = useState<number>(0);
@@ -40,13 +40,13 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
   useEffect(() => {
     if (currentRole == 0) navigate('/')
     applicationStore.setClassroom(null)
-    if (!newForm) {
+    if (!newProject) {
       if (!location.state) {
         navigate('/assessment')
       }
 
       else {
-        const { _id, name, description, form, score, assessBy, feedBack, autoCalculate } = location.state.assessment
+        const { _id, name, description, form, score, assessBy, feedBack } = location.state.assessment
         setId(_id)
         setName(name)
         setDescription(description)
@@ -55,7 +55,6 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
         setAssessBy(assessBy)
         setFeedBack(feedBack)
         setTitleSubmit(true)
-        setAutoCalculate(autoCalculate)
         const newFormSubmit = [] as Array<boolean>
         form.forEach(() => {
           newFormSubmit.push(true)
@@ -76,13 +75,13 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
       setForm([...form, { question: '', description: '', weight: 1, limitScore: 5, type: 1 }])
       setFormSubmit([...formSubmit, false])
       setScrollToBottom((scrollToBottom) => scrollToBottom + 1)
-      if (autoCalculate) {
+      if (autoScore) {
         setScore(score + 5)
       }
     }
   }
   const handleOnRemoveQuestion = (index: number) => {
-    if (autoCalculate) {
+    if (autoScore) {
       setScore(score - (form[index].limitScore * form[index].weight))
     }
     setForm(form.filter((_, i) => i !== index));
@@ -91,8 +90,8 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
 
   const handleOnSubmit = async () => {
     setLoading(true)
-    const reqBody = { name, description, form, feedBack, assessBy, score, autoCalculate }
-    if (newForm) {
+    const reqBody = { name, description, form, feedBack, assessBy, score }
+    if (newProject) {
       console.log('Creating...')
       const res = await createAssessment(reqBody)
       if (res.statusCode !== 201) {
@@ -138,7 +137,7 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
       if (type === 'limitScore' && newValue > 5) newForm[index].type = 2
       newForm[index][type] = newValue
 
-      if (autoCalculate) {
+      if (autoScore) {
         const sum = (newForm[index].limitScore * newForm[index].weight) - (oldLimitScore * oldWeight)
         setScore(score + sum)
       }
@@ -162,7 +161,7 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
       })
       setScore(sum)
     }
-    setAutoCalculate(value)
+    setAutoScore(value)
   }
 
   const handleOnScoreChange = (value: string) => {
@@ -293,7 +292,7 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
         <Box sx={{display: "flex", flexDirection: "column"}}>
           <Box sx={{display: "flex", flexDirection: "row", marginBottom: 1}}>
             <Checkbox
-              checked={autoCalculate}
+              checked={autoScore}
               sx={{
                 padding: 0,
                 boxShadow: "none",
@@ -319,7 +318,7 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
           <TextField
             required
             value={score}
-            disabled={autoCalculate}
+            disabled={autoScore}
             id={"question-score-1"}
             size="medium"
             // value={e.limitScore}
@@ -630,4 +629,4 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
   )
 }
 
-export default AssessmentEdit
+export default ProjectEdit

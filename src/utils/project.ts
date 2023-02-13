@@ -1,7 +1,9 @@
 import axios from "axios"
+import { getToken } from "./auth"
 
 export const listProjectInClass = async (reqQuery: any, classId: string) => {
     try {
+        await getToken()
         const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/class/${classId}/project`
         const resAxios = await axios.get(url, {params: reqQuery})
         return {

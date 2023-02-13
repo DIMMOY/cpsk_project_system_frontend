@@ -81,7 +81,7 @@ export const NavBar = observer(() => {
     async function getData() {
       if (pathname[1] === 'class' && pathname[2]) {
         const classroom = await getClassById(pathname[2])
-        applicationStore.setClassroom(classroom.data.name)
+        applicationStore.setClassroom(classroom.data)
       }
     }
     getData()
@@ -137,7 +137,7 @@ export const NavBar = observer(() => {
               fontWeight: 500
             }}
           >
-            {'Classroom: ' + classroom}
+            {'Classroom: ' + classroom.name}
           </Typography> : 
           <></> 
         }

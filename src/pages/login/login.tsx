@@ -1,11 +1,11 @@
 import React, { Component, useEffect, useState } from 'react'
 import { Button, Container, Box } from '@mui/material'
-import logo from '../assets/images/logo.png'
+import logo from '../../assets/images/logo.png'
 import { useMediaQuery } from 'react-responsive'
-import logoGoogle from '../assets/images/google_logo.png'
+import logoGoogle from '../../assets/images/google_logo.png'
 import Typography from '@mui/material/Typography'
-import { signInWithGoogle } from '../utils/auth'
-import { theme } from '../styles/theme'
+import { signInWithGoogle } from '../../utils/auth'
+import { theme } from '../../styles/theme'
 
 export default function Login () {
   const isBigScreen = useMediaQuery({ query: '(min-width: 850px)' })

@@ -20,8 +20,8 @@ const useStyles = makeStyles({
 })
 
 
-const ProjectHomePreview = (props: { isCommittee: boolean }) => {
-  const { isCommittee } = props
+const ProjectHomePreview = (props: { isStudent: boolean, isCommittee: boolean }) => {
+  const { isStudent, isCommittee } = props
   const classes = useStyles()
   const isBigScreen = useMediaQuery({ query: '(min-width: 1440px)' })
 

@@ -1,7 +1,7 @@
 import './styles/globals.scss'
 import React, { Component } from 'react'
 import { NavBar } from './components/Navbar/Navbar'
-import Login from './pages/login'
+import Login from './pages/login/login'
 import StudentHomePage from './pages/student/homepage'
 import ProjectHomePreview from './pages/project/ProjectHomePreview'
 import DocumentHomePreview from './pages/document/DocumentHomePreview'

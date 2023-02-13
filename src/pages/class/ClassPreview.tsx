@@ -184,7 +184,7 @@ const ClassPreview = observer(() => {
             <ListPreviewButton 
               key={c._id}
               onClick={() => {
-                applicationStore.setClassroom(c.name)
+                applicationStore.setClassroom(c)
                 navigate(`/class/${c._id as string}/project`)
               }}
             >

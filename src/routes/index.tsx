@@ -6,7 +6,7 @@ import PublicRoute from './PublicRoute'
 import PrivateRoute from './PrivateRoute'
 
 import { NavBar } from "../components/Navbar/Navbar"
-import Login from '../pages/login'
+import Login from '../pages/login/login'
 import ProjectHomePreview from '../pages/project/ProjectHomePreview'
 import DocumentHomePreview from '../pages/document/DocumentHomePreview'
 import MeetingScheduleHomePreview from '../pages/meetingschedule/MeetingScheduleHomePreview'
@@ -24,6 +24,7 @@ import DocumentPreview from '../pages/document/DocumentPreview'
 import MeetingSchedulePreview from '../pages/meetingschedule/MeetingSchedulePreview'
 import AssessmentPage from '../pages/assessment'
 import AssessmentEdit from '../pages/assessment/AssessmentEdit'
+import ClassJoining from '../pages/class/ClassJoining'
 
 
 const Routers: React.FC = (): JSX.Element => {
@@ -58,6 +59,8 @@ const Routers: React.FC = (): JSX.Element => {
                     <Route path = '/assessment' element={<AssessmentPage/>}/>
                     <Route path = '/assessment/create' element={<AssessmentEdit newForm={true}/>}/>
                     <Route path = '/assessment/edit' element={<AssessmentEdit newForm={false}/>}/>
+
+                    <Route path = '/test' element={<ClassJoining></ClassJoining>}/>
                 </Route>
 
             </Routes>

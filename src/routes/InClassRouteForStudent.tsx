@@ -3,15 +3,12 @@ import { observer } from "mobx-react-lite";
 import { Route, Navigate, Outlet } from 'react-router-dom'
 import applicationStore from "../stores/applicationStore";
 
-const PublicRoute = observer(
+const InClassRouteForStudent = observer(
     () => {
         const { user } = applicationStore
-        const isLogin = !!user
-        applicationStore.setIsShowNavBar(isLogin)
 
-
-        return isLogin ? <Navigate to = "/" /> : <Outlet />
+        return <Outlet />
     }
 )
 
-export default PublicRoute
+export default InClassRouteForStudent

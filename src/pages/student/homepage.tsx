@@ -21,7 +21,7 @@ export default function StudentHomePage (props: {
         </h1>
             )
           : (
-        <ProjectHomePreview isCommittee={false}></ProjectHomePreview>
+        <ProjectHomePreview isStudent={true} isCommittee={false}></ProjectHomePreview>
             )}
     </Box>
   )

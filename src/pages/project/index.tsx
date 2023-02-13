@@ -8,7 +8,7 @@ const ProjectPage = () => {
     const { currentRole, isAdmin, isAdvisor } = applicationStore
     if ((currentRole == 2 && isAdmin)) return <AdminProjectPreview/>
     else if ((currentRole == 1 && isAdvisor)) return <ProjectPreview/>
-    return <ProjectHomePreview isCommittee={false}/>
+    return <ProjectHomePreview isStudent={true} isCommittee={false}/>
 }
 
 export default ProjectPage
