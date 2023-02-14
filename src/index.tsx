@@ -15,7 +15,7 @@ const root = ReactDOM.createRoot(
 onAuthStateChanged(firebaseAuth, async (user) => {
   if (user && user.email?.indexOf('@ku.th') !== -1) {
     const accessToken = await user.getIdToken()
-    axios.defaults.headers.common['Authorization'] = accessToken;
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
     applicationStore.setUser(user)
     const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/user`
     const userRes = await axios.patch(`${url}/last-login`)

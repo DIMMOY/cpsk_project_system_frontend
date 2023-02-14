@@ -88,7 +88,7 @@ export const getToken = async () => {
   onAuthStateChanged(firebaseAuth, async (user) => {
     if (user && user.email?.indexOf('@ku.th') !== -1) {
       const accessToken = await user.getIdToken()
-      axios.defaults.headers.common['Authorization'] = accessToken;
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
       applicationStore.setUser(user)
     }
   })
