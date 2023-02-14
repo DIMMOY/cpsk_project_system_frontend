@@ -6,13 +6,11 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AdminCommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
-import { ListPreviewButton } from '../../styles/layout/_button';
+import { ActivateButton, CancelButton, EditButton, ListPreviewButton, useStylesButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
 import AdminSidebar from '../../components/Sidebar/AdminSidebar';
-import Button from '@mui/material/Button';
-import DocumentStartModal from '../../components/Modal/DocumentStartModal';
 import { disabeMeetingScheduleInClass, listMeetingScheduleInClass } from '../../utils/meetingSchedule';
 import MeetingScheduleStartModal from '../../components/Modal/MeetingScheduleStartModal';
 import CancelModal from '../../components/Modal/CancelModal';
@@ -20,8 +18,9 @@ import { theme } from '../../styles/theme';
 import { observer } from 'mobx-react';
 
 const MeetingSchedulePreview = observer(() => {
+    const classesButton = useStylesButton()
     const navigate = useNavigate()
-    const location = useLocation();
+    const location = useLocation()
     const search = new URLSearchParams(location.search);
     const { isAdmin, isAdvisor, currentRole } = applicationStore
   
@@ -38,7 +37,7 @@ const MeetingSchedulePreview = observer(() => {
     const [lastMeetingScheduleName, setLastMeetingScheduleName] = useState<string | null>(null)
     const [lastMeetingScheduleId, setLastMeetingScheduleId] = useState<string | null>(null)
     
-    const isBigScreen = useMediaQuery({ query: '(min-width: 650px)' })
+    const isBigScreen = useMediaQuery({ query: '(min-width: 900px)' })
     const [meetingSchedules, setMeetingSchedules] = useState<Array<any>>([])
 
     const getData = async () => {
@@ -74,7 +73,8 @@ const MeetingSchedulePreview = observer(() => {
       })
     }
   
-    const handleOpenSetDateModal = (name: string, id: string, startDate: string, endDate: string | null) => {
+    const handleOpenSetDateModal = (name: string, id: string, startDate: string, endDate: string | null, event: any) => {
+      event.stopPropagation()
       setLastMeetingScheduleName(name)
       setLastMeetingScheduleId(id)
       setStartDate(startDate)
@@ -84,7 +84,8 @@ const MeetingSchedulePreview = observer(() => {
   
     const handleCloseSetDateModal = () => setOpenStartDate(false)
 
-    const handleOpenCancelModal = (name: string, id: string) => {
+    const handleOpenCancelModal = (name: string, id: string, event: any) => {
+      event.stopPropagation()
       setLastMeetingScheduleName(name)
       setLastMeetingScheduleId(id)
       setOpenCancel(true)
@@ -179,78 +180,77 @@ const MeetingSchedulePreview = observer(() => {
                     fontSize: 'calc(30px + 0.2vw)',
                     fontFamily: 'Prompt',
                     fontWeight: 600,
-                    color: theme.color.text.primary
+                    color: theme.color.text.primary,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    display: "inline-block",
+                    textAlign: "left",
+                    width: isBigScreen ? "70%" : "40%"
                   }}
                 >
                   {c.name}
                 </Typography>
+
                 {
                   !c.statusInClass && isAdmin && currentRole === 2 ? 
-                  <Button sx={{
-                      position: 'absolute',
-                      right: 'calc(20px + 1vw)',
-                      width: "7rem",
-                      height: "2.8rem",
-                      fontSize: 20,
-                      background: theme.color.button.success,
-                      borderRadius: '10px',
-                      color: theme.color.text.default,
-                      boxShadow: 'none',
-                      textTransform: 'none',
-                      '&:hover': { background: '#43BF6E' },
-                      zIndex: 2
+                  <ActivateButton 
+                    sx={{
+                        position: 'absolute',
+                        right: 'calc(20px + 1vw)',
+                        zIndex: 2
                       }}
-                      onClick={() => 
-                        handleOpenSetDateModal(c.name, c._id, moment(new Date()).format('YYYY-MM-DDTHH:mm'), null)}
+                    onClick={(event) => 
+                      handleOpenSetDateModal(
+                        c.name, 
+                        c._id, 
+                        moment(new Date()).format('YYYY-MM-DDTHH:mm'), 
+                        null,
+                        event,
+                      )}
                   >
-                          เปิดใช้งาน
-                  </Button> : 
+                      เปิดใช้งาน
+                  </ActivateButton> : 
                   <></>
-              }
-              {
-                  c.statusInClass && isAdmin && currentRole === 2 ? 
-                  <Button sx={{
-                      position: 'absolute',
-                      right: 'calc(150px + 1vw)',
-                      width: "5rem",
-                      height: "2.8rem",
-                      fontSize: 20,
-                      background: theme.color.button.warning,
-                      borderRadius: '10px',
-                      color: theme.color.text.default,
-                      boxShadow: 'none',
-                      textTransform: 'none',
-                      '&:hover': { background: '#FBBC0E' },
-                      zIndex: 2
-                      }}
-                      onClick={() => handleOpenSetDateModal(c.name, c._id, c.startDate, c.endDate)}
-                  >
-                          แก้ไข
-                  </Button> : 
-                  <></>
-              }
-              {
-                  c.statusInClass && isAdmin && currentRole === 2 ? 
-                  <Button sx={{
-                      position: 'absolute',
-                      right: 'calc(20px + 1vw)',
-                      width: "7rem",
-                      height: "2.8rem",
-                      fontSize: 20,
-                      background: theme.color.button.error,
-                      borderRadius: '10px',
-                      color: theme.color.text.default,
-                      boxShadow: 'none',
-                      textTransform: 'none',
-                      '&:hover': { background: '#FF545E' },
-                      zIndex: 2
-                      }}
-                      onClick={() => handleOpenCancelModal(c.name, c._id)}
-                  >
-                          ปิดใช้งาน
-                  </Button> : 
-                  <></>
-              }
+                }
+                {
+                    c.statusInClass && isAdmin && currentRole === 2 ? 
+                    <EditButton sx={{
+                        position: 'absolute',
+                        right: 'calc(150px + 1vw)',
+                        zIndex: 2
+                        }}
+                        onClick={(event) => 
+                          handleOpenSetDateModal(
+                            c.name, 
+                            c._id, 
+                            c.startDate, 
+                            c.endDate,
+                            event,
+                          )}
+                    >
+                            แก้ไข
+                    </EditButton> : 
+                    <></>
+                }
+                {
+                    c.statusInClass && isAdmin && currentRole === 2 ? 
+                    <CancelButton sx={{
+                        position: 'absolute',
+                        right: 'calc(20px + 1vw)',
+                        zIndex: 2
+                        }}
+                        onClick={(event) => 
+                          handleOpenCancelModal(
+                            c.name, 
+                            c._id,
+                            event
+                        )}
+                    >
+                            ปิดใช้งาน
+                    </CancelButton> : 
+                    <></>
+                }
   
                 <Typography
                   sx={{

@@ -6,12 +6,12 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AdminCommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
-import { ListPreviewButton } from '../../styles/layout/_button';
+import { ActivateButton, CancelButton, EditButton, ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
 import AdminSidebar from '../../components/Sidebar/AdminSidebar';
-import { disabeDocumentInClass, listDocumentInClass, listSendDocumentInClass } from '../../utils/document';
+import { disabeDocumentInClass, listDocumentInClass } from '../../utils/document';
 import Button from '@mui/material/Button';
 import DocumentStartModal from '../../components/Modal/DocumentStartModal';
 import { theme } from '../../styles/theme';
@@ -37,7 +37,7 @@ const DocumentPreview = observer(() => {
   const [lastDocumentName, setLastDocumentName] = useState<string | null>(null)
   const [lastDocumentId, setLastDocumentId] = useState<string | null>(null)
   
-  const isBigScreen = useMediaQuery({ query: '(min-width: 650px)' })
+  const isBigScreen = useMediaQuery({ query: '(min-width: 900px)' })
   const [documents, setDocuments] = useState<Array<any>>([])
 
   const getData = async () => {
@@ -73,7 +73,8 @@ const DocumentPreview = observer(() => {
     })
   }
 
-  const handleOpenSetDateModal = (name: string, id: string, startDate: string, endDate: string | null) => {
+  const handleOpenSetDateModal = (name: string, id: string, startDate: string, endDate: string | null, event: any) => {
+    event.stopPropagation()
     setLastDocumentName(name)
     setLastDocumentId(id)
     setStartDate(startDate)
@@ -83,7 +84,8 @@ const DocumentPreview = observer(() => {
 
   const handleCloseSetDateModal = () => setOpenStartDate(false)
 
-  const handleOpenCancelModal = (name: string, id: string) => {
+  const handleOpenCancelModal = (name: string, id: string, event: any) => {
+    event.stopPropagation()
     setLastDocumentName(name)
     setLastDocumentId(id)
     setOpenCancel(true)
@@ -178,78 +180,76 @@ const DocumentPreview = observer(() => {
                   fontSize: 'calc(30px + 0.2vw)',
                   fontFamily: 'Prompt',
                   fontWeight: 600,
-                  color: theme.color.text.primary
+                  color: theme.color.text.primary,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  display: "inline-block",
+                  textAlign: "left",
+                  width: isBigScreen ? "70%" : "40%"
                 }}
               >
                 {c.name}
               </Typography>
-              {
-                !c.statusInClass && isAdmin && currentRole === 2 ? 
-                <Button sx={{
-                    position: 'absolute',
-                    right: 'calc(20px + 1vw)',
-                    width: "7rem",
-                    height: "2.8rem",
-                    fontSize: 20,
-                    background: theme.color.button.success,
-                    borderRadius: '10px',
-                    color: theme.color.text.default,
-                    boxShadow: 'none',
-                    textTransform: 'none',
-                    '&:hover': { background: '#43BF6E' },
-                    zIndex: 2
-                    }}
-                    onClick={() => 
-                      handleOpenSetDateModal(c.name, c._id, moment(new Date()).format('YYYY-MM-DDTHH:mm'), null)}
+            {
+              !c.statusInClass && isAdmin && currentRole === 2 ? 
+              <ActivateButton 
+                sx={{
+                  position: 'absolute',
+                  right: 'calc(20px + 1vw)',
+                  zIndex: 2
+                }}
+                onClick={(event) => 
+                  handleOpenSetDateModal(
+                    c.name, 
+                    c._id, 
+                    moment(new Date()).format('YYYY-MM-DDTHH:mm'), 
+                    null,
+                    event,
+                    )}
                 >
-                        เปิดใช้งาน
-                </Button> : 
+                  เปิดใช้งาน
+                </ActivateButton> : 
                 <></>
             }
             {
-                c.statusInClass && isAdmin && currentRole === 2 ? 
-                <Button sx={{
-                    position: 'absolute',
-                    right: 'calc(150px + 1vw)',
-                    width: "5rem",
-                    height: "2.8rem",
-                    fontSize: 20,
-                    background: theme.color.button.warning,
-                    borderRadius: '10px',
-                    color: theme.color.text.default,
-                    boxShadow: 'none',
-                    textTransform: 'none',
-                    '&:hover': { background: '#FBBC0E' },
-                    zIndex: 2
-                    }}
-                    onClick={() => handleOpenSetDateModal(c.name, c._id, c.startDate, c.endDate)}
-                >
-                        แก้ไข
-                </Button> : 
-                <></>
-            }
-            {
-                c.statusInClass && isAdmin && currentRole === 2 ? 
-                <Button sx={{
-                    position: 'absolute',
-                    right: 'calc(20px + 1vw)',
-                    width: "7rem",
-                    height: "2.8rem",
-                    fontSize: 20,
-                    background: theme.color.button.error,
-                    borderRadius: '10px',
-                    color: theme.color.text.default,
-                    boxShadow: 'none',
-                    textTransform: 'none',
-                    '&:hover': { background: '#FF545E' },
-                    zIndex: 2
-                    }}
-                    onClick={() => handleOpenCancelModal(c.name, c._id)}
-                >
-                        ปิดใช้งาน
-                </Button> : 
-                <></>
-            }
+                    c.statusInClass && isAdmin && currentRole === 2 ? 
+                    <EditButton sx={{
+                        position: 'absolute',
+                        right: 'calc(150px + 1vw)',
+                        zIndex: 2
+                        }}
+                        onClick={(event) => 
+                          handleOpenSetDateModal(
+                            c.name, 
+                            c._id, 
+                            c.startDate, 
+                            c.endDate,
+                            event,
+                          )}
+                    >
+                            แก้ไข
+                    </EditButton> : 
+                    <></>
+                }
+                {
+                    c.statusInClass && isAdmin && currentRole === 2 ? 
+                    <CancelButton sx={{
+                        position: 'absolute',
+                        right: 'calc(20px + 1vw)',
+                        zIndex: 2
+                        }}
+                        onClick={(event) => 
+                          handleOpenCancelModal(
+                            c.name, 
+                            c._id,
+                            event
+                        )}
+                    >
+                            ปิดใช้งาน
+                    </CancelButton> : 
+                    <></>
+                }
 
               <Typography
                 sx={{
@@ -264,7 +264,7 @@ const DocumentPreview = observer(() => {
                 { 
                   isAdmin && currentRole === 2 ? 
                     c.statusInClass ?
-                    `เปิดใช้งานวันที่ ${moment(c.startDate).format('DD/MM/YYYY HH:mm')}` : 
+                    ((isBigScreen ? `เปิดใช้งานวันที่ ` : '') + `${moment(c.startDate).format('DD/MM/YYYY HH:mm')}`) : 
                     'ยังไม่ถูกใช้ในคลาสนี้' :
                   `กำหนดส่งภายในวันที่ ${moment(c.endDate).format('DD/MM/YYYY HH:mm')}`
                 }

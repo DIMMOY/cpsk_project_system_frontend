@@ -37,19 +37,6 @@ const ClassPreview = observer(() => {
   const isBigScreen = useMediaQuery({ query: '(min-width: 700px)' })
   const [classes, setClasses] = useState<Array<any>>([])
 
-  useEffect(() => {
-      if (currentRole == 0) navigate('/')
-      applicationStore.setClassroom(null)
-      applicationStore.setIsShowSideBar(false)
-      applicationStore.setIsShowMenuSideBar(false)
-      async function getData () {
-        const result = await listClass({ sort: sortSelect, select: classFilter, major: majorFilter})
-        setClasses(result.data as Array<any>);
-      }
-      getData()
-    }, [classFilter, sortSelect, majorFilter] 
-  )
-
   const handleOpenModal = () => setOpen(true);
   const handleCloseModal = () => setOpen(false)
   const handleClassFilterChange = (event: SelectChangeEvent) => {
@@ -77,6 +64,19 @@ const ClassPreview = observer(() => {
     const result = await listClass({ sort: sortSelect, select: classFilter, major: majorFilter} )
     setClasses(result.data as Array<any>);
   }
+
+  useEffect(() => {
+      if (currentRole == 0) navigate('/')
+      applicationStore.setClassroom(null)
+      applicationStore.setIsShowSideBar(false)
+      applicationStore.setIsShowMenuSideBar(false)
+      async function getData () {
+        const result = await listClass({ sort: sortSelect, select: classFilter, major: majorFilter})
+        setClasses(result.data as Array<any>);
+      }
+      getData()
+    }, [classFilter, sortSelect, majorFilter] 
+  )
 
   return (
     <AdminCommonPreviewContainer>

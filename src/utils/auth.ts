@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
-import { firebaseAuth } from '../config/firebase';
+import { firebaseApp, firebaseAuth } from '../config/firebase';
+import firebase from 'firebase/app';
 import applicationStore from '../stores/applicationStore';
 
 export const signInWithGoogle = async () => {
@@ -85,7 +86,7 @@ export const signOutWithGoogle = async () => {
 }
 
 export const getToken = async () => {
-  onAuthStateChanged(firebaseAuth, async (user) => {
+  await onAuthStateChanged(firebaseAuth, async (user) => {
     if (user && user.email?.indexOf('@ku.th') !== -1) {
       const accessToken = await user.getIdToken()
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;

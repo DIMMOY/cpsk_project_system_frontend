@@ -58,7 +58,7 @@ export const NavBar = observer(() => {
   };
 
   const handleChangeCurrentRole = async (role: number) => {
-    const change = await changeCurrentRole({userId, role})
+    const change = await changeCurrentRole({role})
     if (change.statusCode === 200) {
       navigate('/')
       window.location.reload()
@@ -70,7 +70,6 @@ export const NavBar = observer(() => {
   }
 
   useEffect(() => {
-    console.log('การเปลี่ยน role นี้เป็นการใช้วิธีชั่วคราวโดยการส่ง userId ไปโดยตรง กรุณากลับมาแก้ไขถ้าพร้อมแล้ว')
     const menuItems = []
     if (isStudent && currentRole !== 0) menuItems.push({name: "เปลี่ยนโหมด 'นิสิต'" as string, role: 0 as number})
     if (isAdvisor && currentRole !== 1) menuItems.push({name: "เปลี่ยนโหมด 'อาจารย์ที่ปรึกษา'" as string, role: 1 as number})

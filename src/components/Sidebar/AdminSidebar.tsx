@@ -80,7 +80,7 @@ const AdminSidebar = observer(() => {
           }}
         >
           <Toolbar />
-          <Box sx={{ overflow: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '70%', minHeight: '20rem', flexDirection: 'column'}}>
+          <Box sx={{ overflow: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40rem', minHeight: '20rem', flexDirection: 'column'}}>
             <List>
               {menuText.map((text, index) => (
                 <ListItem key={text} disablePadding sx={{fontWeight: 100}}>

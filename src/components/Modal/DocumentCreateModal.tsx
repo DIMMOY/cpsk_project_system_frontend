@@ -14,15 +14,16 @@ interface ModalProps {
 }
 
 const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
-  const [documentName, setDocumentName] = useState<string | null>(null)
-  const [description, setDescription] = useState<string | null>(null)
-  const [canSubmit, setCanSubmit] = useState<boolean>(false) 
+  const [documentName, setDocumentName] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
+  const [submit, setSubmit] = useState<boolean>(false) 
   const [loading, setLoading] = useState<boolean>(false)
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
 
     const handleDocumentNameChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if ((event.target.value.replace(/(\r\n|\n|\r)/gm, '').replace(/\s/g,'') == '')) setSubmit(false)
+        else setSubmit(true)
         setDocumentName(event.target.value as string)
-        setCanSubmit(event.target.value ? true : false)
     }
 
     const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -33,6 +34,7 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
     const handleCreateDocument = async () => {
         setLoading(true)
         const reqBody = { name: documentName, description }
+        console.log(reqBody)
         const res = await createDocument(reqBody);
         if (res.statusCode !== 201) {
             console.error(res.errorMsg)
@@ -43,8 +45,9 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
             refresh()
         }, 1000)
         setTimeout(() => {
-            setDocumentName(null)
-            setCanSubmit(false)
+            setDocumentName('')
+            setDescription('')
+            setSubmit(false)
             setLoading(false)
         }, 1300)
     }
@@ -52,8 +55,9 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
     const handleCancel = () => {
         onClose()
         setTimeout(() => {
-            setDocumentName(null)
-            setCanSubmit(false)
+            setDocumentName('')
+            setDescription('')
+            setSubmit(false)
             setLoading(false)
         }, 300)
     }
@@ -197,7 +201,7 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                         backgroundColor: theme.color.button.disable,
                         }
                     }}
-                    disabled={!canSubmit}
+                    disabled={!submit}
                 >
                     ยืนยัน
                 </LoadingButton>

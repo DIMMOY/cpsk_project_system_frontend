@@ -205,7 +205,7 @@ const ProjectEdit = ({ newProject }: PreviewProps) => {
               color: theme.color.text.secondary 
             }}
           >
-          {'อีเมลของนักศึกษาที่ทำโปรเจกต์ร่วม'}
+          {'นักศึกษาที่ทำโปรเจกต์ร่วม (ต้องเข้าคลาสมาก่อน)'}
         </Typography>
 
         <TextField
@@ -239,7 +239,7 @@ const ProjectEdit = ({ newProject }: PreviewProps) => {
               color: theme.color.text.secondary 
             }}
           >
-          {'อีเมลของอาจารย์ที่ปรึกษา *'}
+          {'อาจารย์ที่ปรึกษา *'}
         </Typography>
 
         <TextField

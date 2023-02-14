@@ -88,7 +88,13 @@ const ProjectPreview = observer(() => {
                   fontSize: 'calc(30px + 0.2vw)',
                   fontFamily: 'Prompt',
                   fontWeight: 600,
-                  color: theme.color.text.primary
+                  color: theme.color.text.primary,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  display: "inline-block",
+                  textAlign: "left",
+                  width: "90%"
                 }}
               >
                 {c.nameTH}

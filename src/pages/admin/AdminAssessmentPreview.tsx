@@ -7,7 +7,7 @@ import InputLabel from '@mui/material/InputLabel';
 import AddIcon from '@mui/icons-material/Add';
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AdminCommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
-import { ListPreviewButton } from '../../styles/layout/_button';
+import { EditButton, ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
@@ -72,7 +72,7 @@ const AdminAssessmentPreview = observer(() => {
           แบบฟอร์มประเมิน
         </Typography>
         <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: 'row', maxWidth: 700, flexWrap: "wrap" }}>
-          <FormControl sx={{marginRight: '1.5rem', position: 'relative', marginBottom: isBigScreen ? 0 : '1rem'}}>
+          <FormControl sx={{marginRight: '1.5rem', position: 'relative'}}>
             <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
             <Select
                 labelId="select-sort-label"
@@ -135,7 +135,7 @@ const AdminAssessmentPreview = observer(() => {
                   whiteSpace: "nowrap",
                   display: "inline-block",
                   textAlign: "left",
-                  width: "90%"
+                  width: isBigScreen ? "80%" : "60%"
                 }}
               >
                 {c.name}
@@ -152,6 +152,16 @@ const AdminAssessmentPreview = observer(() => {
               >
                 สร้างเมื่อ {moment(c.createdAt).format('DD/MM/YYYY HH:mm')} น.
               </Typography>
+              <EditButton
+                sx={{
+                  position: 'absolute',
+                  right: 'calc(20px + 1vw)',
+                  zIndex: 2
+                }}
+                onClick={() => console.log("TEST")}
+              >
+                แก้ไข
+              </EditButton>
             </ListPreviewButton>
           ))}
         </Box>

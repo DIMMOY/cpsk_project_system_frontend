@@ -47,7 +47,6 @@ const CancelModal = ({ open, onClose, onSubmit, title, description }: ModalProps
             <Box sx={{
                 position: 'absolute',
                 display: 'flex',
-                height: 180,
                 width: '50vw',
                 minWidth: 350,
                 bgcolor: theme.color.background.default,
@@ -73,57 +72,52 @@ const CancelModal = ({ open, onClose, onSubmit, title, description }: ModalProps
                     id="cancel-description"
                     sx={{
                         fontSize: 20, 
-                        fontWeight: 500, 
-                        marginBottom: 1, 
+                        fontWeight: 500,  
                         color: theme.color.text.secondary
                     }}
                 >
                     {description}
                 </Typography>
-                <Button
-                    onClick={handleCancel} 
-                    sx={{
-                        width: "7rem",
-                        height: "2.8rem",   
-                        fontSize: 20,
-                        background: theme.color.button.disable,
-                        borderRadius: '10px',
-                        color: theme.color.text.secondary,
-                        boxShadow: 'none',
-                        textTransform: 'none',
-                        transform: 'translate(-50%, -50%)',
-                        position: 'absolute',
-                        right: 130,
-                        bottom: 10,
-                        '&:hover': { background: theme.color.button.default }
-                    }}
-                >
-                    ยกเลิก
-                </Button>
-                <LoadingButton
-                    onClick={handleOnSubmit}
-                    loading={loading} 
-                    sx={{
-                        width: "7rem",
-                        height: "2.8rem",   
-                        fontSize: 20,
-                        background: theme.color.button.disable,
-                        borderRadius: '10px',
-                        color: theme.color.text.primary,
-                        boxShadow: 'none',
-                        textTransform: 'none',
-                        transform: 'translateY(-50%)',
-                        position: 'absolute',
-                        right: '3rem',
-                        bottom: 10,
-                        '&:hover': { background: theme.color.button.default },
-                        "&:disabled": {
-                        background: theme.color.button.disable,
-                        }
-                    }}
-                >
-                    ยืนยัน
-                </LoadingButton>
+ 
+                <Box sx={{display: "flex", flexDirection: "row", marginTop: 5, justifyContent: "right"}}>
+                    <Button
+                        onClick={handleCancel} 
+                        sx={{
+                            width: "7rem",
+                            height: "2.8rem",   
+                            fontSize: 20,
+                            background: theme.color.button.disable,
+                            borderRadius: '10px',
+                            color: theme.color.text.secondary,
+                            boxShadow: 'none',
+                            textTransform: 'none',
+                            '&:hover': { background: theme.color.button.default },
+                            marginRight: 2,
+                        }}
+                    >
+                        ยกเลิก
+                    </Button>
+                    <LoadingButton
+                        onClick={handleOnSubmit}
+                        loading={loading} 
+                        sx={{
+                            width: "7rem",
+                            height: "2.8rem",   
+                            fontSize: 20,
+                            background: theme.color.button.disable,
+                            borderRadius: '10px',
+                            color: theme.color.text.primary,
+                            boxShadow: 'none',
+                            textTransform: 'none',
+                            '&:hover': { background: theme.color.button.default },
+                            "&:disabled": {
+                            background: theme.color.button.disable,
+                            }
+                        }}
+                    >
+                        ยืนยัน
+                    </LoadingButton>
+                </Box>
             </Box>
             </Grow>
         </Modal>
