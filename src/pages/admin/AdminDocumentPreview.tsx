@@ -11,7 +11,7 @@ import { EditButton, ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
-import DocumentCreateModal from '../../components/Modal/DocumentCreateModal';
+import DocumentEditModal from '../../components/Modal/DocumentEditModal';
 import { listDocument } from '../../utils/document';
 import { theme } from '../../styles/theme';
 import { observer } from 'mobx-react';
@@ -30,6 +30,11 @@ const AdminDocumentPreview = observer(() => {
   const [documents, setDocuments] = useState<Array<any>>([])
   const navigate = useNavigate();
 
+  const [currentDocumentId, setCurrentDocumentId] = useState<string | null>(null)
+  const [currentDocumentName, setCurrentDocumentName] = useState<string>('')
+  const [currentDocumentDescription, setCurrentDocumentDescription] = useState<string>('')
+
+
   useEffect(() => {
       if (currentRole == 0) navigate('/')
       applicationStore.setClassroom(null)
@@ -43,8 +48,15 @@ const AdminDocumentPreview = observer(() => {
     }, [sortSelect] 
   )
 
-  const handleOpenModal = () => setOpen(true)
+  const handleOpenModal = (id: string | null, name: string, description: string) => {
+    setCurrentDocumentId(id)
+    setCurrentDocumentName(name)
+    setCurrentDocumentDescription(description)
+    setOpen(true)
+  }
+
   const handleCloseModal = () => setOpen(false)
+
   const handleSortChange = (event: SelectChangeEvent) => {
     setSortSelect(event.target.value as string);
     navigate({
@@ -91,40 +103,43 @@ const AdminDocumentPreview = observer(() => {
                 <MenuItem value={'name'}>ชื่อรายการ</MenuItem>
             </Select>
             </FormControl>
-          {isAdmin 
-              ? 
-                <Box>  
-                  <Button 
-                    sx={{
-                      borderRadius: '10px', 
-                      background: theme.color.button.primary, 
-                      color: theme.color.text.default, 
-                      boxShadow: 'none', 
-                      textTransform: 'none', 
-                      '&:hover': { background: '#B07CFF' }, 
-                      height: 45, 
-                      weight: 42, 
-                      fontSize: isBigScreen ? 16 : 13, 
-                      padding: isBigScreen ? 1 : 0.5, 
-                      marginRight: '1.5rem'}}
-                      startIcon={<AddIcon sx={{width: 20, height: 20}}></AddIcon>}
-                      onClick={handleOpenModal}
-                  >
-                    สร้างรายการ
-                  </Button>
-                  <DocumentCreateModal
-                    open={open} 
-                    onClose={handleCloseModal}
-                    refresh={refreshData}>
-                  </DocumentCreateModal>
-                </Box>
-              :  <></>
-          }
-        </Box>
+            <Box>  
+              <Button 
+                sx={{
+                  borderRadius: '10px', 
+                  background: theme.color.button.primary, 
+                  color: theme.color.text.default, 
+                  boxShadow: 'none', 
+                  textTransform: 'none', 
+                  '&:hover': { background: '#B07CFF' }, 
+                  height: 45, 
+                  weight: 42, 
+                  fontSize: isBigScreen ? 16 : 13, 
+                  padding: isBigScreen ? 1 : 0.5, 
+                  marginRight: '1.5rem'}}
+                  startIcon={<AddIcon sx={{width: 20, height: 20}}></AddIcon>}
+                  onClick={() => handleOpenModal(null, '', '')}
+              >
+                สร้างรายการ
+              </Button>
+              <DocumentEditModal
+                open={open} 
+                onClose={handleCloseModal}
+                refresh={refreshData}
+                id={currentDocumentId}
+                name={currentDocumentName}
+                description={currentDocumentDescription}
+              >
+              </DocumentEditModal>
+            </Box>
+          </Box>
 
         <Box sx={{ flexDirection: 'column', display: 'flex'}}>
           {documents.map((c) => (
-            <ListPreviewButton key={c._id}>
+            <ListPreviewButton 
+              key={c._id} 
+              onClick={() => handleOpenModal(c._id, c.name, c.description)}
+            >
               <Typography
                 sx={{
                   top: '1.5rem',
@@ -155,16 +170,6 @@ const AdminDocumentPreview = observer(() => {
               >
                 สร้างเมื่อ {moment(c.createdAt).format('DD/MM/YYYY HH:mm')} น.
               </Typography>
-              <EditButton 
-                sx={{
-                  position: 'absolute',
-                  right: 'calc(20px + 1vw)',
-                  zIndex: 2
-                }}
-                onClick={() => console.log("TEST")}
-              >
-                แก้ไข
-              </EditButton>
             </ListPreviewButton>
           ))}
         </Box>

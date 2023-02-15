@@ -150,16 +150,6 @@ const AdminMeetingSchedulePreview = observer(() => {
               >
                 สร้างเมื่อ {moment(c.createdAt).format('DD/MM/YYYY HH:mm')} น.
               </Typography>
-              <EditButton 
-                sx={{
-                  position: 'absolute',
-                  right: 'calc(20px + 1vw)',
-                  zIndex: 2
-                }}
-                onClick={() => console.log("TEST")}
-              >
-                แก้ไข
-              </EditButton>
             </ListPreviewButton>
           ))}
         </Box>

@@ -34,8 +34,8 @@ const DocumentPreview = observer(() => {
   const [openCancel, setOpenCancel] = useState<boolean>(false)
   const [startDate, setStartDate] = useState<string | null>(null)
   const [endDate, setEndDate] = useState<string | null>(null)
-  const [lastDocumentName, setLastDocumentName] = useState<string | null>(null)
-  const [lastDocumentId, setLastDocumentId] = useState<string | null>(null)
+  const [currentDocumentName, setCurrentDocumentName] = useState<string | null>(null)
+  const [currentDocumentId, setCurrentDocumentId] = useState<string | null>(null)
   
   const isBigScreen = useMediaQuery({ query: '(min-width: 900px)' })
   const [documents, setDocuments] = useState<Array<any>>([])
@@ -75,8 +75,8 @@ const DocumentPreview = observer(() => {
 
   const handleOpenSetDateModal = (name: string, id: string, startDate: string, endDate: string | null, event: any) => {
     event.stopPropagation()
-    setLastDocumentName(name)
-    setLastDocumentId(id)
+    setCurrentDocumentName(name)
+    setCurrentDocumentId(id)
     setStartDate(startDate)
     setEndDate(endDate)
     setOpenStartDate(true)
@@ -86,15 +86,15 @@ const DocumentPreview = observer(() => {
 
   const handleOpenCancelModal = (name: string, id: string, event: any) => {
     event.stopPropagation()
-    setLastDocumentName(name)
-    setLastDocumentId(id)
+    setCurrentDocumentName(name)
+    setCurrentDocumentId(id)
     setOpenCancel(true)
   }
 
   const handleCloseCancelModal = () => setOpenCancel(false)
 
   const handleCancelSubmit = async () => {
-    const result = await disabeDocumentInClass(window.location.pathname.split('/')[2], lastDocumentId as string)
+    const result = await disabeDocumentInClass(window.location.pathname.split('/')[2], currentDocumentId as string)
     if (result.statusCode === 200) {
       getData()
     }
@@ -153,8 +153,8 @@ const DocumentPreview = observer(() => {
 
         <DocumentStartModal 
           open={openStartDate} 
-          documentName={lastDocumentName} 
-          documentId={lastDocumentId} 
+          documentName={currentDocumentName} 
+          documentId={currentDocumentId} 
           onClose={handleCloseSetDateModal} 
           refresh={getData}
           defaultStartDate={startDate}
@@ -165,7 +165,7 @@ const DocumentPreview = observer(() => {
           open={openCancel}
           onClose={handleCloseCancelModal}
           onSubmit={handleCancelSubmit}
-          title={`ปิดการใช้งาน ${lastDocumentName}`}
+          title={`ปิดการใช้งาน ${currentDocumentName}`}
           description='เมื่อปิดใช้งานแล้วนิสิตและที่ปรึกษาจะไม่เห็นรายการนี้ในคลาส'
         />
 

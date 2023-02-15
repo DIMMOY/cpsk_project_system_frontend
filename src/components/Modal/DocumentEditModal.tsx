@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useState, useEffect } from 'react'
 import { Box, Button, Grow, TextField, Typography } from '@mui/material'
 import { LoadingButton } from '@mui/lab';
 import Modal from '@mui/material/Modal';
@@ -11,34 +11,47 @@ interface ModalProps {
     open: boolean
     onClose: () => void
     refresh: () => void
+    id: string | null;
+    name: string;
+    description: string;
 }
 
-const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
-  const [documentName, setDocumentName] = useState<string>('')
-  const [description, setDescription] = useState<string>('')
-  const [submit, setSubmit] = useState<boolean>(false) 
-  const [loading, setLoading] = useState<boolean>(false)
-  const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
+const DocumentEditModal = ({ open, onClose, refresh, id, name, description }: ModalProps) => {
+    const [documentName, setDocumentName] = useState<string>('')
+    const [documentDescription, setDocumentDescription] = useState<string>('')
+    const [submit, setSubmit] = useState<boolean>(false)
+    const [isNameChange, setIsNameChange] = useState<boolean>(false)
+    const [isDescriptionChange, setIsDescriptionChange] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
+    const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
 
     const handleDocumentNameChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if ((event.target.value.replace(/(\r\n|\n|\r)/gm, '').replace(/\s/g,'') == '')) setSubmit(false)
-        else setSubmit(true)
-        setDocumentName(event.target.value as string)
+        else {
+            setSubmit(true)
+            setDocumentName(event.target.value as string)
+            setIsNameChange(true)
+        }
     }
 
     const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setDescription(event.target.value as string)
+        setDocumentDescription(event.target.value as string)
+        setIsDescriptionChange(true)
     }
 
-
-    const handleCreateDocument = async () => {
+    const handleOnSubmit = async () => {
         setLoading(true)
-        const reqBody = { name: documentName, description }
+        const reqBody = { name: documentName, description: documentDescription }
         console.log(reqBody)
-        const res = await createDocument(reqBody);
-        if (res.statusCode !== 201) {
-            console.error(res.errorMsg)
-            return
+        if (!id) {
+            const res = await createDocument(reqBody);
+            if (res.statusCode !== 201) {
+                console.error(res.errorMsg)
+            }
+        } else {
+            if(!isDescriptionChange) setDocumentDescription(description)
+            if(!isNameChange) setDocumentName(name)
+            console.log(documentName, documentDescription)
         }
         setTimeout(() => {
             onClose()
@@ -46,17 +59,17 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
         }, 1000)
         setTimeout(() => {
             setDocumentName('')
-            setDescription('')
+            setDocumentDescription('')
             setSubmit(false)
             setLoading(false)
         }, 1300)
     }
     
-    const handleCancel = () => {
+    const handleOnCancel = () => {
         onClose()
         setTimeout(() => {
             setDocumentName('')
-            setDescription('')
+            setDocumentDescription('')
             setSubmit(false)
             setLoading(false)
         }, 300)
@@ -65,7 +78,7 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
     return (
         <Modal
             open={open}
-            onClose={handleCancel}
+            onClose={handleOnCancel}
             aria-labelledby="document-title"
             aria-describedby="document-description"
             sx={{ display: 'flex', justifyContent: 'center', top: '25%', overflow: 'auto' }}
@@ -91,10 +104,10 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                     id="document-title" 
                     sx={{fontSize: 40, fontWeight: 500, marginBottom: 2, color: theme.color.text.primary}}
                 >
-                    สร้างรายการส่งเอกสาร
+                    รายการส่งเอกสาร
                 </Typography>
                 <Typography 
-                    id="document-description"
+                    id="document-name"
                     sx={{
                         fontSize: 20, 
                         fontWeight: 500, 
@@ -107,9 +120,10 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                 <TextField
                     autoFocus
                     required
-                    id="document-description"
+                    id="document-name-textfield"
                     size="medium"
                     fullWidth
+                    defaultValue={name}
                     inputProps={{ 
                         maxLength: 50,
                     }}
@@ -140,12 +154,13 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                 </Typography>
                 <TextField
                     autoFocus
-                    id="document-description"
+                    id="document-description-textfield"
                     fullWidth
                     multiline
                     maxRows={4}
                     minRows={4}
                     size="medium"
+                    defaultValue={description}
                     inputProps={{ style: {padding: "0.25rem"}}}
                     sx={{
                         "& fieldset": { border: 'none' },
@@ -161,7 +176,7 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                     onChange={handleDescriptionChange}
                 />
                 <Button
-                    onClick={handleCancel} 
+                    onClick={handleOnCancel} 
                     sx={{
                         width: "7rem",
                         height: "2.8rem",   
@@ -181,7 +196,7 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                     ยกเลิก
                 </Button>
                 <LoadingButton
-                    onClick={handleCreateDocument}
+                    onClick={handleOnSubmit}
                     loading={loading} 
                     sx={{
                         width: "7rem",
@@ -211,4 +226,4 @@ const DocumentCreateModal = ({ open, onClose, refresh }: ModalProps) => {
     )
 }
 
-export default DocumentCreateModal
+export default DocumentEditModal
