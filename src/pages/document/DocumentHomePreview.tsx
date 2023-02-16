@@ -32,7 +32,7 @@ const DocumentHomePreview = ({ isStudent }: PreviewProps) => {
 
   //ชั่วคราว
   const classId = '63b133a7529ab2ab1a0606f8'
-  const projectId = '63b5593616aea7a2dd63be34'
+  const projectId = '63ebad4ec315ab3de08bdf82'
 
   useEffect(() => {
     async function getData() {

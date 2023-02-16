@@ -85,12 +85,15 @@ export const signOutWithGoogle = async () => {
   }
 }
 
-export const getToken = async () => {
+export const refreshToken = async () => {
   await onAuthStateChanged(firebaseAuth, async (user) => {
     if (user && user.email?.indexOf('@ku.th') !== -1) {
-      const accessToken = await user.getIdToken()
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
-      applicationStore.setUser(user)
+      let accessToken = await user.getIdTokenResult()
+      if (new Date(accessToken.expirationTime).getTime() < new Date().getTime()) {
+        accessToken = await user.getIdTokenResult(true)
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken.token;
+        applicationStore.setUser(user)
+      }
     }
   })
 }

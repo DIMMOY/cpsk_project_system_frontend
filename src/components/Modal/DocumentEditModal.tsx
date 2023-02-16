@@ -3,7 +3,7 @@ import { Box, Button, Grow, TextField, Typography } from '@mui/material'
 import { LoadingButton } from '@mui/lab';
 import Modal from '@mui/material/Modal';
 import { useMediaQuery } from 'react-responsive';
-import { createDocument } from '../../utils/document';
+import { createDocument, updateDocument } from '../../utils/document';
 import { theme } from '../../styles/theme';
 
 interface ModalProps {
@@ -37,21 +37,24 @@ const DocumentEditModal = ({ open, onClose, refresh, id, name, description }: Mo
     const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setDocumentDescription(event.target.value as string)
         setIsDescriptionChange(true)
+        if (id) setSubmit(true)
     }
 
-    const handleOnSubmit = async () => {
+    const handleSubmit = async () => {
         setLoading(true)
         const reqBody = { name: documentName, description: documentDescription }
-        console.log(reqBody)
         if (!id) {
-            const res = await createDocument(reqBody);
+            const res = await createDocument(reqBody)
             if (res.statusCode !== 201) {
                 console.error(res.errorMsg)
             }
         } else {
-            if(!isDescriptionChange) setDocumentDescription(description)
-            if(!isNameChange) setDocumentName(name)
-            console.log(documentName, documentDescription)
+            if(!isDescriptionChange) reqBody.description = description
+            if(!isNameChange) reqBody.name = name
+            const res = await updateDocument(id, reqBody)
+            if (res.statusCode !== 200) {
+                console.error(res.errorMsg)
+            }
         }
         setTimeout(() => {
             onClose()
@@ -196,7 +199,7 @@ const DocumentEditModal = ({ open, onClose, refresh, id, name, description }: Mo
                     ยกเลิก
                 </Button>
                 <LoadingButton
-                    onClick={handleOnSubmit}
+                    onClick={handleSubmit}
                     loading={loading} 
                     sx={{
                         width: "7rem",

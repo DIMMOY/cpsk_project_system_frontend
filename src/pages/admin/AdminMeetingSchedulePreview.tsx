@@ -11,7 +11,7 @@ import { EditButton, ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
-import MeetingScheduleCreateModal from '../../components/Modal/MeetingScheduleCreateModal';
+import MeetingScheduleEditModal from '../../components/Modal/MeetingScheduleEditModal';
 import { listMeetingSchedule } from '../../utils/meetingSchedule';
 import { theme } from '../../styles/theme';
 import { observer } from 'mobx-react';
@@ -30,6 +30,9 @@ const AdminMeetingSchedulePreview = observer(() => {
   const [meetingSchedules, setMeetingSchedules] = useState<Array<any>>([])
   const navigate = useNavigate()
 
+  const [currentMeetingScheduleId, setCurrentMeetingScheduleId] = useState<string | null>(null)
+  const [currentMeetingScheduleName, setCurrentMeetingScheduleName] = useState<string>('')
+
   useEffect(() => {
       if (currentRole == 0) navigate('/')
       applicationStore.setClassroom(null)
@@ -43,8 +46,14 @@ const AdminMeetingSchedulePreview = observer(() => {
     }, [sortSelect] 
   )
 
-  const handleOpenModal = () => setOpen(true);
+  const handleOpenModal = (id: string | null, name: string) => {
+    setCurrentMeetingScheduleId(id)
+    setCurrentMeetingScheduleName(name)
+    setOpen(true)
+  }
+
   const handleCloseModal = () => setOpen(false)
+
   const handleSortChange = (event: SelectChangeEvent) => {
     setSortSelect(event.target.value as string);
     navigate({
@@ -85,41 +94,43 @@ const AdminMeetingSchedulePreview = observer(() => {
                 <MenuItem value={'createdAtASC'}>วันที่สร้างเก่าสุด</MenuItem>
                 <MenuItem value={'name'}>ชื่อคลาส</MenuItem>
             </Select>
-            </FormControl>
-          {isAdmin 
-              ? 
-                <Box>  
-                  <Button 
-                    sx={{
-                      background: theme.color.button.primary, 
-                      color: theme.color.text.default, 
-                      borderRadius: '10px', 
-                      boxShadow: 'none', 
-                      textTransform: 'none', 
-                      '&:hover': { background: '#B07CFF' }, 
-                      height: 45, 
-                      weight: 42, 
-                      fontSize: isBigScreen ? 16 : 13, 
-                      padding: isBigScreen ? 1 : 0.5, 
-                      marginRight: '1.5rem'}}
-                      startIcon={<AddIcon sx={{width: 20, height: 20}}></AddIcon>}
-                      onClick={handleOpenModal}
-                  >
-                    สร้างรายการ
-                  </Button>
-                  <MeetingScheduleCreateModal
-                    open={open} 
-                    onClose={handleCloseModal}
-                    refresh={refreshData}>
-                  </MeetingScheduleCreateModal>
-                </Box>
-              :  <></>
-          }
+          </FormControl>
+          <Box>  
+            <Button 
+              sx={{
+                background: theme.color.button.primary, 
+                color: theme.color.text.default, 
+                borderRadius: '10px', 
+                boxShadow: 'none', 
+                textTransform: 'none', 
+                '&:hover': { background: '#B07CFF' }, 
+                height: 45, 
+                weight: 42, 
+                fontSize: isBigScreen ? 16 : 13, 
+                padding: isBigScreen ? 1 : 0.5, 
+                marginRight: '1.5rem'}}
+                startIcon={<AddIcon sx={{width: 20, height: 20}}></AddIcon>}
+                onClick={() => handleOpenModal(null, '')}
+            >
+              สร้างรายการ
+            </Button>
+            <MeetingScheduleEditModal
+              open={open} 
+              onClose={handleCloseModal}
+              refresh={refreshData}
+              id={currentMeetingScheduleId}
+              name={currentMeetingScheduleName}
+            >
+            </MeetingScheduleEditModal>
+          </Box>
         </Box>
 
         <Box sx={{ flexDirection: 'column', display: 'flex'}}>
           {meetingSchedules.map((c) => (
-            <ListPreviewButton key={c._id}>
+            <ListPreviewButton 
+              key={c._id}
+              onClick={() => handleOpenModal(c._id, c.name)}
+            >
               <Typography
                 sx={{
                   top: '1.5rem',

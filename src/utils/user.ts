@@ -1,13 +1,13 @@
 import axios from "axios";
 import { onAuthStateChanged } from 'firebase/auth'
 import { firebaseAuth } from "../config/firebase";
-import { getToken } from "./auth";
+import { refreshToken } from "./auth";
 
 const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT}/user`
 
 export const changeCurrentRole = async (reqBody: any) => {
    try {
-    await getToken();
+    await refreshToken();
     await axios.patch(`${url}/current-role`, reqBody)
     return {
         statusCode: 200,
@@ -25,7 +25,7 @@ export const changeCurrentRole = async (reqBody: any) => {
 
 export const joinClass = async (reqBody: any) => {
   try {
-    await getToken();
+    await refreshToken();
     await axios.post(`${url}/class/join`, reqBody)
     return {
       statusCode: 200,

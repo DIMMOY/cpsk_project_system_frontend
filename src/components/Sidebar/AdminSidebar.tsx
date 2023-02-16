@@ -85,7 +85,7 @@ const AdminSidebar = observer(() => {
               {menuText.map((text, index) => (
                 <ListItem key={text} disablePadding sx={{fontWeight: 100}}>
                   {/*ปิดชั่วคราว index >= 3*/}
-                  <ListItemButton onClick={() => handleOnClick(params[index], text)} disabled={index >= 3}>
+                  <ListItemButton onClick={() => handleOnClick(params[index], text)} >
                     <ListItemIcon sx={{color: text === currentSelect ? theme.color.text.primary : theme.color.text.secondary }}>
                       {
                         text === 'โปรเจกต์' ? <FolderSharedIcon/> : 

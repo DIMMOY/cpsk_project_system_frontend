@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { LoadingButton } from '@mui/lab';
 import Modal from '@mui/material/Modal';
 import { useMediaQuery } from 'react-responsive';
-import { createMeetingSchedule } from '../../utils/meetingSchedule';
+import { createMeetingSchedule, updateMeetingSchedule } from '../../utils/meetingSchedule';
 import { theme } from '../../styles/theme';
 
 interface ModalProps {
@@ -14,31 +14,44 @@ interface ModalProps {
     open: boolean
     onClose: () => void
     refresh: () => void
+    id: string | null;
+    name: string;
 }
 
-const MeetingScheduleCreateModal = ({ open, onClose, refresh }: ModalProps) => {
-  const [meetingScheduleName, setMeetingScheduleName] = useState<string | null>(null)
-  const [canSubmit, setCanSubmit] = useState<boolean>(false) 
+const MeetingScheduleEditModal = ({ open, onClose, refresh, id, name }: ModalProps) => {
+  const [meetingScheduleName, setMeetingScheduleName] = useState<string>('')
+  const [submit, setSubmit] = useState<boolean>(false) 
   const [loading, setLoading] = useState<boolean>(false)
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
 
     const handleMeetingScheduleNameChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setMeetingScheduleName(event.target.value as string)
-        setCanSubmit(event.target.value ? true : false)
+        if ((event.target.value.replace(/(\r\n|\n|\r)/gm, '').replace(/\s/g,'') == '')) setSubmit(false)
+        else {
+            setMeetingScheduleName(event.target.value as string)
+            setSubmit(true)
+        }
     }
-    const handleCreateClass = async () => {
+    const handleSubmit = async () => {
         setLoading(true)
         const reqBody = { name: meetingScheduleName }
-        const res = await createMeetingSchedule(reqBody);
-        if (res.statusCode !== 201) {
+        if (!id) {
+            const res = await createMeetingSchedule(reqBody);
+            if (res.statusCode !== 201) {
+                console.error(res.errorMsg)
+            }
+        } else {
+            const res = await updateMeetingSchedule(id, reqBody)
+            if (res.statusCode !== 200) {
+                console.error(res.errorMsg)
+            }
         }
         setTimeout(() => {
             onClose()
             refresh()
         }, 1000)
         setTimeout(() => {
-            setMeetingScheduleName(null)
-            setCanSubmit(false)
+            setMeetingScheduleName('')
+            setSubmit(false)
             setLoading(false)
         }, 1300)
     }
@@ -46,8 +59,8 @@ const MeetingScheduleCreateModal = ({ open, onClose, refresh }: ModalProps) => {
     const handleCancel = () => {
         onClose()
         setTimeout(() => {
-            setMeetingScheduleName(null)
-            setCanSubmit(false)
+            setMeetingScheduleName('')
+            setSubmit(false)
             setLoading(false)
         }, 300)
     }
@@ -86,7 +99,7 @@ const MeetingScheduleCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                         color: theme.color.text.primary
                     }}
                 >
-                    สร้างรายงานพบอาจารย์ที่ปรึกษา
+                    รายงานพบอาจารย์ที่ปรึกษา
                 </Typography>
                 <Typography 
                     id="meetingschedule-description"
@@ -102,6 +115,7 @@ const MeetingScheduleCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                 <TextField
                     autoFocus
                     required
+                    defaultValue={name}
                     id="meetingschedule-description"
                     size="medium"
                     fullWidth
@@ -143,7 +157,7 @@ const MeetingScheduleCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                     ยกเลิก
                 </Button>
                 <LoadingButton
-                    onClick={handleCreateClass}
+                    onClick={handleSubmit}
                     loading={loading} 
                     sx={{
                         width: "7rem",
@@ -163,7 +177,7 @@ const MeetingScheduleCreateModal = ({ open, onClose, refresh }: ModalProps) => {
                             background: theme.color.button.disable,
                         }
                     }}
-                    disabled={!canSubmit}
+                    disabled={!submit}
                 >
                     ยืนยัน
                 </LoadingButton>
@@ -173,4 +187,4 @@ const MeetingScheduleCreateModal = ({ open, onClose, refresh }: ModalProps) => {
     )
 }
 
-export default MeetingScheduleCreateModal
+export default MeetingScheduleEditModal
