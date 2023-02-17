@@ -16,10 +16,10 @@ import { useMediaQuery } from 'react-responsive';
 import applicationStore from '../../stores/applicationStore';
 import { observer } from 'mobx-react';
 
-const AdminSidebar = observer(() => {
+const Sidebar = observer(() => {
     const { pathname } = window.location
     const navigate = useNavigate();
-    const params = ['project', 'document', 'meeting-schedule', 'score', 'committee']
+    const params = ['project', 'document', 'meeting-schedule', 'assessment', 'committee']
     const menuText = ['โปรเจกต์', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา', 'ประเมิน', 'จับคู่กรรมการคุมสอบ']
     const [currentSelect, setCurrentSelect] = useState<null | string>(null)
     const isBigScreen = useMediaQuery({ query: '(min-width: 900px)' })
@@ -117,4 +117,4 @@ const AdminSidebar = observer(() => {
     )
 })
 
-export default AdminSidebar
+export default Sidebar

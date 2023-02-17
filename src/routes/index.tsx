@@ -26,10 +26,12 @@ import AssessmentPage from '../pages/assessment'
 import AssessmentEdit from '../pages/assessment/AssessmentEdit'
 import ClassJoining from '../pages/class/ClassJoining'
 import ProjectEdit from '../pages/project/ProjectEdit'
+import NotFound from '../pages/other/NotFound'
+import NotStudentRoute from './NotStudentRoute'
+import NotAdvisorRoute from './NotAdvisorRoute'
 
 
 const Routers: React.FC = (): JSX.Element => {
-
     return (
         <Router>
             <NavBar/>
@@ -40,28 +42,39 @@ const Routers: React.FC = (): JSX.Element => {
 
                 <Route element={<PrivateRoute/>}>
                     <Route path = '/' element={<HomePage/>}/>
-                    <Route path = '/class' element={<ClassPreview/>}/>
-                    <Route path = '/class/:id/project' element={<ProjectPreview/>}/>
-                    <Route path = '/class/:id/document' element={<DocumentPreview/>}/>
-                    <Route path = '/class/:id/meeting-schedule' element={<MeetingSchedulePreview/>}/>
-                    <Route path = '/class/:id/score' element={<ProjectPreview/>}/>
-                    <Route path = '/class/:id/committee' element={<ProjectPreview/>}/>
 
-                    <Route path = '/project' element={<ProjectPreview/>}/>
+                    <Route element={<NotStudentRoute/>}>
+                        <Route path = '/class' element={<ClassPreview/>}/>
 
-                    <Route path = '/document' element={<DocumentPage/>}/>
-                    <Route path = '/document/:id' element={<DocumentDetail/>}/>
+                        <Route path = '/class/:id/project' element={<ProjectPreview/>}/>
+                        <Route path = '/class/:id/project/:projectId' element={<ProjectHomePreview isStudent={false} isCommittee={false}/>}/>
+                        <Route path = '/class/:id/project/:projectId/document' element={<DocumentHomePreview isStudent={false}/>}/>
+                        <Route path = '/class/:id/project/:projectId/document/:documentId' element={<DocumentDetail isStudent={false}/>}/> {/*ยังไม่ทำ NotFound*/}
+                        <Route path = '/class/:id/project/:projectId/meeting-schedule' element={<MeetingScheduleHomePreview isStudent={false}/>}/>
+                        <Route path = '/class/:id/project/:projectId/meeting-schedule/:mtId' element={<MeetingScheduleDetail isStudent={false}/>}/>
 
-                    <Route path = '/meeting-schedule' element={<MeetingSchedulePage/>}/>
-                    <Route path = '/meeting-schedule/:id' element={<MeetingScheduleDetail isStudent={true}/>}/>
+                        <Route path = '/class/:id/document' element={<DocumentPreview/>}/>
 
-                    <Route path = '/score' element={<AssessmentPreview isStudent={true}/>}/>
+                        <Route path = '/class/:id/assessment' element={<ProjectPreview/>}/>
 
-                    <Route path = '/assessment' element={<AssessmentPage/>}/>
-                    <Route path = '/assessment/create' element={<AssessmentEdit newForm={true}/>}/>
-                    <Route path = '/assessment/edit' element={<AssessmentEdit newForm={false}/>}/>
+                        <Route path = '/class/:id/committee' element={<ProjectPreview/>}/>
 
-                    <Route path = '/test' element={<ProjectEdit newProject={true}></ProjectEdit>}/>
+                        <Route path = '/class/:id/meeting-schedule' element={<MeetingSchedulePreview/>}/>
+                    </Route>
+
+                    <Route element={<NotAdvisorRoute/>}>
+                        <Route path = '/project' element={<ProjectPreview/>}/>
+                        <Route path = '/document' element={<DocumentPage/>}/>
+                        <Route path = '/document/:id' element={<DocumentDetail isStudent={true}/>}/>
+                        <Route path = '/meeting-schedule' element={<MeetingSchedulePage/>}/>
+                        <Route path = '/meeting-schedule/:id' element={<MeetingScheduleDetail isStudent={true}/>}/>
+                        <Route path = '/assessment' element={<AssessmentPage/>}/>
+                        <Route path = '/assessment/create' element={<AssessmentEdit newForm={true}/>}/>
+                        <Route path = '/assessment/edit' element={<AssessmentEdit newForm={false}/>}/>
+                    </Route>
+
+                    {/* Page Not Found */}
+                    <Route path = '*' element={<NotFound/>}/>
                 </Route>
 
             </Routes>

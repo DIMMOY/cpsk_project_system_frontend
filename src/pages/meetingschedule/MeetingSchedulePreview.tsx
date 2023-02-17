@@ -10,12 +10,13 @@ import { ActivateButton, CancelButton, EditButton, ListPreviewButton, useStylesB
 import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
-import AdminSidebar from '../../components/Sidebar/AdminSidebar';
+import Sidebar from '../../components/Sidebar/Sidebar';
 import { disabeMeetingScheduleInClass, listMeetingScheduleInClass } from '../../utils/meetingSchedule';
 import MeetingScheduleStartModal from '../../components/Modal/MeetingScheduleStartModal';
 import CancelModal from '../../components/Modal/CancelModal';
 import { theme } from '../../styles/theme';
 import { observer } from 'mobx-react';
+import NotFound from '../other/NotFound';
 
 const MeetingSchedulePreview = observer(() => {
     const classesButton = useStylesButton()
@@ -36,17 +37,24 @@ const MeetingSchedulePreview = observer(() => {
     const [endDate, setEndDate] = useState<string | null>(null)
     const [lastMeetingScheduleName, setLastMeetingScheduleName] = useState<string | null>(null)
     const [lastMeetingScheduleId, setLastMeetingScheduleId] = useState<string | null>(null)
+    const [notFound, setNotFound] = useState<number>(2)
     
     const isBigScreen = useMediaQuery({ query: '(min-width: 900px)' })
     const [meetingSchedules, setMeetingSchedules] = useState<Array<any>>([])
 
     const getData = async () => {
+      let meetingScheduleData
       if (isAdmin && currentRole === 2) {
-        const result = await listMeetingScheduleInClass({ sort: sortSelect, status: statusSelect }, window.location.pathname.split('/')[2])
-        setMeetingSchedules(result.data as Array<any>);
+        meetingScheduleData = await listMeetingScheduleInClass({ sort: sortSelect, status: statusSelect }, window.location.pathname.split('/')[2])
       } else if (isAdvisor && currentRole === 1) {
-        const result = await listMeetingScheduleInClass({ sort: sortSelect, status: 'true' }, window.location.pathname.split('/')[2])
-        setMeetingSchedules(result.data as Array<any>);
+        meetingScheduleData = await listMeetingScheduleInClass({ sort: sortSelect, status: 'true' }, window.location.pathname.split('/')[2])
+      }
+
+      if (!meetingScheduleData?.data) {
+        setNotFound(0)
+      } else {
+        setMeetingSchedules(meetingScheduleData.data as Array<any>);
+        setNotFound(1)
       }
     }
   
@@ -100,182 +108,192 @@ const MeetingSchedulePreview = observer(() => {
       }
     }
   
-    return (
-      <AdminCommonPreviewContainer>
-        <AdminSidebar/>
-        <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
-          <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: 'row', maxWidth: 700, flexWrap: 'wrap' }}>
-            { isAdmin && currentRole === 2 ?
+    if (notFound === 1) {
+      return (
+        <AdminCommonPreviewContainer>
+          <Sidebar/>
+          <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
+            <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: 'row', maxWidth: 700, flexWrap: 'wrap' }}>
+              { isAdmin && currentRole === 2 ?
+                <FormControl sx={{marginRight: '1.5rem', position: 'relative'}}>
+                  <InputLabel id="select-status-label">สถานะ</InputLabel>
+                  <Select
+                      labelId="select-status-label"
+                      id="select-status"
+                      value={statusSelect}
+                      onChange={handleStatusChange}
+                      label="สถานะ"
+                      sx={{
+                        borderRadius: '10px', 
+                        color: theme.color.background.primary, 
+                        height: 45, 
+                        fontWeight: 500, 
+                        width: 160
+                      }}
+                    >
+                      <MenuItem value={'all'}>ทั้งหมด</MenuItem>
+                      <MenuItem value={'true'}>เปิดใช้งาน</MenuItem>
+                      <MenuItem value={'false'}>ยังไม่เปิดใช้งาน</MenuItem>
+                </Select>
+                </FormControl> : 
+                <></>
+              }
               <FormControl sx={{marginRight: '1.5rem', position: 'relative'}}>
-                <InputLabel id="select-status-label">สถานะ</InputLabel>
+                <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
                 <Select
-                    labelId="select-status-label"
-                    id="select-status"
-                    value={statusSelect}
-                    onChange={handleStatusChange}
-                    label="สถานะ"
+                    labelId="select-sort-label"
+                    id="select-sort"
+                    value={sortSelect}
+                    onChange={handleSortChange}
+                    label="จัดเรียงโดย"
                     sx={{
                       borderRadius: '10px', 
                       color: theme.color.background.primary, 
                       height: 45, 
                       fontWeight: 500, 
-                      width: 160
+                      width: 180}}
+                >
+                    <MenuItem value={'createdAtDESC'}>วันที่สร้างล่าสุด</MenuItem>
+                    <MenuItem value={'createdAtASC'}>วันที่สร้างเก่าสุด</MenuItem>
+                    <MenuItem value={'name'}>ชื่อเอกสาร</MenuItem>
+                </Select>
+                </FormControl>
+            </Box>
+    
+            <MeetingScheduleStartModal 
+              open={openStartDate} 
+              meetingScheduleName={lastMeetingScheduleName} 
+              meetingScheduleId={lastMeetingScheduleId} 
+              onClose={handleCloseSetDateModal} 
+              refresh={getData}
+              defaultStartDate={startDate}
+              defaultEndDate={endDate}
+            />
+
+            <CancelModal
+              open={openCancel}
+              onClose={handleCloseCancelModal}
+              onSubmit={handleCancelSubmit}
+              title={`ปิดการใช้งาน ${lastMeetingScheduleName}`}
+              description='เมื่อปิดใช้งานแล้วนิสิตและที่ปรึกษาจะไม่เห็นรายการนี้ในคลาส'
+            />
+    
+            <Box sx={{ flexDirection: 'column', display: 'flex'}}>
+              {meetingSchedules.map((c) => (
+                <ListPreviewButton key={c._id} sx={{zIndex: 1}} onClick={() => console.log('TEST')}>
+                  <Typography
+                    sx={{
+                      top: '1.5rem',
+                      left: 'calc(20px + 1vw)',
+                      position: 'absolute',
+                      fontSize: 'calc(30px + 0.2vw)',
+                      fontFamily: 'Prompt',
+                      fontWeight: 600,
+                      color: theme.color.text.primary,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      display: "inline-block",
+                      textAlign: "left",
+                      width: isBigScreen ? "70%" : "40%"
                     }}
                   >
-                    <MenuItem value={'all'}>ทั้งหมด</MenuItem>
-                    <MenuItem value={'true'}>เปิดใช้งาน</MenuItem>
-                    <MenuItem value={'false'}>ยังไม่เปิดใช้งาน</MenuItem>
-              </Select>
-              </FormControl> : 
-              <></>
-            }
-            <FormControl sx={{marginRight: '1.5rem', position: 'relative'}}>
-              <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
-              <Select
-                  labelId="select-sort-label"
-                  id="select-sort"
-                  value={sortSelect}
-                  onChange={handleSortChange}
-                  label="จัดเรียงโดย"
-                  sx={{
-                    borderRadius: '10px', 
-                    color: theme.color.background.primary, 
-                    height: 45, 
-                    fontWeight: 500, 
-                    width: 180}}
-              >
-                  <MenuItem value={'createdAtDESC'}>วันที่สร้างล่าสุด</MenuItem>
-                  <MenuItem value={'createdAtASC'}>วันที่สร้างเก่าสุด</MenuItem>
-                  <MenuItem value={'name'}>ชื่อเอกสาร</MenuItem>
-              </Select>
-              </FormControl>
-          </Box>
-  
-          <MeetingScheduleStartModal 
-            open={openStartDate} 
-            meetingScheduleName={lastMeetingScheduleName} 
-            meetingScheduleId={lastMeetingScheduleId} 
-            onClose={handleCloseSetDateModal} 
-            refresh={getData}
-            defaultStartDate={startDate}
-            defaultEndDate={endDate}
-          />
+                    {c.name}
+                  </Typography>
 
-          <CancelModal
-            open={openCancel}
-            onClose={handleCloseCancelModal}
-            onSubmit={handleCancelSubmit}
-            title={`ปิดการใช้งาน ${lastMeetingScheduleName}`}
-            description='เมื่อปิดใช้งานแล้วนิสิตและที่ปรึกษาจะไม่เห็นรายการนี้ในคลาส'
-          />
-  
-          <Box sx={{ flexDirection: 'column', display: 'flex'}}>
-            {meetingSchedules.map((c) => (
-              <ListPreviewButton key={c._id} sx={{zIndex: 1}} onClick={() => console.log('TEST')}>
-                <Typography
-                  sx={{
-                    top: '1.5rem',
-                    left: 'calc(20px + 1vw)',
-                    position: 'absolute',
-                    fontSize: 'calc(30px + 0.2vw)',
-                    fontFamily: 'Prompt',
-                    fontWeight: 600,
-                    color: theme.color.text.primary,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    display: "inline-block",
-                    textAlign: "left",
-                    width: isBigScreen ? "70%" : "40%"
-                  }}
-                >
-                  {c.name}
-                </Typography>
-
-                {
-                  !c.statusInClass && isAdmin && currentRole === 2 ? 
-                  <ActivateButton 
-                    sx={{
-                        position: 'absolute',
-                        right: 'calc(20px + 1vw)',
-                        zIndex: 2
-                      }}
-                    onClick={(event) => 
-                      handleOpenSetDateModal(
-                        c.name, 
-                        c._id, 
-                        moment(new Date()).format('YYYY-MM-DDTHH:mm'), 
-                        null,
-                        event,
-                      )}
-                  >
-                      เปิดใช้งาน
-                  </ActivateButton> : 
-                  <></>
-                }
-                {
-                    c.statusInClass && isAdmin && currentRole === 2 ? 
-                    <EditButton sx={{
-                        position: 'absolute',
-                        right: 'calc(150px + 1vw)',
-                        zIndex: 2
+                  {
+                    !c.statusInClass && isAdmin && currentRole === 2 ? 
+                    <ActivateButton 
+                      sx={{
+                          position: 'absolute',
+                          right: 'calc(20px + 1vw)',
+                          zIndex: 2
                         }}
-                        onClick={(event) => 
-                          handleOpenSetDateModal(
-                            c.name, 
-                            c._id, 
-                            c.startDate, 
-                            c.endDate,
-                            event,
-                          )}
-                    >
-                            แก้ไข
-                    </EditButton> : 
-                    <></>
-                }
-                {
-                    c.statusInClass && isAdmin && currentRole === 2 ? 
-                    <CancelButton sx={{
-                        position: 'absolute',
-                        right: 'calc(20px + 1vw)',
-                        zIndex: 2
-                        }}
-                        onClick={(event) => 
-                          handleOpenCancelModal(
-                            c.name, 
-                            c._id,
-                            event
+                      onClick={(event) => 
+                        handleOpenSetDateModal(
+                          c.name, 
+                          c._id, 
+                          moment(new Date()).format('YYYY-MM-DDTHH:mm'), 
+                          null,
+                          event,
                         )}
                     >
-                            ปิดใช้งาน
-                    </CancelButton> : 
+                        เปิดใช้งาน
+                    </ActivateButton> : 
                     <></>
-                }
-  
-                <Typography
-                  sx={{
-                    top: '5rem',
-                    left: 'calc(20px + 1vw)',
-                    position: 'absolute',
-                    fontSize: 'calc(15px + 0.3vw)',
-                    color: c.statusInClass ? theme.color.text.secondary : theme.color.text.error,
-                    fontWeight: 600
-                  }}
-                >
-                  { 
-                    isAdmin && currentRole === 2 ? 
-                      c.statusInClass ?
-                      `เปิดใช้งานวันที่ ${moment(c.startDate).format('DD/MM/YYYY HH:mm')}` : 
-                      'ยังไม่ถูกใช้ในคลาสนี้' :
-                    `กำหนดส่งภายในวันที่ ${moment(c.endDate).format('DD/MM/YYYY HH:mm')}`
-                  } 
-                </Typography>
-              </ListPreviewButton>
-            ))}
+                  }
+                  {
+                      c.statusInClass && isAdmin && currentRole === 2 ? 
+                      <EditButton sx={{
+                          position: 'absolute',
+                          right: 'calc(150px + 1vw)',
+                          zIndex: 2
+                          }}
+                          onClick={(event) => 
+                            handleOpenSetDateModal(
+                              c.name, 
+                              c._id, 
+                              c.startDate, 
+                              c.endDate,
+                              event,
+                            )}
+                      >
+                              แก้ไข
+                      </EditButton> : 
+                      <></>
+                  }
+                  {
+                      c.statusInClass && isAdmin && currentRole === 2 ? 
+                      <CancelButton sx={{
+                          position: 'absolute',
+                          right: 'calc(20px + 1vw)',
+                          zIndex: 2
+                          }}
+                          onClick={(event) => 
+                            handleOpenCancelModal(
+                              c.name, 
+                              c._id,
+                              event
+                          )}
+                      >
+                              ปิดใช้งาน
+                      </CancelButton> : 
+                      <></>
+                  }
+    
+                  <Typography
+                    sx={{
+                      top: '5rem',
+                      left: 'calc(20px + 1vw)',
+                      position: 'absolute',
+                      fontSize: 'calc(15px + 0.3vw)',
+                      color: c.statusInClass ? theme.color.text.secondary : theme.color.text.error,
+                      fontWeight: 600
+                    }}
+                  >
+                    { 
+                      isAdmin && currentRole === 2 ? 
+                        c.statusInClass ?
+                        `เปิดใช้งานวันที่ ${moment(c.startDate).format('DD/MM/YYYY HH:mm')}` : 
+                        'ยังไม่ถูกใช้ในคลาสนี้' :
+                      `กำหนดส่งภายในวันที่ ${moment(c.endDate).format('DD/MM/YYYY HH:mm')}`
+                    } 
+                  </Typography>
+                </ListPreviewButton>
+              ))}
+            </Box>
           </Box>
-        </Box>
-      </AdminCommonPreviewContainer>
-    )
+        </AdminCommonPreviewContainer>
+      )
+    } else if (notFound === 2) {
+      return (
+        <AdminCommonPreviewContainer>
+          <Sidebar/>
+        </AdminCommonPreviewContainer>
+      )
+    } else {
+      return <NotFound/>
+    }
 })
 
 export default MeetingSchedulePreview

@@ -7,10 +7,13 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { firebaseAuth } from './config/firebase'
 import applicationStore from './stores/applicationStore'
 import axios from 'axios'
+import { findProjectInClassForStudent } from './utils/project'
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 )
+
+console.warn = (msg) => console.error(msg);
 
 onAuthStateChanged(firebaseAuth, async (user) => {
   if (user && user.email?.indexOf('@ku.th') !== -1) {
@@ -28,6 +31,13 @@ onAuthStateChanged(firebaseAuth, async (user) => {
       const userJoinClassRes = await axios.get(`${url}/class`)
       const classroom = userJoinClassRes.data.data ? userJoinClassRes.data.data.classId : null
       applicationStore.setClassroom(classroom)
+      if (classroom) {
+        // find project
+        const projectInClassRes = await findProjectInClassForStudent(classroom._id)
+        const project = projectInClassRes.data ? projectInClassRes.data.projectId : null
+        console.log(projectInClassRes)
+        applicationStore.setProject(project)
+      }
     }
   }
   root.render(

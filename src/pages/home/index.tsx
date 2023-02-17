@@ -7,7 +7,10 @@ import ClassJoining from '../class/ClassJoining'
 const HomePage = () => {
     const { currentRole, isAdmin, isAdvisor, classroom, isStudent } = applicationStore
     if ((currentRole === 2 && isAdmin) || (currentRole === 1 && isAdvisor)) return <ClassPreview/>
-    else if (currentRole === 0 && isStudent && classroom) return <ProjectHomePreview isStudent={true} isCommittee={false}></ProjectHomePreview>
+    else if (currentRole === 0 && isStudent && classroom) { 
+        console.log("TEST")
+        return <ProjectHomePreview isStudent={true} isCommittee={false}></ProjectHomePreview>
+    }
     else return <ClassJoining></ClassJoining>
 }
 

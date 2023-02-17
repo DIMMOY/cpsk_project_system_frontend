@@ -12,15 +12,17 @@ import { LoadingButton } from '@mui/lab'
 import CancelModal from '../../components/Modal/CancelModal'
 import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 import { theme } from '../../styles/theme'
+import applicationStore from '../../stores/applicationStore'
+import { checkRoleInProject } from '../../utils/project'
+import NotFound from '../other/NotFound'
 
 interface PreviewProps {
   isStudent: boolean
 }
 
 const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
-  isStudent = true
-
   const location = useLocation()
+  const { currentRole, classroom, project } = applicationStore
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
   const [detail, setDetail] = useState<string>('')
   const { success, warning, error, secondary } = theme.color.text
@@ -37,24 +39,49 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [open, setOpen] = useState<boolean>(false)
   const [submit, setSubmit] = useState<boolean>(false)
+  const [isAdvisor, setIsAdvisor] = useState<boolean>(false)
+  const [notFound, setNotFound] = useState<number>(2)
 
-  // ชั่วคราว
-  const classId = '63b133a7529ab2ab1a0606f8'
-  const projectId = '63ebad4ec315ab3de08bdf82'
-  const meetingScheduleId = window.location.pathname.split('/')[2]
+  const currentPathName = 
+    window.location.pathname.endsWith('/') ? 
+      window.location.pathname.slice(0, -1) : 
+      window.location.pathname
+
+  const pathname = currentPathName.split('/')
+  const classId = isStudent ? classroom._id : pathname[2]
+  const projectId = isStudent ? project._id : pathname[4]
+  const meetingScheduleId = isStudent ? pathname[2] : pathname[6]
 
   const getData = async (detail: string) => {
     const result = await getSendMeetingScheduleInClass(classId, projectId, meetingScheduleId)
-    setName(result.data.meetingSchedule.name)
-    setDueDate(moment(result.data.endDate).format('DD/MM/YYYY HH:mm'))
-    setStatus(result.data.sendStatus)
-    setId(result.data.meetingScheduleId)
-    setDetail(result.data.detail ? result.data.detail : detail)
-    setSubmit(result.data.detail || detail !== '')
+    if (!result.data) {
+      setNotFound(0)
+    } else {
+      setName(result.data.meetingSchedule.name)
+      setDueDate(moment(result.data.endDate).format('DD/MM/YYYY HH:mm'))
+      setStatus(result.data.sendStatus)
+      setId(result.data.meetingScheduleId)
+      setDetail(result.data.detail ? result.data.detail : detail)
+      setSubmit(result.data.detail || detail !== '')
+      setNotFound(1)
+    }
   }
   
-
   useEffect(() => {
+    async function getRoleInProject() {
+      const checkRole = await checkRoleInProject(classId, projectId);
+      console.log(checkRole)
+      if (checkRole.data) {
+        const { data } = checkRole;
+        // check role is advisor in this project or not
+        if (data.filter((e: number) => e === 2).length) {
+          setIsAdvisor(true)
+        }
+      }
+    }
+    if (currentRole === 1) {
+      getRoleInProject()
+    }
     window.history.replaceState({}, document.title)
     if (location.state) {
       setName(location.state.name)
@@ -63,6 +90,7 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
       setId(location.state.id)
       setDetail(location.state.detail)
       setSubmit(location.state.detail)
+      setNotFound(1)
     } else {
       getData('')
     }
@@ -96,91 +124,91 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
     }
   }
 
-  return (
-    <CommonPreviewContainer sx={{textAlign: "center"}}>
-      <Box sx={{ display: 'flex', padding: '0 auto' }}>
-        <Link to="/meeting-schedule">
-          <IconButton
-            disableRipple
-            sx={{ 
-              marginRight: '1.25rem',
-              '& svg': {
-                color: theme.color.background.primary
-              }
-            }}
-            disableFocusRipple
-          >
-            <ArrowBackIosNewIcon fontSize="large" />
-          </IconButton>
-        </Link>
-      </Box>
-      <Box sx={{ flexDirection: 'column', display: 'flex', justifyContent: "center",}}>
-          <Box
-            className="ml-96 common-preview-button"
-            sx={{
-              position: "relative",
-              borderRadius: '20px',
-              background: theme.color.button.default,
-              margin: '1.25rem 0 0 0',
-              display: 'flex',
-              textTransform: 'none',
-              zIndex: '1',
-            }}
-          >
-            <Typography
-              sx={{
-                top: '1.5rem',
-                left: 'calc(20px + 1vw)',
-                position: 'absolute',
-                fontSize: 'calc(30px + 0.2vw)',
-                fontFamily: 'Prompt',
-                fontWeight: 600,
-                color: theme.color.text.primary
+  if (notFound === 1) {
+    return (
+      <CommonPreviewContainer sx={{textAlign: "center"}}>
+        <Box sx={{ display: 'flex', padding: '0 auto' }}>
+          <Link to={isStudent ? "/meeting-schedule" : currentPathName.slice(0, currentPathName.lastIndexOf('/'))}>
+            <IconButton
+              disableRipple
+              sx={{ 
+                marginRight: '1.25rem',
+                '& svg': {
+                  color: theme.color.background.primary
+                }
               }}
+              disableFocusRipple
             >
-              {name}
-            </Typography>
-            <Typography
+              <ArrowBackIosNewIcon fontSize="large" />
+            </IconButton>
+          </Link>
+        </Box>
+        <Box sx={{ flexDirection: 'column', display: 'flex', justifyContent: "center",}}>
+            <Box
+              className="ml-96 common-preview-button"
               sx={{
-                top: isBigScreen ? '1.5rem' : '1.95rem' ,
-                right: 'calc(20px + 1vw)',
-                position: 'absolute',
-                fontSize: isBigScreen ? 'calc(30px + 0.2vw)' : 'calc(15px + 2vw)',
-                color: statusList[status].color,
-                fontWeight: 600
-              }}
-            >
-              {statusList[status].message}
-            </Typography>
-            <Typography
-              sx={{
-                top: '5rem',
-                left: 'calc(20px + 1vw)',
-                position: 'absolute',
-                fontSize: 'calc(15px + 0.3vw)',
-                color: theme.color.text.secondary,
-                fontWeight: 600
-              }}
-            >
-              ภายในวันที่ {dueDate}
-            </Typography>
-          </Box>
-
-          <Box
-            sx={{
-                top: "-5rem",
                 position: "relative",
-                height: "23rem",
-                background: theme.color.background.tertiary,
-                borderRadius: "20px",
-            }}
-          >
-          { isStudent &&
-          <>
+                borderRadius: '20px',
+                background: theme.color.button.default,
+                margin: '1.25rem 0 0 0',
+                display: 'flex',
+                textTransform: 'none',
+                zIndex: '1',
+              }}
+            >
+              <Typography
+                sx={{
+                  top: '1.5rem',
+                  left: 'calc(20px + 1vw)',
+                  position: 'absolute',
+                  fontSize: 'calc(30px + 0.2vw)',
+                  fontFamily: 'Prompt',
+                  fontWeight: 600,
+                  color: theme.color.text.primary
+                }}
+              >
+                {name}
+              </Typography>
+              <Typography
+                sx={{
+                  top: isBigScreen ? '1.5rem' : '1.95rem' ,
+                  right: 'calc(20px + 1vw)',
+                  position: 'absolute',
+                  fontSize: isBigScreen ? 'calc(30px + 0.2vw)' : 'calc(15px + 2vw)',
+                  color: statusList[status].color,
+                  fontWeight: 600
+                }}
+              >
+                {statusList[status].message}
+              </Typography>
+              <Typography
+                sx={{
+                  top: '5rem',
+                  left: 'calc(20px + 1vw)',
+                  position: 'absolute',
+                  fontSize: 'calc(15px + 0.3vw)',
+                  color: theme.color.text.secondary,
+                  fontWeight: 600
+                }}
+              >
+                ภายในวันที่ {dueDate}
+              </Typography>
+            </Box>
+
+            <Box
+              sx={{
+                  top: "-5rem",
+                  position: "relative",
+                  height: "23rem",
+                  background: theme.color.background.tertiary,
+                  borderRadius: "20px",
+              }}
+            >
+
             <TextField
               id="outlined-multiline-flexible"
-              disabled={status ? true : false}
-              placeholder={`กรุณาใส่ข้อความ`}
+              disabled={status || !isStudent ? true : false}
+              placeholder={isStudent ? `กรุณาใส่ข้อความ` : ''}
               value={detail}
               multiline
               maxRows={4}
@@ -211,15 +239,57 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
               onChange={e => handleOnDescriptionChange(e.target.value)}
             />
 
-            <CancelModal 
-              open={open}
-              onClose={handleOnCloseModal}
-              onSubmit={handleOnCancel}
-              title={`ยกเลิกการส่ง ${name}`}
-              description='เมื่อยกเลิกแล้วจะต้องให้ที่ปรึกษายืนยันใหม่อีกครั้ง'           
-            />
-            
-            { status != 4 ? 
+          { 
+            isStudent &&
+            <>
+              <CancelModal 
+                open={open}
+                onClose={handleOnCloseModal}
+                onSubmit={handleOnCancel}
+                title={`ยกเลิกการส่ง ${name}`}
+                description='เมื่อยกเลิกแล้วจะต้องให้ที่ปรึกษายืนยันใหม่อีกครั้ง'           
+              />
+              
+              { status != 4 ? 
+                <LoadingButton 
+                  loading={loading}
+                  sx={{
+                    top: "18rem",
+                    width: "7rem",
+                    height: "2.8rem",
+                    fontSize: 20,
+                    textAlign: "center",
+                    justifyContent: "center",
+                    background: status ? theme.color.button.error : theme.color.button.primary,
+                    borderRadius: '10px',
+                    color: theme.color.text.default,
+                    boxShadow: 'none',
+                    textTransform: 'none',
+                    '&:hover': { background: status ? '#FF545E' : '#B07CFF' },
+                    "&:disabled": {
+                      backgroundColor: theme.color.button.disable,
+                  }
+                  }}
+                  onClick={status ? handleOnOpenModal : handleOnSubmit}
+                  disabled={!submit}
+                >
+                    {status ? 'ยกเลิก' : 'ยืนยัน'}
+                  </LoadingButton> 
+                : <></>
+                }
+            </> 
+          }
+          {
+            (!isStudent && isAdvisor && (status === 2) || (status === 1)) ?
+            <>
+              <CancelModal 
+                open={open}
+                onClose={handleOnCloseModal}
+                onSubmit={handleOnCancel}
+                title={`ยกเลิกการยืนยัน ${name}`}
+                description='เมื่อยกเลิกแล้วจะต้องให้ที่ปรึกษายืนยันใหม่อีกครั้ง'           
+              />
+
               <LoadingButton 
                 loading={loading}
                 sx={{
@@ -229,30 +299,32 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
                   fontSize: 20,
                   textAlign: "center",
                   justifyContent: "center",
-                  background: status ? theme.color.button.error : theme.color.button.primary,
+                  background: status === 2 ? theme.color.button.success : theme.color.button.error,
                   borderRadius: '10px',
                   color: theme.color.text.default,
                   boxShadow: 'none',
                   textTransform: 'none',
-                  '&:hover': { background: status ? '#FF545E' : '#B07CFF' },
+                  '&:hover': { background: status === 2 ? theme.color.button.success : '#FF545E' },
                   "&:disabled": {
                     backgroundColor: theme.color.button.disable,
                 }
                 }}
-                onClick={status ? handleOnOpenModal : handleOnSubmit}
+                onClick={status === 2 ? handleOnSubmit : handleOnOpenModal}
                 disabled={!submit}
               >
-                  {status ? 'ยกเลิก' : 'ยืนยัน'}
-                </LoadingButton> 
-              : <></>
-              }
-          </> }
+                  {status === 2 ? 'ยืนยัน' : 'ยกเลิก'}
+                </LoadingButton>
+            </> : <></>
+          }
+          </Box>  
         </Box>
-
-          
-      </Box>
-    </CommonPreviewContainer>
-  )
+      </CommonPreviewContainer>
+    )
+  } else if (notFound === 2) {
+    return <CommonPreviewContainer/>
+  } else {
+    return <NotFound/>
+  }
 })
 
 export default MeetingScheduleDetail

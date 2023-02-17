@@ -102,7 +102,9 @@ export const listMeetingScheduleInClass = async (reqQuery: any, classId: string)
 
 export const listSendMeetingScheduleInClass = async (reqQuery: any, classId: string, projectId: string) => {
     try {
+        console.log("OLD: " + axios.defaults.headers.common['Authorization'])
         await refreshToken()
+        console.log("NEW: " + axios.defaults.headers.common['Authorization'])
         const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/class/${classId}/project/${projectId}/meeting-schedule`
         const resAxios = await axios.get(url, {params: reqQuery})
         return {

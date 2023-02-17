@@ -10,7 +10,7 @@ export const ProjectPreviewButton = styled(Button, {
   color: '#AD68FF',
   fontFamily: 'Prompt',
   background: '#F3F3F3',
-  margin: '60px 2.22vw 0 2.22vw',
+  margin: '60px 2.22vw 60px 2.22vw',
   flexDirection: 'column',
   borderRadius: '20px',
   minWidth: '24rem',

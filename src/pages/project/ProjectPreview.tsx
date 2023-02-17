@@ -8,34 +8,36 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { AdminCommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
 import { ListPreviewButton } from '../../styles/layout/_button';
 import { useMediaQuery } from 'react-responsive';
-import { listClass } from '../../utils/class';
-import moment from 'moment';
 import applicationStore from '../../stores/applicationStore';
-import AdminSidebar from '../../components/Sidebar/AdminSidebar';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
+import Sidebar from '../../components/Sidebar/Sidebar';
 import { listProjectInClass } from '../../utils/project';
 import { theme } from '../../styles/theme';
 import { observer } from 'mobx-react';
+import NotFound from '../other/NotFound';
 
 const ProjectPreview = observer(() => {
   const navigate = useNavigate()
   const location = useLocation();
   const search = new URLSearchParams(location.search);
-  const { isAdmin, currentRole } = applicationStore
+  const { isAdmin, currentRole, classroom } = applicationStore
 
+  const classId = window.location.pathname.split('/')[2]
   const sortOptions = ['createdAtDESC', 'createdAtASC', 'name']
   const sortCheck = search.get('sort') && sortOptions.find((e) => search.get('sort')?.toLowerCase() == e.toLowerCase()) ? search.get('sort') : 'createdAtDESC'
   const [sortSelect, setSortSelect] = useState<string>(sortCheck || 'createdAtDESC')
   
   const isBigScreen = useMediaQuery({ query: '(min-width: 650px)' })
   const [projects, setProjects] = useState<Array<any>>([])
+  const [notFound, setNotFound] = useState<number>(2)
 
   useEffect(() => {
-      // if (!applicationStore.classroom)
       applicationStore.setIsShowMenuSideBar(true)
       async function getData () {
-        const result = await listProjectInClass({ sort: sortSelect}, window.location.pathname.split('/')[2])
-        setProjects(result.data as Array<any>);
+        const result = await listProjectInClass({ sort: sortSelect }, classId)
+        if (result.data) {
+          setProjects(result.data as Array<any>);
+          setNotFound(1)
+        } else setNotFound(0)
       }
       getData()
     }, [sortSelect] 
@@ -49,74 +51,84 @@ const ProjectPreview = observer(() => {
     });
   }
 
-  return (
-    <AdminCommonPreviewContainer>
-      {<AdminSidebar/>}
-      <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
-        <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: isBigScreen ? 'row' : 'column', maxWidth: 700 }}>
-          <FormControl sx={{marginRight: '1.5rem', position: 'relative'}}>
-            <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
-            <Select
-                labelId="select-sort-label"
-                id="select-sort"
-                value={sortSelect}
-                onChange={handleSortChange}
-                label="จัดเรียงโดย"
-                sx={{
-                  borderRadius: '10px', 
-                  color: theme.color.background.primary, 
-                  height: 45, 
-                  fontWeight: 500, 
-                  width: 180
-                }}
-            >
-                <MenuItem value={'createdAtDESC'}>วันที่สร้างล่าสุด</MenuItem>
-                <MenuItem value={'createdAtASC'}>วันที่สร้างเก่าสุด</MenuItem>
-                <MenuItem value={'name'}>ชื่อคลาส</MenuItem>
-            </Select>
-            </FormControl>
-        </Box>
+  if (notFound === 1) {
+    return (
+      <AdminCommonPreviewContainer>
+        <Sidebar/>
+        <Box sx={{display: 'flex', flexDirection: 'column', width: '100%'}}>
+          <Box sx={{ display: 'flex', padding: '0 auto', margin: '1.25rem 0 1.25rem 0', flexDirection: isBigScreen ? 'row' : 'column', maxWidth: 700 }}>
+            <FormControl sx={{marginRight: '1.5rem', position: 'relative'}}>
+              <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
+              <Select
+                  labelId="select-sort-label"
+                  id="select-sort"
+                  value={sortSelect}
+                  onChange={handleSortChange}
+                  label="จัดเรียงโดย"
+                  sx={{
+                    borderRadius: '10px', 
+                    color: theme.color.background.primary, 
+                    height: 45, 
+                    fontWeight: 500, 
+                    width: 180
+                  }}
+              >
+                  <MenuItem value={'createdAtDESC'}>วันที่สร้างล่าสุด</MenuItem>
+                  <MenuItem value={'createdAtASC'}>วันที่สร้างเก่าสุด</MenuItem>
+                  <MenuItem value={'name'}>ชื่อคลาส</MenuItem>
+              </Select>
+              </FormControl>
+          </Box>
 
-        <Box sx={{ flexDirection: 'column', display: 'flex'}}>
-          {projects.map((c) => (
-            <ListPreviewButton key={c._id}>
-              <Typography
-                sx={{
-                  top: '1.5rem',
-                  left: 'calc(20px + 1vw)',
-                  position: 'absolute',
-                  fontSize: 'calc(30px + 0.2vw)',
-                  fontFamily: 'Prompt',
-                  fontWeight: 600,
-                  color: theme.color.text.primary,
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  display: "inline-block",
-                  textAlign: "left",
-                  width: "90%"
-                }}
-              >
-                {c.nameTH}
-              </Typography>
-              <Typography
-                sx={{
-                  top: '5rem',
-                  left: 'calc(20px + 1vw)',
-                  position: 'absolute',
-                  fontSize: 'calc(15px + 0.3vw)',
-                  color: theme.color.text.secondary,
-                  fontWeight: 600
-                }}
-              >
-                {c.nameEN}
-              </Typography>
-            </ListPreviewButton>
-          ))}
+          <Box sx={{ flexDirection: 'column', display: 'flex'}}>
+            {projects.map((c) => (
+              <ListPreviewButton key={c._id} onClick={() => navigate(`/class/${classId}/project/${c._id}`)}>
+                <Typography
+                  sx={{
+                    top: '1.5rem',
+                    left: 'calc(20px + 1vw)',
+                    position: 'absolute',
+                    fontSize: 'calc(30px + 0.2vw)',
+                    fontFamily: 'Prompt',
+                    fontWeight: 600,
+                    color: theme.color.text.primary,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    display: "inline-block",
+                    textAlign: "left",
+                    width: "90%"
+                  }}
+                >
+                  {c.nameTH}
+                </Typography>
+                <Typography
+                  sx={{
+                    top: '5rem',
+                    left: 'calc(20px + 1vw)',
+                    position: 'absolute',
+                    fontSize: 'calc(15px + 0.3vw)',
+                    color: theme.color.text.secondary,
+                    fontWeight: 600
+                  }}
+                >
+                  {c.nameEN}
+                </Typography>
+              </ListPreviewButton>
+            ))}
+          </Box>
         </Box>
-      </Box>
-    </AdminCommonPreviewContainer>
-  )
+      </AdminCommonPreviewContainer>
+    )
+  } else if (notFound === 2) {
+    return (
+      <AdminCommonPreviewContainer>
+        <Sidebar/>
+      </AdminCommonPreviewContainer>
+    )
+  } else {
+    return <NotFound></NotFound>
+  }
 })
 
 export default ProjectPreview

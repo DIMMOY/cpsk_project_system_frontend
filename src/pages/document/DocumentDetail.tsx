@@ -21,7 +21,6 @@ interface PreviewProps {
 }
 
 const DocumentDetail = ({ isStudent }: PreviewProps) => {
-  isStudent = true
   const location = useLocation();
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
   const { success, warning, error, secondary } = theme.color.text
@@ -34,16 +33,22 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
   const {name, dueDate, status} = location.state
   const [files, setFiles] = useState<Array<any>>([])
 
+  const currentPathName = 
+    window.location.pathname.endsWith('/') ? 
+      window.location.pathname.slice(0, -1) : 
+      window.location.pathname
+
   const handleChange = (e: any) => {
     setFiles(Array.from(e.target.files));
   }
 
   console.log(files)
 
+
   return (
     <CommonPreviewContainer>
       <Box sx={{ display: 'flex', padding: '0 auto' }}>
-        <Link to="/document">
+        <Link to={isStudent ? "/document" : currentPathName.slice(0, currentPathName.lastIndexOf('/'))}>
           <IconButton
             disableRipple
             sx={{ 
@@ -161,21 +166,24 @@ const DocumentDetail = ({ isStudent }: PreviewProps) => {
             }
             </Box>
             
-            <Button sx={{
-              width: "7rem",
-              height: "2.8rem",
-              fontSize: 20,
-              textAlign: "center",
-              justifyContent: "center",
-              background: theme.color.button.primary,
-              borderRadius: '10px',
-              color: theme.color.text.default,
-              boxShadow: 'none',
-              textTransform: 'none',
-              '&:hover': { background: '#B07CFF' },
-            }}>
-                ยืนยัน
-            </Button>
+            { isStudent ?
+              <Button sx={{
+                width: "7rem",
+                height: "2.8rem",
+                fontSize: 20,
+                textAlign: "center",
+                justifyContent: "center",
+                background: theme.color.button.primary,
+                borderRadius: '10px',
+                color: theme.color.text.default,
+                boxShadow: 'none',
+                textTransform: 'none',
+                '&:hover': { background: '#B07CFF' },
+              }}>
+                  ยืนยัน
+              </Button>
+              : <></>
+            }
         </Box>
       </CommonPreviewContainer>
       

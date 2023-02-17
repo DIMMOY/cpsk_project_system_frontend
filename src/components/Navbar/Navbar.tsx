@@ -1,4 +1,4 @@
-import { Typography, Toolbar, Box, AppBar, Menu, Fade, MenuItem, Divider, IconButton } from '@mui/material'
+import { Typography, Toolbar, Box, AppBar, Menu, Fade, MenuItem, Divider, IconButton, Tooltip } from '@mui/material'
 import { observer } from 'mobx-react'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -9,7 +9,6 @@ import { signOutWithGoogle } from '../../utils/auth'
 import { changeCurrentRole } from '../../utils/user'
 import Button from '@mui/material/Button';
 import { useMediaQuery } from 'react-responsive'
-import Tooltip from '@mui/material/Tooltip'
 
 // Icon
 import DescriptionIcon from '@mui/icons-material/Description'
@@ -80,7 +79,8 @@ export const NavBar = observer(() => {
     async function getData() {
       if (pathname[1] === 'class' && pathname[2]) {
         const classroom = await getClassById(pathname[2])
-        applicationStore.setClassroom(classroom.data)
+        if (classroom.data)
+          applicationStore.setClassroom(classroom.data)
       }
     }
     getData()
@@ -128,17 +128,23 @@ export const NavBar = observer(() => {
           </IconButton> : 
           <></>
         }
-        { classroom && isBigScreen ? 
+        { classroom  ? 
           <Typography 
             sx={{
               fontSize: 20, 
               marginLeft: '1.5vw', 
-              fontWeight: 500
+              fontWeight: 500,
+              cursor: 'pointer',
+              zIndex: 2,
+              color: theme.color.text.default
             }}
+            onClick={() => navigate(currentRole === 0 ? "/" : `/class/${classroom._id as string}/project`)}
+            onMouseEnter={(e : React.MouseEvent<HTMLSpanElement, MouseEvent>) => ((e.target as HTMLSpanElement).style.textDecoration = 'underline')}
+            onMouseLeave={(e : React.MouseEvent<HTMLSpanElement, MouseEvent>) => ((e.target as HTMLSpanElement).style.textDecoration = 'none')}
           >
             {'Classroom: ' + classroom.name}
-          </Typography> : 
-          <></> 
+          </Typography> 
+          : <></> 
         }
         { 
           currentRole === 2 ? 
@@ -192,7 +198,18 @@ export const NavBar = observer(() => {
           </Box> : <></> 
         }
         <Box sx={{ position: 'absolute', display: 'flex', alignItems: 'center', right: 0, zIndex: 2 }}>
-          {isBigScreen ? <Typography sx={{fontSize: 20, margin: '0.6vw', fontWeight: 500}}>{applicationStore.user?.displayName?.split(' ')[0].toUpperCase()}</Typography> : <></>}
+          { isBigScreen ? 
+            <Typography 
+              sx={{
+                fontSize: 20, 
+                margin: '0.6vw', 
+                fontWeight: 500, 
+                color: theme.color.text.default}}
+            >
+              {applicationStore.user?.displayName?.split(' ')[0].toUpperCase()}
+            </Typography> 
+            : <></>
+          }
           <IconButton disableFocusRipple>
           <img 
             style={{width: '3rem', height: '3rem', borderRadius: '50%' }} 

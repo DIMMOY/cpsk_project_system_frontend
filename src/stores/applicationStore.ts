@@ -4,7 +4,7 @@ import { makeAutoObservable } from "mobx";
 class applicationStore {
     user: User | null = null
     userDisplayName: string | null = ''
-    projectId: string | null = null
+    project: any | null = null
     classroom: any | null = null;
     userId: string | null = null;
     isShowNavBar = false
@@ -23,8 +23,8 @@ class applicationStore {
         this.user = user as User
     }
 
-    setProjectId(projectId: string) {
-        this.projectId = projectId as string
+    setProject(project: any | null) {
+        this.project = project as any | null
     }
 
     setIsShowNavBar(isShowNavBar: boolean) {
@@ -56,8 +56,8 @@ class applicationStore {
         this.currentRole = currentRole as number
     }
 
-    setClassroom(name: string | null) {
-        this.classroom = name as string | null
+    setClassroom(name: any | null) {
+        this.classroom = name as any | null
     }
 }
 

@@ -86,11 +86,16 @@ export const signOutWithGoogle = async () => {
 }
 
 export const refreshToken = async () => {
-  await onAuthStateChanged(firebaseAuth, async (user) => {
+  await firebaseAuth.onAuthStateChanged(async (user) => {
     if (user && user.email?.indexOf('@ku.th') !== -1) {
       let accessToken = await user.getIdTokenResult()
-      if (new Date(accessToken.expirationTime).getTime() < new Date().getTime()) {
+      const now = new Date()
+      console.log("OLDTOKEN EXPIRE: ")
+      console.log(accessToken)
+      if (new Date(accessToken.expirationTime).getTime() - 120000 < now.getTime()) {
         accessToken = await user.getIdTokenResult(true)
+        console.log("NEWTOKEN EXPIRE: ")
+        console.log(accessToken)
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken.token;
         applicationStore.setUser(user)
       }
