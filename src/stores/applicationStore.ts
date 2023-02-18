@@ -14,6 +14,7 @@ class applicationStore {
     isAdvisor = false
     isStudent = false
     currentRole = 0
+    expiredTime = 0
 
     constructor() {
         makeAutoObservable(this)
@@ -25,6 +26,10 @@ class applicationStore {
 
     setProject(project: any | null) {
         this.project = project as any | null
+    }
+
+    setExpiredTime(expiredTime: number) {
+        this.expiredTime = expiredTime as number
     }
 
     setIsShowNavBar(isShowNavBar: boolean) {

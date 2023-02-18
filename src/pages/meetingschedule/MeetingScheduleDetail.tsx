@@ -24,7 +24,6 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
   const location = useLocation()
   const { currentRole, classroom, project } = applicationStore
   const isBigScreen = useMediaQuery({ query: '(min-width: 600px)' })
-  const [detail, setDetail] = useState<string>('')
   const { success, warning, error, secondary } = theme.color.text
   const statusList 
     = [{color: error, message: 'ยังไม่ส่ง'}, 
@@ -32,7 +31,6 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
       {color: warning, message: 'รอยืนยัน'}, 
       {color: warning, message: 'ส่งช้า'}, 
       {color: secondary, message: "----"}]
-  const [id, setId] = useState<string | null>(null)
   const [name, setName] = useState<string>('กำลังโหลด...')
   const [dueDate, setDueDate] = useState<string>('--/--/---- --:--')
   const [status, setStatus] = useState<number>(4)
@@ -41,6 +39,7 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
   const [submit, setSubmit] = useState<boolean>(false)
   const [isAdvisor, setIsAdvisor] = useState<boolean>(false)
   const [notFound, setNotFound] = useState<number>(2)
+  const [detail, setDetail] = useState<string>('')
 
   const currentPathName = 
     window.location.pathname.endsWith('/') ? 
@@ -57,10 +56,10 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
     if (!result.data) {
       setNotFound(0)
     } else {
+      console.log(result.data)
       setName(result.data.meetingSchedule.name)
       setDueDate(moment(result.data.endDate).format('DD/MM/YYYY HH:mm'))
       setStatus(result.data.sendStatus)
-      setId(result.data.meetingScheduleId)
       setDetail(result.data.detail ? result.data.detail : detail)
       setSubmit(result.data.detail || detail !== '')
       setNotFound(1)
@@ -87,7 +86,6 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
       setName(location.state.name)
       setDueDate(location.state.dueDate)
       setStatus(location.state.status)
-      setId(location.state.id)
       setDetail(location.state.detail)
       setSubmit(location.state.detail)
       setNotFound(1)

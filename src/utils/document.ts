@@ -21,6 +21,27 @@ export const createDocument = async (reqBody: any) => {
     }
 }
 
+export const sendDocument = async (reqBody: any, projectId: string, documentId: string) => {
+    try {
+        await refreshToken()
+        const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/project/${projectId}/document/${documentId}`
+        await axios.post(url, reqBody)
+        return {
+            statusCode: 200,
+            message: 'Create send document successful',
+        };
+
+    } catch (error) {
+        console.error(error)
+        return {
+            statusCode: 400,
+            message: 'Create send document error',
+            errorMsg: 'สร้างรายการส่ง document ผิดพลาด กรุณาลองใหม่ในภายหลัง',
+            error
+        }
+    }
+}
+
 export const setDateDocument = async (reqBody: any) => {
     try {
         await refreshToken()
@@ -93,6 +114,25 @@ export const listSendDocumentInClass = async (reqQuery: any, classId: string, pr
             statusCode: 400,
             message: 'List document error',
             errorMsg: 'ค้นหาเอกสารผิดพลาด กรุณาลองใหม่ในภายหลัง',
+            error
+        }
+    } 
+}
+
+export const getSendDocumentInClass = async (classId: string, projectId: string, documentId: string) => {
+    try {
+        await refreshToken()
+        const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/class/${classId}/project/${projectId}/document/${documentId}/detail`
+        const resAxios = await axios.get(url)
+        return {
+            data: resAxios.data.data
+        }
+    } catch (error) {
+        console.error(error)
+        return {
+            statusCode: 400,
+            message: 'Find send document error',
+            errorMsg: 'ค้นหา send document ผิดพลาด กรุณาลองใหม่ในภายหลัง',
             error
         }
     } 

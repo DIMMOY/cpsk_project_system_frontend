@@ -13,17 +13,15 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 )
 
-console.warn = (msg) => console.error(msg);
-
 onAuthStateChanged(firebaseAuth, async (user) => {
   if (user && user.email?.indexOf('@ku.th') !== -1) {
-    const accessToken = await user.getIdToken()
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
+    const accessToken = await user.getIdTokenResult()
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken.token;
     applicationStore.setUser(user)
+    applicationStore.setExpiredTime(new Date(accessToken.expirationTime).getTime() - 3600000)
     const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/user`
     const userRes = await axios.patch(`${url}/last-login`)
     const userData = userRes.data.data
-    const { userId } = userData
     applicationStore.setRole(userData.role)
 
     // find class when user is student

@@ -88,8 +88,8 @@ const DocumentHomePreview = observer(({ isStudent }: PreviewProps) => {
           {documents.map((document) => (
               <ListPreviewButton
                 key={document._id}
-                onClick = {() => {navigate(isStudent ? `/document/${document._id as string}` : `${window.location.pathname}/${document._id as string}`,
-                  {replace: true, state: {id: document._id, name: document.name, status: document.sendStatus, 
+                onClick = {() => {navigate(isStudent ? `/document/${document.documentId as string}` : `${currentPathName}/${document.documentId as string}`,
+                  {replace: true, state: {name: document.name, status: document.sendStatus, pathDocument: document.pathDocument, 
                   statusType: statusList[document.sendStatus].message, dueDate: moment(document.endDate).format('DD/MM/YYYY HH:mm')}})}}
               >
                 <Typography

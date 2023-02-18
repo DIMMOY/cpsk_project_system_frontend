@@ -100,7 +100,7 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
             <ListPreviewButton
               key={mtSchedule._id}
               onClick = {() => {navigate(isStudent ? `/meeting-schedule/${mtSchedule.meetingScheduleId as string}` : `${currentPathName}/${mtSchedule.meetingScheduleId as string}`,
-                  {replace: true, state: {id: mtSchedule._id, name: mtSchedule.name, status: mtSchedule.sendStatus, detail: mtSchedule.detail ? mtSchedule.detail : '',
+                  {replace: true, state: {name: mtSchedule.name, status: mtSchedule.sendStatus, detail: mtSchedule.detail ? mtSchedule.detail : '',
                   statusType: mtSchedule.statusType, dueDate: moment(mtSchedule.endDate).format('DD/MM/YYYY HH:mm')}})}}
             >
               <Typography
