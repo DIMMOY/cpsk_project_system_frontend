@@ -18,7 +18,7 @@ onAuthStateChanged(firebaseAuth, async (user) => {
     const accessToken = await user.getIdTokenResult()
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken.token;
     applicationStore.setUser(user)
-    applicationStore.setExpiredTime(new Date(accessToken.expirationTime).getTime() - 3600000)
+    applicationStore.setExpiredTime(new Date(accessToken.expirationTime).getTime() - 120000)
     const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/user`
     const userRes = await axios.patch(`${url}/last-login`)
     const userData = userRes.data.data
@@ -33,7 +33,6 @@ onAuthStateChanged(firebaseAuth, async (user) => {
         // find project
         const projectInClassRes = await findProjectInClassForStudent(classroom._id)
         const project = projectInClassRes.data ? projectInClassRes.data.projectId : null
-        console.log(projectInClassRes)
         applicationStore.setProject(project)
       }
     }

@@ -29,8 +29,7 @@ const DocumentHomePreview = observer(({ isStudent }: PreviewProps) => {
   const { success, warning, error, secondary } = theme.color.text
   const statusList 
     = [{color: error, message: 'ยังไม่ส่ง'}, 
-      {color: success, message: 'ส่งแล้ว'}, 
-      {color: warning, message: 'รอยืนยัน'}, 
+      {color: success, message: 'ส่งแล้ว'},  
       {color: warning, message: 'ส่งช้า'}, 
       {color: secondary, message: "----"}]
 
@@ -89,7 +88,7 @@ const DocumentHomePreview = observer(({ isStudent }: PreviewProps) => {
               <ListPreviewButton
                 key={document._id}
                 onClick = {() => {navigate(isStudent ? `/document/${document.documentId as string}` : `${currentPathName}/${document.documentId as string}`,
-                  {replace: true, state: {name: document.name, status: document.sendStatus, pathDocument: document.pathDocument, 
+                  {replace: true, state: {name: document.name, status: document.sendStatus, pathDocument: document.pathDocument, description: document.description,
                   statusType: statusList[document.sendStatus].message, dueDate: moment(document.endDate).format('DD/MM/YYYY HH:mm')}})}}
               >
                 <Typography

@@ -54,12 +54,14 @@ const Routers: React.FC = (): JSX.Element => {
                         <Route path = '/class/:id/project/:projectId/meeting-schedule/:mtId' element={<MeetingScheduleDetail isStudent={false}/>}/>
 
                         <Route path = '/class/:id/document' element={<DocumentPreview/>}/>
+                        <Route path = '/class/:id/document/:documentId' element={<DocumentPreview/>}/>
 
                         <Route path = '/class/:id/assessment' element={<ProjectPreview/>}/>
 
                         <Route path = '/class/:id/committee' element={<ProjectPreview/>}/>
 
                         <Route path = '/class/:id/meeting-schedule' element={<MeetingSchedulePreview/>}/>
+                        <Route path = '/class/:id/meeting-schedule/:mtId' element={<MeetingSchedulePreview/>}/>
                     </Route>
 
                     <Route element={<NotAdvisorRoute/>}>

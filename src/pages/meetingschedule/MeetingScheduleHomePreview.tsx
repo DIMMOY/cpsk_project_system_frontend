@@ -39,8 +39,8 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
   const statusList 
     = [{color: error, message: 'ยังไม่ส่ง'}, 
       {color: success, message: 'ส่งแล้ว'}, 
-      {color: warning, message: 'รอยืนยัน'}, 
-      {color: warning, message: 'ส่งช้า'}, 
+      {color: warning, message: 'ส่งช้า'},
+      {color: warning, message: 'รอยืนยัน'},  
       {color: secondary, message: "----"}]
   
   const currentPathName = 

@@ -138,6 +138,27 @@ export const getSendDocumentInClass = async (classId: string, projectId: string,
     } 
 }
 
+export const cancelSendDocument = async (projectId: string, documentId: string) => {
+    try {
+        await refreshToken()
+        const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/project/${projectId}/document/${documentId}`
+        await axios.delete(url)
+        return {
+            statusCode: 200,
+            message: 'Delete send document successful',
+        };
+
+    } catch (error) {
+        console.error(error)
+        return {
+            statusCode: 400,
+            message: 'Delete send document error',
+            errorMsg: 'ลบรายการส่ง document ผิดพลาด กรุณาลองใหม่ในภายหลัง',
+            error
+        }
+    }
+}
+
 export const disabeDocumentInClass = async (classId: string, documentId: string) => {
     try {
         await refreshToken()

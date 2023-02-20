@@ -7,7 +7,7 @@ import TextField from '@mui/material/TextField'
 import { useMediaQuery } from 'react-responsive'
 import { observer } from 'mobx-react'
 import moment from 'moment'
-import { cancelSendMeetingSchedule, getSendMeetingScheduleInClass, sendMeetingSchedule } from '../../utils/meetingSchedule'
+import { cancelSendMeetingSchedule, changeStatusMeetingSchedule, getSendMeetingScheduleInClass, sendMeetingSchedule } from '../../utils/meetingSchedule'
 import { LoadingButton } from '@mui/lab'
 import CancelModal from '../../components/Modal/CancelModal'
 import { CommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
@@ -28,8 +28,8 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
   const statusList 
     = [{color: error, message: 'ยังไม่ส่ง'}, 
       {color: success, message: 'ส่งแล้ว'}, 
-      {color: warning, message: 'รอยืนยัน'}, 
       {color: warning, message: 'ส่งช้า'}, 
+      {color: warning, message: 'รอยืนยัน'},
       {color: secondary, message: "----"}]
   const [name, setName] = useState<string>('กำลังโหลด...')
   const [dueDate, setDueDate] = useState<string>('--/--/---- --:--')
@@ -100,9 +100,34 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
     setDetail(description)
   }
 
-  const handleOnSubmit = async () => {
+  const handleOnSendMeetingSchedule = async () => {
     setLoading(true)
     const result = await sendMeetingSchedule({ detail }, projectId, meetingScheduleId)
+    if (result.statusCode === 200) {
+      setTimeout(async () => {
+        await getData('')
+        setLoading(false)
+      }, 1300)
+    }
+    else setLoading(false)
+  }
+
+  const handleOnSubmitMeetingSchedule = async () => {
+    setLoading(true)
+    const result = await changeStatusMeetingSchedule(true, projectId, meetingScheduleId)
+    if (result.statusCode === 200) {
+      setTimeout(async () => {
+        await getData('')
+        setLoading(false)
+      }, 1300)
+    }
+    else setLoading(false)
+  }
+
+  const handleOnCancelSubmitMeetingSchedule = async () => {
+    setLoading(true)
+    console.log("TST")
+    const result = await changeStatusMeetingSchedule(false, projectId, meetingScheduleId)
     if (result.statusCode === 200) {
       setTimeout(async () => {
         await getData('')
@@ -115,7 +140,7 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
   const handleOnOpenModal = () => setOpen(true)
   const handleOnCloseModal = () => setOpen(false)
 
-  const handleOnCancel = async () => {
+  const handleOnCancelSendMeetingSchedule = async () => {
     const result = await cancelSendMeetingSchedule(projectId, meetingScheduleId)
     if (result.statusCode === 200) {
       await getData(detail)
@@ -243,7 +268,7 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
               <CancelModal 
                 open={open}
                 onClose={handleOnCloseModal}
-                onSubmit={handleOnCancel}
+                onSubmit={handleOnCancelSendMeetingSchedule}
                 title={`ยกเลิกการส่ง ${name}`}
                 description='เมื่อยกเลิกแล้วจะต้องให้ที่ปรึกษายืนยันใหม่อีกครั้ง'           
               />
@@ -268,7 +293,7 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
                       backgroundColor: theme.color.button.disable,
                   }
                   }}
-                  onClick={status ? handleOnOpenModal : handleOnSubmit}
+                  onClick={status ? handleOnOpenModal : handleOnSendMeetingSchedule}
                   disabled={!submit}
                 >
                     {status ? 'ยกเลิก' : 'ยืนยัน'}
@@ -278,12 +303,12 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
             </> 
           }
           {
-            (!isStudent && isAdvisor && (status === 2) || (status === 1)) ?
+            (!isStudent && isAdvisor && (status === 3) || (status === 1)) ?
             <>
               <CancelModal 
                 open={open}
                 onClose={handleOnCloseModal}
-                onSubmit={handleOnCancel}
+                onSubmit={handleOnCancelSendMeetingSchedule}
                 title={`ยกเลิกการยืนยัน ${name}`}
                 description='เมื่อยกเลิกแล้วจะต้องให้ที่ปรึกษายืนยันใหม่อีกครั้ง'           
               />
@@ -297,20 +322,20 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
                   fontSize: 20,
                   textAlign: "center",
                   justifyContent: "center",
-                  background: status === 2 ? theme.color.button.success : theme.color.button.error,
+                  background: status === 3 ? theme.color.button.success : theme.color.button.error,
                   borderRadius: '10px',
                   color: theme.color.text.default,
                   boxShadow: 'none',
                   textTransform: 'none',
-                  '&:hover': { background: status === 2 ? theme.color.button.success : '#FF545E' },
+                  '&:hover': { background: status === 3 ? theme.color.button.success : '#FF545E' },
                   "&:disabled": {
                     backgroundColor: theme.color.button.disable,
                 }
                 }}
-                onClick={status === 2 ? handleOnSubmit : handleOnOpenModal}
+                onClick={status === 3 ? handleOnSubmitMeetingSchedule : handleOnCancelSubmitMeetingSchedule}
                 disabled={!submit}
               >
-                  {status === 2 ? 'ยืนยัน' : 'ยกเลิก'}
+                  {status === 3 ? 'ยืนยัน' : 'ยกเลิก'}
                 </LoadingButton>
             </> : <></>
           }

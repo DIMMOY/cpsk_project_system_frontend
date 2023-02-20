@@ -201,3 +201,24 @@ export const updateMeetingSchedule = async (mtId: string, reqBody: { name: strin
         }
     }
 }
+
+export const changeStatusMeetingSchedule = async (status: boolean, projectId: string, mtId: string) => {
+    try {
+        await refreshToken()
+        const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/project/${projectId}/meeting-schedule/${mtId}`
+        await axios.patch(url, { status })
+        return {
+            statusCode: 200,
+            message: 'Update send meeting schedule successful',
+        };
+    } catch (error) {
+        console.error(error)
+        return {
+            statusCode: 400,
+            message: 'Update send meeting schedule in class error',
+            errorMsg: 'แก้ไข send meeting schedule ผิดพลาด กรุณาลองใหม่ในภายหลัง',
+            error
+    
+        }
+    }
+}

@@ -228,7 +228,7 @@ const ClassPreview = observer(() => {
                   fontWeight: 600
                 }}
               >
-                สร้างเมื่อ {moment(c.createdAt).format('DD/MM/YYYY HH:mm')} น.
+                { currentRole === 2 && isAdmin ? `รหัสเข้าคลาส: ${c.inviteCode}` : `สร้างเมื่อ ${moment(c.createdAt).format('DD/MM/YYYY HH:mm')} น.`}
               </Typography>
             </ListPreviewButton>
           ))}
