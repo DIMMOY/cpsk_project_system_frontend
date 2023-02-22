@@ -20,7 +20,7 @@ onAuthStateChanged(firebaseAuth, async (user) => {
     applicationStore.setUser(user)
     applicationStore.setExpiredTime(new Date(accessToken.expirationTime).getTime() - 120000)
     const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/user`
-    const userRes = await axios.patch(`${url}/last-login`)
+    const userRes = await axios.patch(`${url}/last-login`, { imageUrl: user.photoURL })
     const userData = userRes.data.data
     applicationStore.setRole(userData.role)
 

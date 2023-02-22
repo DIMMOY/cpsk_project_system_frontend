@@ -29,6 +29,7 @@ import ProjectEdit from '../pages/project/ProjectEdit'
 import NotFound from '../pages/other/NotFound'
 import NotStudentRoute from './NotStudentRoute'
 import NotAdvisorRoute from './NotAdvisorRoute'
+import AdminRoleSetting from '../pages/admin/AdminRoleSetting'
 
 
 const Routers: React.FC = (): JSX.Element => {
@@ -54,14 +55,14 @@ const Routers: React.FC = (): JSX.Element => {
                         <Route path = '/class/:id/project/:projectId/meeting-schedule/:mtId' element={<MeetingScheduleDetail isStudent={false}/>}/>
 
                         <Route path = '/class/:id/document' element={<DocumentPreview/>}/>
-                        <Route path = '/class/:id/document/:documentId' element={<DocumentPreview/>}/>
+                        <Route path = '/class/:id/document/overview' element={<DocumentPreview/>}/>
 
                         <Route path = '/class/:id/assessment' element={<ProjectPreview/>}/>
 
                         <Route path = '/class/:id/committee' element={<ProjectPreview/>}/>
 
                         <Route path = '/class/:id/meeting-schedule' element={<MeetingSchedulePreview/>}/>
-                        <Route path = '/class/:id/meeting-schedule/:mtId' element={<MeetingSchedulePreview/>}/>
+                        <Route path = '/class/:id/meeting-schedule/overview' element={<MeetingSchedulePreview/>}/>
                     </Route>
 
                     <Route element={<NotAdvisorRoute/>}>
@@ -73,6 +74,10 @@ const Routers: React.FC = (): JSX.Element => {
                         <Route path = '/assessment' element={<AssessmentPage/>}/>
                         <Route path = '/assessment/create' element={<AssessmentEdit newForm={true}/>}/>
                         <Route path = '/assessment/edit' element={<AssessmentEdit newForm={false}/>}/>
+
+                        <Route element={<NotStudentRoute/>}>
+                            <Route path = 'role-setting' element={<AdminRoleSetting/>}/>
+                        </Route>
                     </Route>
 
                     {/* Page Not Found */}

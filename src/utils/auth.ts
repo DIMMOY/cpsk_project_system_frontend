@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { firebaseApp, firebaseAuth } from '../config/firebase';
 import firebase from 'firebase/app';
 import applicationStore from '../stores/applicationStore';
@@ -89,14 +89,13 @@ export const refreshToken = async () => {
   const { expiredTime } = applicationStore
   const now = new Date().getTime()
   if (expiredTime < now) {
-    console.log("REFRESH !")
-    await firebaseAuth.onAuthStateChanged(async (user) => {
-      if (user && user.email?.indexOf('@ku.th') !== -1) {
-        const accessToken = await user.getIdTokenResult(true)
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken.token;
-        applicationStore.setExpiredTime(new Date(accessToken.expirationTime).getTime() - 120000)
-        console.log("REFRESH: " + new Date(accessToken.expirationTime) + " " + new Date(expiredTime))
-      }
-    })
+    const auth = getAuth()
+    const user = auth.currentUser
+    if (user && user.email?.indexOf('@ku.th') !== -1) {
+      const accessToken = await user.getIdTokenResult(true);
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken.token;
+      applicationStore.setExpiredTime(new Date(accessToken.expirationTime).getTime() - 120000);
+      console.log("REFRESH: " + new Date(accessToken.expirationTime) + " " + new Date(expiredTime));
+    }
   }
 }

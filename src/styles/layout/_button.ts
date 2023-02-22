@@ -26,7 +26,7 @@ export const ListPreviewButton = styled(Button)({
   flexDirection: "column",
   textTransform: 'none',
   height: '9rem',
-  width: '100%'
+  width: '100%',
 })
 
 export const CommonPreviewButton = styled(Button)({

@@ -163,9 +163,10 @@ const ClassPreview = observer(() => {
                       weight: 42, 
                       fontSize: isBigScreen ? 16 : 13, 
                       padding: isBigScreen ? 1 : 0.5, 
-                      marginRight: '1.5rem'}}
-                      startIcon={<AddIcon sx={{width: 20, height: 20}}></AddIcon>}
-                      onClick={handleOpenModal}
+                      marginRight: '1.5rem',
+                    }}
+                    startIcon={<AddIcon sx={{width: 20, height: 20}}></AddIcon>}
+                    onClick={handleOpenModal}
                   >
                     สร้างคลาส
                   </Button>
@@ -228,7 +229,7 @@ const ClassPreview = observer(() => {
                   fontWeight: 600
                 }}
               >
-                { currentRole === 2 && isAdmin ? `รหัสเข้าคลาส: ${c.inviteCode}` : `สร้างเมื่อ ${moment(c.createdAt).format('DD/MM/YYYY HH:mm')} น.`}
+                {`รหัสเข้าคลาส: ${c.inviteCode as string}`}
               </Typography>
             </ListPreviewButton>
           ))}

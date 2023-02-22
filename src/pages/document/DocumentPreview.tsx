@@ -41,6 +41,7 @@ const DocumentPreview = observer(() => {
   
   const isBigScreen = useMediaQuery({ query: '(min-width: 900px)' })
   const [documents, setDocuments] = useState<Array<any>>([])
+  const classId = window.location.pathname.split('/')[2]
 
   const getData = async () => {
     let documentData
@@ -102,7 +103,7 @@ const DocumentPreview = observer(() => {
   const handleCloseCancelModal = () => setOpenCancel(false)
 
   const handleCancelSubmit = async () => {
-    const result = await disabeDocumentInClass(window.location.pathname.split('/')[2], currentDocumentId as string)
+    const result = await disabeDocumentInClass(classId, currentDocumentId as string)
     if (result.statusCode === 200) {
       getData()
     }
@@ -158,6 +159,23 @@ const DocumentPreview = observer(() => {
                   <MenuItem value={'name'}>ชื่อเอกสาร</MenuItem>
               </Select>
               </FormControl>
+              <Button 
+                sx={{
+                  background: theme.color.button.primary, 
+                  color: theme.color.text.default,
+                  borderRadius: '10px', 
+                  boxShadow: 'none', 
+                  textTransform: 'none', 
+                  '&:hover': { background: '#B07CFF' }, 
+                  height: 45, 
+                  weight: 42, 
+                  fontSize: 16, 
+                  padding: 1, 
+                }}
+                  onClick={() => navigate(`overview`)}
+              >
+                ดูภาพรวม
+              </Button>
           </Box>
 
           <DocumentStartModal 

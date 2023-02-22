@@ -19,10 +19,13 @@ import { observer } from 'mobx-react';
 const Sidebar = observer(() => {
     const { pathname } = window.location
     const navigate = useNavigate();
-    const params = ['project', 'document', 'meeting-schedule', 'assessment', 'committee']
-    const menuText = ['โปรเจกต์', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา', 'ประเมิน', 'จับคู่กรรมการคุมสอบ']
     const [currentSelect, setCurrentSelect] = useState<null | string>(null)
     const isBigScreen = useMediaQuery({ query: '(min-width: 900px)' })
+    const { classroom, currentRole } = applicationStore
+    const params = ['project', 'document', 'meeting-schedule', 'assessment', 'committee']
+    const menuText = currentRole === 2 ? [
+      'โปรเจกต์', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา', 'ประเมิน', 'จับคู่กรรมการคุมสอบ'] : 
+      ['โปรเจกต์', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา', 'ประเมิน']
 
     const [show, setShow] = useState(applicationStore.isShowSideBar);
   
@@ -42,9 +45,8 @@ const Sidebar = observer(() => {
 
     const handleOnClick = (param: string, text: string) => {
       if (text !== currentSelect) {
-        const path = pathname.substring(0, pathname.lastIndexOf('/'));
         setCurrentSelect(text)
-        navigate(path + '/' + param)
+        navigate(`/class/${classroom._id as string}/${param}`)
         applicationStore.setIsShowSideBar(false)
       }
     }

@@ -3,7 +3,7 @@ import { observer } from 'mobx-react'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../../assets/images/logo.png'
-import defaulProfile from '../../assets/images/default_profile.png'
+import defaultProfile from '../../assets/images/default_profile.png'
 import applicationStore from '../../stores/applicationStore'
 import { signOutWithGoogle } from '../../utils/auth'
 import { changeCurrentRole } from '../../utils/user'
@@ -19,6 +19,8 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import GradingIcon from '@mui/icons-material/Grading'
 import GradingOutlinedIcon from '@mui/icons-material/GradingOutlined'
+import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 import { theme } from '../../styles/theme'
 import { getClassById } from '../../utils/class'
@@ -35,11 +37,11 @@ export const NavBar = observer(() => {
   const isBigScreenTooltip = useMediaQuery({ query: '(min-width: 1100px)' })
   const responsePadding = isBigScreen ? '1.12rem 3rem 1.12rem 3rem' : '1.12rem 1.5rem 1.12rem 1.5rem'
   const open = Boolean(anchorEl);
-  const buttons = ['คลาส', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา', 'ประเมิน']
-  const linkButtons = ['class', 'document', 'meeting-schedule', 'assessment']
+  const buttons = ['คลาส', 'เอกสาร', 'รายงานพบอาจารย์ที่ปรึกษา', 'ประเมิน', 'จัดการตำแหน่ง']
+  const linkButtons = ['class', 'document', 'meeting-schedule', 'assessment', 'role-setting']
   const firstPathname = (window.location.pathname).split('/')
 
-  const [profile, setProfile] = useState<string>(applicationStore.user && applicationStore.user.photoURL ? applicationStore.user.photoURL : defaulProfile)
+  const [profile, setProfile] = useState<string>(applicationStore.user && applicationStore.user.photoURL ? applicationStore.user.photoURL : defaultProfile)
 
   const onGoogleLogOut = async () => {
     setAnchorEl(null);
@@ -188,7 +190,8 @@ export const NavBar = observer(() => {
                     {index === 0 ? ((firstPathname[1] === linkButtons[index]) || (index === 0 && firstPathname[1] === '') ? <ClassIcon sx={{fontSize: 30}}/> : <ClassOutlinedIcon sx={{fontSize: 30}}/>) :
                      index === 1 ? ((firstPathname[1] === linkButtons[index]) ? <DescriptionIcon sx={{fontSize: 30}}/> : <DescriptionOutlinedIcon sx={{fontSize: 30}}/>) :
                      index === 2 ? ((firstPathname[1] === linkButtons[index]) ? <GroupsIcon sx={{fontSize: 30}}/> : <GroupsOutlinedIcon sx={{fontSize: 30}}/>) :
-                     (firstPathname[1] === linkButtons[index]) ? <GradingIcon sx={{fontSize: 30}}/> : <GradingOutlinedIcon sx={{fontSize: 30}}/>
+                     index === 3 ? ((firstPathname[1] === linkButtons[index]) ? <GradingIcon sx={{fontSize: 30}}/> : <GradingOutlinedIcon sx={{fontSize: 30}}/>) :
+                     (firstPathname[1] === linkButtons[index]) ? <ManageAccountsRoundedIcon sx={{fontSize: 30}}/> : <ManageAccountsOutlinedIcon sx={{fontSize: 30}}/>
                      }
                 </Button>
               </span>

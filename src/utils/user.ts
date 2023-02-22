@@ -23,6 +23,59 @@ export const changeCurrentRole = async (reqBody: any) => {
    } 
 }
 
+export const listUser = async (reqQuery: any) => {
+  try {
+    await refreshToken();
+    const result = await axios.get(`${url}/role`, {params: reqQuery})
+    return {
+      data: result.data.data
+  };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: 'Find user error',
+      errorMsg: 'ค้นหา User ผิดพลาด กรุณาลองใหม่อีกครั้งในภายหลัง'
+    }
+   } 
+}
+
+export const addRoleInUser = async(reqBody: any) => {
+  try {
+    await refreshToken();
+    const res = await axios.post(`${url}/role`, reqBody)
+    return {
+      statusCode: res.data.statusCode,
+      message: res.data.message,
+  };
+  } catch (error: any) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: 'Add role error',
+      errorMsg: error.response.data.message,
+    }
+   } 
+}
+
+export const deleteRoleInUser = async(reqBody: any) => {
+  try {
+    await refreshToken();
+    const res = await axios.put(`${url}/role`, reqBody)
+    return {
+      statusCode: res.data.statusCode,
+      message: res.data.message,
+  };
+  } catch (error: any) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: 'Delete role error',
+      errorMsg: error.response.data.message,
+    }
+   } 
+}
+
 export const joinClass = async (reqBody: any) => {
   try {
     await refreshToken();

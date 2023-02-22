@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -41,6 +41,7 @@ const MeetingSchedulePreview = observer(() => {
     
     const isBigScreen = useMediaQuery({ query: '(min-width: 900px)' })
     const [meetingSchedules, setMeetingSchedules] = useState<Array<any>>([])
+    const classId = window.location.pathname.split('/')[2]
 
     const getData = async () => {
       let meetingScheduleData
@@ -102,7 +103,7 @@ const MeetingSchedulePreview = observer(() => {
     const handleCloseCancelModal = () => setOpenCancel(false)
 
     const handleCancelSubmit = async () => {
-      const result = await disabeMeetingScheduleInClass(window.location.pathname.split('/')[2], lastMeetingScheduleId as string)
+      const result = await disabeMeetingScheduleInClass(classId, lastMeetingScheduleId as string)
       if (result.statusCode === 200) {
         getData()
       }
@@ -157,7 +158,24 @@ const MeetingSchedulePreview = observer(() => {
                     <MenuItem value={'createdAtASC'}>วันที่สร้างเก่าสุด</MenuItem>
                     <MenuItem value={'name'}>ชื่อเอกสาร</MenuItem>
                 </Select>
-                </FormControl>
+              </FormControl>
+              <Button 
+                sx={{
+                  background: theme.color.button.primary, 
+                  color: theme.color.text.default,
+                  borderRadius: '10px', 
+                  boxShadow: 'none', 
+                  textTransform: 'none', 
+                  '&:hover': { background: '#B07CFF' }, 
+                  height: 45, 
+                  weight: 42, 
+                  fontSize: 16, 
+                  padding: 1, 
+                }}
+                onClick={() => navigate(`overview`)}
+              >
+                ดูภาพรวม
+              </Button>
             </Box>
     
             <MeetingScheduleStartModal 

@@ -28,6 +28,10 @@ class applicationStore {
         this.project = project as any | null
     }
 
+    setIsAdvisor(isAdvisor: boolean) {
+        this.isAdvisor= isAdvisor as boolean
+    }
+
     setExpiredTime(expiredTime: number) {
         this.expiredTime = expiredTime as number
     }
