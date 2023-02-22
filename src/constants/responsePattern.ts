@@ -1,5 +1,5 @@
 export interface responsePattern {
-    statusCode: number,
-    message: string,
-    data?: any,
+  statusCode: number;
+  message: string;
+  data?: any;
 }

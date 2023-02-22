@@ -1,14 +1,12 @@
-import React from 'react'
+import React from "react";
 import { observer } from "mobx-react-lite";
-import { Route, Navigate, Outlet } from 'react-router-dom'
+import { Route, Navigate, Outlet } from "react-router-dom";
 import applicationStore from "../stores/applicationStore";
 
-const InClassRouteForStudent = observer(
-    () => {
-        const { user } = applicationStore
+const InClassRouteForStudent = observer(() => {
+  const { user } = applicationStore;
 
-        return <Outlet />
-    }
-)
+  return <Outlet />;
+});
 
-export default InClassRouteForStudent
+export default InClassRouteForStudent;

@@ -1,7 +1,5 @@
-
-
 const OverviewGrid = () => {
-    return "D:D"
-}
+  return "D:D";
+};
 
-export default OverviewGrid
+export default OverviewGrid;

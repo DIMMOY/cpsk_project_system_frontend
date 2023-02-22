@@ -13,7 +13,6 @@ import {
 import { theme } from "../../styles/theme";
 
 interface ModalProps {
-  children: React.ReactNode;
   open: boolean;
   onClose: () => void;
   refresh: () => void;
@@ -21,14 +20,14 @@ interface ModalProps {
   name: string;
 }
 
-const MeetingScheduleEditModal = ({
+const MatchCommitteeCreateModal = ({
   open,
   onClose,
   refresh,
   id,
   name,
 }: ModalProps) => {
-  const [meetingScheduleName, setMeetingScheduleName] = useState<string>("");
+  const [matchCommitteeName, setMatchCommitteeName] = useState<string>("");
   const [submit, setSubmit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const isBigScreen = useMediaQuery({ query: "(min-width: 600px)" });
@@ -41,30 +40,19 @@ const MeetingScheduleEditModal = ({
     )
       setSubmit(false);
     else {
-      setMeetingScheduleName(event.target.value as string);
+      setMatchCommitteeName(event.target.value as string);
       setSubmit(true);
     }
   };
   const handleSubmit = async () => {
     setLoading(true);
-    const reqBody = { name: meetingScheduleName };
-    if (!id) {
-      const res = await createMeetingSchedule(reqBody);
-      if (res.statusCode !== 201) {
-        console.error(res.errorMsg);
-      }
-    } else {
-      const res = await updateMeetingSchedule(id, reqBody);
-      if (res.statusCode !== 200) {
-        console.error(res.errorMsg);
-      }
-    }
+    const reqBody = { name: name };
     setTimeout(() => {
       onClose();
       refresh();
     }, 1000);
     setTimeout(() => {
-      setMeetingScheduleName("");
+      setMatchCommitteeName("");
       setSubmit(false);
       setLoading(false);
     }, 1300);
@@ -73,7 +61,7 @@ const MeetingScheduleEditModal = ({
   const handleCancel = () => {
     onClose();
     setTimeout(() => {
-      setMeetingScheduleName("");
+      setMatchCommitteeName("");
       setSubmit(false);
       setLoading(false);
     }, 300);
@@ -120,7 +108,7 @@ const MeetingScheduleEditModal = ({
               color: theme.color.text.primary,
             }}
           >
-            รายงานพบอาจารย์ที่ปรึกษา
+            จับคู่กรรมการคุมสอบ
           </Typography>
           <Typography
             id="meetingschedule-description"
@@ -208,4 +196,4 @@ const MeetingScheduleEditModal = ({
   );
 };
 
-export default MeetingScheduleEditModal;
+export default MatchCommitteeCreateModal;

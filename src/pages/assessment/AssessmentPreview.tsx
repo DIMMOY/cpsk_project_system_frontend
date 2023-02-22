@@ -1,117 +1,121 @@
-import React, { Component } from 'react'
-import { Container, Box, IconButton, Button, Typography } from '@mui/material'
-import { makeStyles } from '@mui/styles'
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
-import { fontFamily, fontWeight, Stack } from '@mui/system'
-import { KeyObjectType } from 'crypto'
-import { padding } from '@mui/system/spacing'
-import { Link } from 'react-router-dom'
-import { theme } from '../../styles/theme'
-import { AdminCommonPreviewContainer } from '../../styles/layout/_preview/_previewCommon'
+import React, { Component } from "react";
+import { Container, Box, IconButton, Button, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { fontFamily, fontWeight, Stack } from "@mui/system";
+import { KeyObjectType } from "crypto";
+import { padding } from "@mui/system/spacing";
+import { Link } from "react-router-dom";
+import { theme } from "../../styles/theme";
+import { AdminCommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
 
 const exampleScore = [
   {
     id: 1,
-    name: 'ประเมินๆๆๆ',
-    score: '70'
+    name: "ประเมินๆๆๆ",
+    score: "70",
   },
   {
     id: 2,
-    name: 'ประเมินๆๆๆ',
-    score: '??'
+    name: "ประเมินๆๆๆ",
+    score: "??",
   },
   {
     id: 3,
-    name: 'ประเมินๆๆๆ',
-    score: '??'
+    name: "ประเมินๆๆๆ",
+    score: "??",
   },
   {
     id: 4,
-    name: 'ประเมินๆๆๆ',
-    score: '??'
+    name: "ประเมินๆๆๆ",
+    score: "??",
   },
   {
     id: 5,
-    name: 'ประเมินๆๆๆ',
-    score: '??'
-  }
-]
+    name: "ประเมินๆๆๆ",
+    score: "??",
+  },
+];
 
 const useStyles = makeStyles({
   iconSize: {
-    '& svg': {
-      color: '#AD68FF'
-    }
-  }
-})
+    "& svg": {
+      color: "#AD68FF",
+    },
+  },
+});
 
 interface PreviewProps {
-  isStudent: boolean
+  isStudent: boolean;
 }
 
 const AssessmentPreview = ({ isStudent }: PreviewProps) => {
-  const classes = useStyles()
-  isStudent = true
+  const classes = useStyles();
+  isStudent = true;
 
   const statusColorList = {
-    ส่งแล้ว: '#43BF64',
-    ส่งช้า: '#FBBC05',
-    ยังไม่ส่ง: '#FF5454'
-  }
+    ส่งแล้ว: "#43BF64",
+    ส่งช้า: "#FBBC05",
+    ยังไม่ส่ง: "#FF5454",
+  };
 
   return (
     <AdminCommonPreviewContainer>
-      <Box sx={{ display: 'flex', padding: '0 auto' }}>
+      <Box sx={{ display: "flex", padding: "0 auto" }}>
         <Link to="/">
           <IconButton
             disableRipple
             className={classes.iconSize}
-            sx={{ marginRight: '1.25rem' }}
+            sx={{ marginRight: "1.25rem" }}
             disableFocusRipple
           >
             <ArrowBackIosNewIcon fontSize="large" />
           </IconButton>
         </Link>
         <Typography
-          sx={{ fontSize: '1.875rem', fontWeight: '600', color: theme.color.text.primary }}
+          sx={{
+            fontSize: "1.875rem",
+            fontWeight: "600",
+            color: theme.color.text.primary,
+          }}
         >
           คะแนน
         </Typography>
       </Box>
-      <Box sx={{ flexDirection: 'column', display: 'flex' }}>
+      <Box sx={{ flexDirection: "column", display: "flex" }}>
         {exampleScore.map((document) => (
           <Button
             key={document.id}
             className="ml-96 common-preview-button"
             sx={{
-              position: 'relative',
-              borderRadius: '20px',
-              background: '#F3F3F3',
-              margin: '1.25rem 0 1.25rem 0',
-              display: 'flex',
-              textTransform: 'none',
-              color: '#AD68FF'
+              position: "relative",
+              borderRadius: "20px",
+              background: "#F3F3F3",
+              margin: "1.25rem 0 1.25rem 0",
+              display: "flex",
+              textTransform: "none",
+              color: "#AD68FF",
             }}
           >
             <Typography
               sx={{
-                left: 'calc(20px + 1vw)',
-                position: 'absolute',
-                fontSize: 'calc(30px + 0.2vw)',
-                fontFamily: 'Prompt',
+                left: "calc(20px + 1vw)",
+                position: "absolute",
+                fontSize: "calc(30px + 0.2vw)",
+                fontFamily: "Prompt",
                 fontWeight: 600,
-                color: theme.color.text.primary
+                color: theme.color.text.primary,
               }}
             >
               {document.name}
             </Typography>
             <Typography
               sx={{
-                right: 'calc(20px + 1vw)',
-                position: 'absolute',
-                fontSize: 'calc(30px + 0.2vw)',
-                color: '#686868',
-                fontWeight: 600
+                right: "calc(20px + 1vw)",
+                position: "absolute",
+                fontSize: "calc(30px + 0.2vw)",
+                color: "#686868",
+                fontWeight: 600,
               }}
             >
               {document.score} / 100
@@ -120,7 +124,7 @@ const AssessmentPreview = ({ isStudent }: PreviewProps) => {
         ))}
       </Box>
     </AdminCommonPreviewContainer>
-  )
-}
+  );
+};
 
-export default AssessmentPreview
+export default AssessmentPreview;
