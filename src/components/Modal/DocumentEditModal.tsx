@@ -7,7 +7,6 @@ import { createDocument, updateDocument } from "../../utils/document";
 import { theme } from "../../styles/theme";
 
 interface ModalProps {
-  children: React.ReactNode;
   open: boolean;
   onClose: () => void;
   refresh: () => void;

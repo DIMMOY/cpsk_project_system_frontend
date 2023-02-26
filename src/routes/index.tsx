@@ -30,7 +30,8 @@ import NotFound from "../pages/other/NotFound";
 import NotStudentRoute from "./NotStudentRoute";
 import NotAdvisorRoute from "./NotAdvisorRoute";
 import AdminRoleSetting from "../pages/admin/AdminRoleSetting";
-import MatchCommittee from "../pages/committee/MatchCommittee";
+import MatchCommitteePreview from "../pages/committee/MatchCommitteePreview";
+import MatchCommitteeEdit from "../pages/committee/MatchCommitteeEdit";
 
 const Routers: React.FC = (): JSX.Element => {
   return (
@@ -60,8 +61,7 @@ const Routers: React.FC = (): JSX.Element => {
             <Route
               path="/class/:id/project/:projectId/document/:documentId"
               element={<DocumentDetail isStudent={false} />}
-            />{" "}
-            {/*ยังไม่ทำ NotFound*/}
+            />
             <Route
               path="/class/:id/project/:projectId/meeting-schedule"
               element={<MeetingScheduleHomePreview isStudent={false} />}
@@ -76,7 +76,8 @@ const Routers: React.FC = (): JSX.Element => {
               element={<DocumentPreview />}
             />
             <Route path="/class/:id/assessment" element={<ProjectPreview />} />
-            <Route path="/class/:id/committee" element={<MatchCommittee />} />
+            <Route path="/class/:id/committee" element={<MatchCommitteePreview />} />
+            <Route path="/class/:id/committee/:committeeId" element={<MatchCommitteeEdit newForm={true}/>}/>
             <Route
               path="/class/:id/meeting-schedule"
               element={<MeetingSchedulePreview />}

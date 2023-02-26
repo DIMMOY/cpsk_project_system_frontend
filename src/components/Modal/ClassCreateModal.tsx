@@ -10,7 +10,6 @@ import { createClass } from "../../utils/class";
 import { theme } from "../../styles/theme";
 
 interface ModalProps {
-  children: React.ReactNode;
   open: boolean;
   onClose: () => void;
   refresh: () => void;

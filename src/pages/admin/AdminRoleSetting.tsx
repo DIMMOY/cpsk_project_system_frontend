@@ -92,11 +92,13 @@ const AdminRoleSetting = observer(() => {
 
   const cancelToSubmitAdmin = () => {
     setAdmins(adminReal);
+    setAdminDelete([]);
     setIsEditAdmin(false);
   };
 
   const cancelToSubmitAdvisor = () => {
     setAdvisors(advisorReal);
+    setAdvisorDelete([]);
     setIsEditAdvisor(false);
   };
 

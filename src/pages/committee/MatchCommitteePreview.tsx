@@ -16,8 +16,10 @@ import { theme } from "../../styles/theme";
 import { observer } from "mobx-react";
 import NotFound from "../other/NotFound";
 import MatchCommitteeCreateModal from "../../components/Modal/MatchCommitteeCreateModal";
+import { listMatchCommitteeInClass } from "../../utils/matchCommittee";
+import moment from "moment";
 
-const MatchCommittee = observer(() => {
+const MatchCommitteePreview = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
@@ -37,19 +39,21 @@ const MatchCommittee = observer(() => {
   );
 
   const isBigScreen = useMediaQuery({ query: "(min-width: 650px)" });
-  const [projects, setProjects] = useState<Array<any>>([]);
+  const [matchCommittee, setMatchCommittee] = useState<Array<any>>([]);
   const [notFound, setNotFound] = useState<number>(2);
   const [open, setOpen] = useState<boolean>(false);
 
+  const getData = async () => {
+    const result = await listMatchCommitteeInClass({ sort: sortSelect }, classId);
+    console.log(result)
+    if (result.data) {
+      setMatchCommittee(result.data as Array<any>);
+      setNotFound(1);
+    } else setNotFound(0);
+  }
+
   useEffect(() => {
     applicationStore.setIsShowMenuSideBar(true);
-    async function getData() {
-      const result = await listProjectInClass({ sort: sortSelect }, classId);
-      if (result.data) {
-        setProjects(result.data as Array<any>);
-        setNotFound(1);
-      } else setNotFound(0);
-    }
     getData();
   }, [sortSelect]);
 
@@ -120,16 +124,16 @@ const MatchCommittee = observer(() => {
           <MatchCommitteeCreateModal
             open={open}
             onClose={() => setOpen(false)}
-            refresh={() => console.log("TEST")}
+            refresh={getData}
             id={null}
-            name={"TEST"}
+            name={""}
           />
 
           <Box sx={{ flexDirection: "column", display: "flex" }}>
-            {projects.map((c) => (
+            {matchCommittee.map((c) => (
               <ListPreviewButton
                 key={c._id}
-                onClick={() => navigate(`/class/${classId}/project/${c._id}`)}
+                onClick={() => navigate(`/class/${classId}/committee/${c._id}`)}
               >
                 <Typography
                   sx={{
@@ -148,7 +152,7 @@ const MatchCommittee = observer(() => {
                     width: "90%",
                   }}
                 >
-                  {c.nameTH}
+                  {c.name}
                 </Typography>
                 <Typography
                   sx={{
@@ -160,7 +164,7 @@ const MatchCommittee = observer(() => {
                     fontWeight: 600,
                   }}
                 >
-                  {c.nameEN}
+                  สร้างเมื่อ {moment(c.createdAt).format("DD/MM/YYYY HH:mm")} น.
                 </Typography>
               </ListPreviewButton>
             ))}
@@ -179,4 +183,4 @@ const MatchCommittee = observer(() => {
   }
 });
 
-export default MatchCommittee;
+export default MatchCommitteePreview;

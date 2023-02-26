@@ -11,6 +11,7 @@ import {
   updateMeetingSchedule,
 } from "../../utils/meetingSchedule";
 import { theme } from "../../styles/theme";
+import { createMatchCommitteeInClass } from "../../utils/matchCommittee";
 
 interface ModalProps {
   open: boolean;
@@ -31,6 +32,12 @@ const MatchCommitteeCreateModal = ({
   const [submit, setSubmit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const isBigScreen = useMediaQuery({ query: "(min-width: 600px)" });
+  const currentPathName = window.location.pathname.endsWith("/")
+    ? window.location.pathname.slice(0, -1)
+    : window.location.pathname;
+
+  const pathname = currentPathName.split("/");
+  const classId = pathname[2];
 
   const handleMeetingScheduleNameChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -46,7 +53,10 @@ const MatchCommitteeCreateModal = ({
   };
   const handleSubmit = async () => {
     setLoading(true);
-    const reqBody = { name: name };
+    const res = await createMatchCommitteeInClass(classId, matchCommitteeName)
+    if (res.statusCode !== 201) {
+      console.error(res.error)
+    }
     setTimeout(() => {
       onClose();
       refresh();

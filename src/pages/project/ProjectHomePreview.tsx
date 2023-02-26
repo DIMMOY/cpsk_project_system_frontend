@@ -85,7 +85,6 @@ const ProjectHomePreview = observer(
                 whiteSpace: "",
                 display: "inline-block",
                 textAlign: "left",
-                height: "10rem",
               }}
             >
               {nameTH}

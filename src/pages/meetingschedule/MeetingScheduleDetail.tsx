@@ -65,7 +65,6 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
     if (!result.data) {
       setNotFound(0);
     } else {
-      console.log(result.data);
       setName(result.data.meetingSchedule.name);
       setDueDate(moment(result.data.endDate).format("DD/MM/YYYY HH:mm"));
       setStatus(result.data.sendStatus);

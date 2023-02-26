@@ -13,7 +13,6 @@ import {
 import { theme } from "../../styles/theme";
 
 interface ModalProps {
-  children: React.ReactNode;
   open: boolean;
   onClose: () => void;
   refresh: () => void;
