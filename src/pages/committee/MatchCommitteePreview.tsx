@@ -7,7 +7,7 @@ import InputLabel from "@mui/material/InputLabel";
 import AddIcon from "@mui/icons-material/Add";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AdminCommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
-import { ListPreviewButton } from "../../styles/layout/_button";
+import { ActivateButton, CancelButton, EditButton, ListPreviewButton } from "../../styles/layout/_button";
 import { useMediaQuery } from "react-responsive";
 import applicationStore from "../../stores/applicationStore";
 import Sidebar from "../../components/Sidebar/Sidebar";
@@ -16,8 +16,10 @@ import { theme } from "../../styles/theme";
 import { observer } from "mobx-react";
 import NotFound from "../other/NotFound";
 import MatchCommitteeCreateModal from "../../components/Modal/MatchCommitteeCreateModal";
-import { listMatchCommitteeInClass } from "../../utils/matchCommittee";
+import { disableMatchCommitteeInClass, listMatchCommitteeInClass } from "../../utils/matchCommittee";
 import moment from "moment";
+import MatchCommitteeStartModal from "../../components/Modal/MatchCommitteeStartModal";
+import CancelModal from "../../components/Modal/CancelModal";
 
 const MatchCommitteePreview = observer(() => {
   const navigate = useNavigate();
@@ -41,11 +43,16 @@ const MatchCommitteePreview = observer(() => {
   const isBigScreen = useMediaQuery({ query: "(min-width: 650px)" });
   const [matchCommittee, setMatchCommittee] = useState<Array<any>>([]);
   const [notFound, setNotFound] = useState<number>(2);
-  const [open, setOpen] = useState<boolean>(false);
+  const [openCreate, setOpenCreate] = useState<boolean>(false);
+  const [openStart, setOpenStart] = useState<boolean>(false);
+  const [openCancel, setOpenCancel] = useState<boolean>(false);
+  const [currentMatchCommitteeName, setCurrentMatchCommitteeName] = useState<string>('')
+  const [currentMatchCommitteeId, setCurrentMatchCommitteeId] = useState<string>('')
+  const [currentStartDate, setCurrentStartDate] = useState<string | null>(null)
+
 
   const getData = async () => {
     const result = await listMatchCommitteeInClass({ sort: sortSelect }, classId);
-    console.log(result)
     if (result.data) {
       setMatchCommittee(result.data as Array<any>);
       setNotFound(1);
@@ -63,6 +70,36 @@ const MatchCommitteePreview = observer(() => {
       pathname: window.location.pathname,
       search: `?sort=${event.target.value}`,
     });
+  };
+
+  const handleOpenSetDateModal = (
+    name: string,
+    id: string,
+    startDate: string,
+    event: any
+  ) => {
+    event.stopPropagation();
+    setCurrentMatchCommitteeName(name);
+    setCurrentMatchCommitteeId(id);
+    setCurrentStartDate(startDate);
+    setOpenStart(true);
+  };
+
+  const handleOpenCancelModal = (name: string, id: string, event: any) => {
+    event.stopPropagation();
+    setCurrentMatchCommitteeName(name);
+    setCurrentMatchCommitteeId(id);
+    setOpenCancel(true);
+  };
+
+  const handleCancelSubmit = async () => {
+    const result = await disableMatchCommitteeInClass(
+      classId,
+      currentMatchCommitteeId as string
+    );
+    if (result.statusCode === 200) {
+      getData();
+    }
   };
 
   if (notFound === 1) {
@@ -115,18 +152,35 @@ const MatchCommitteePreview = observer(() => {
                 marginRight: "1.5rem",
               }}
               startIcon={<AddIcon sx={{ width: 20, height: 20 }}></AddIcon>}
-              onClick={() => setOpen(true)}
+              onClick={() => setOpenCreate(true)}
             >
               สร้าง
             </Button>
           </Box>
 
           <MatchCommitteeCreateModal
-            open={open}
-            onClose={() => setOpen(false)}
+            open={openCreate}
+            onClose={() => setOpenCreate(false)}
             refresh={getData}
             id={null}
             name={""}
+          />
+
+          <MatchCommitteeStartModal
+            open={openStart}
+            onClose={() => setOpenStart(false)}
+            refresh={getData}
+            defaultStartDate={currentStartDate}
+            matchCommitteeName={currentMatchCommitteeName}
+            matchCommitteeId={currentMatchCommitteeId}
+          />
+
+          <CancelModal
+            open={openCancel}
+            onClose={() => setOpenCancel(false)}
+            onSubmit={handleCancelSubmit}
+            title={`ปิดการใช้งาน ${currentMatchCommitteeName}`}
+            description="เมื่อปิดใช้งานแล้วนิสิตและที่ปรึกษาจะไม่เห็นรายการนี้ในคลาส"
           />
 
           <Box sx={{ flexDirection: "column", display: "flex" }}>
@@ -134,6 +188,7 @@ const MatchCommitteePreview = observer(() => {
               <ListPreviewButton
                 key={c._id}
                 onClick={() => navigate(`/class/${classId}/committee/${c._id}`)}
+                sx={{ zIndex: 1 }}
               >
                 <Typography
                   sx={{
@@ -154,6 +209,64 @@ const MatchCommitteePreview = observer(() => {
                 >
                   {c.name}
                 </Typography>
+                {!c.status ? (
+                  <ActivateButton
+                    sx={{
+                      position: "absolute",
+                      right: "calc(20px + 1vw)",
+                      zIndex: 2,
+                    }}
+                    onClick={(event) =>
+                      handleOpenSetDateModal(
+                        c.name,
+                        c._id,
+                        moment(new Date()).format("YYYY-MM-DDTHH:mm"),
+                        event
+                      )
+                    }
+                  >
+                    เปิดใช้งาน
+                  </ActivateButton>
+                ) : (
+                  <></>
+                )}
+                {c.status ? (
+                  <EditButton
+                    sx={{
+                      position: "absolute",
+                      right: "calc(150px + 1vw)",
+                      zIndex: 2,
+                    }}
+                    onClick={(event) =>
+                      handleOpenSetDateModal(
+                        c.name,
+                        c._id,
+                        c.startDate,
+                        event
+                      )
+                    }
+                  >
+                    แก้ไข
+                  </EditButton>
+                ) : (
+                  <></>
+                )}
+                {c.status ? (
+                  <CancelButton
+                    sx={{
+                      position: "absolute",
+                      right: "calc(20px + 1vw)",
+                      zIndex: 2,
+                    }}
+                    onClick={(event) =>
+                      handleOpenCancelModal(c.name, c._id, event)
+                    }
+                  >
+                    ปิดใช้งาน
+                  </CancelButton>
+                ) : (
+                  <></>
+                )}
                 <Typography
                   sx={{
                     top: "5rem",

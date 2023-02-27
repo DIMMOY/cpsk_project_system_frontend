@@ -86,7 +86,7 @@ const MatchCommitteeCreateModal = ({
       sx={{
         display: "flex",
         justifyContent: "center",
-        top: "25%",
+        alignItems: "center",
         overflow: "auto",
       }}
       disableEnforceFocus

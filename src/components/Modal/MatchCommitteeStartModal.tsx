@@ -1,50 +1,86 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import { Box, Button, Grow, TextField, Typography } from "@mui/material";
-import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import { LoadingButton } from "@mui/lab";
 import Modal from "@mui/material/Modal";
 import { useMediaQuery } from "react-responsive";
-import { createClass } from "../../utils/class";
+import moment from "moment";
 import { theme } from "../../styles/theme";
+import { setDateMatchCommittee } from "../../utils/matchCommittee";
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
-  refresh?: () => void;
-  onSubmit: () => any;
-  title: string;
-  description: string;
+  refresh: () => void;
+  matchCommitteeName: string | null;
+  matchCommitteeId: string | null;
+  defaultStartDate: string | null;
 }
 
-const CancelModal = ({
+const MatchCommitteeStartModal = ({
   open,
+  matchCommitteeName,
   onClose,
-  onSubmit,
-  title,
-  description,
+  matchCommitteeId,
+  refresh,
+  defaultStartDate,
 }: ModalProps) => {
+  const currentDate = new Date();
+  const [canSubmit, setCanSubmit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState<string | null>(null);
   const isBigScreen = useMediaQuery({ query: "(min-width: 600px)" });
 
-  const handleCancel = () => onClose();
+  const handleStartDateChange = (newDate: string | null) => {
+    const date = newDate ? moment(newDate).format("YYYY-MM-DDTHH:mm") : null;
+    setStartDate(date);
+    setCanSubmit(true);
+  };
 
-  const handleOnSubmit = async () => {
+  const handleSetDate = async () => {
     setLoading(true);
+    const reqBody = {
+      classId: window.location.pathname.split("/")[2],
+      matchCommitteeId,
+      startDate,
+    };
+    const res = await setDateMatchCommittee(reqBody);
+    if (res.statusCode !== 200) {
+      console.error(res.errorMsg);
+    }
     setTimeout(() => {
-      onSubmit();
       onClose();
+      refresh();
+    }, 1000);
+    setTimeout(() => {
+      setStartDate(
+        moment(defaultStartDate ? defaultStartDate : new Date()).format(
+          "YYYY-MM-DDTHH:mm"
+        )
+      );
+      setCanSubmit(false);
       setLoading(false);
     }, 1300);
+  };
+
+  const handleCancel = () => {
+    onClose();
+    setTimeout(() => {
+      setStartDate(
+        moment(defaultStartDate ? defaultStartDate : new Date()).format(
+          "YYYY-MM-DDTHH:mm"
+        )
+      );
+      setCanSubmit(false);
+      setLoading(false);
+    }, 300);
   };
 
   return (
     <Modal
       open={open}
       onClose={handleCancel}
-      aria-labelledby="cancel-title"
-      aria-describedby="cancel-description"
+      aria-labelledby="match-committee-title"
+      aria-describedby="match-committee-description"
       sx={{
         display: "flex",
         justifyContent: "center",
@@ -59,9 +95,9 @@ const CancelModal = ({
           sx={{
             position: "absolute",
             display: "flex",
-            width: "50vw",
+            width: "40vw",
             minWidth: 350,
-            bgcolor: theme.color.background.default,
+            backgroundColor: theme.color.background.default,
             borderRadius: "20px",
             boxShadow: 24,
             padding: "2rem 3rem 2rem 3rem",
@@ -71,27 +107,31 @@ const CancelModal = ({
           }}
         >
           <Typography
-            id="cancel-title"
+            id="match-committee-title"
             sx={{
               fontSize: 40,
               fontWeight: 500,
-              marginBottom: 2,
+              marginBottom: 5,
               color: theme.color.text.primary,
             }}
           >
-            {title}
+            เปิดใช้งาน {matchCommitteeName}
           </Typography>
-          <Typography
-            id="cancel-description"
-            sx={{
-              fontSize: 20,
-              fontWeight: 500,
-              color: theme.color.text.secondary,
-            }}
-          >
-            {description}
-          </Typography>
-
+          <Box sx={{ display: "flex", flexDirection: "row" }}>
+            <TextField
+              id="start-datetime-local"
+              label="เวลาเริ่มต้น"
+              type="datetime-local"
+              defaultValue={moment(
+                defaultStartDate ? defaultStartDate : currentDate
+              ).format("YYYY-MM-DDTHH:mm")}
+              sx={{ width: 250, marginRight: 4 }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              onChange={(e) => handleStartDateChange(e.target.value)}
+            />
+          </Box>
           <Box
             sx={{
               display: "flex",
@@ -118,7 +158,7 @@ const CancelModal = ({
               ยกเลิก
             </Button>
             <LoadingButton
-              onClick={handleOnSubmit}
+              onClick={handleSetDate}
               loading={loading}
               sx={{
                 width: "7rem",
@@ -134,6 +174,7 @@ const CancelModal = ({
                   background: theme.color.button.disable,
                 },
               }}
+              disabled={!canSubmit}
             >
               ยืนยัน
             </LoadingButton>
@@ -144,4 +185,4 @@ const CancelModal = ({
   );
 };
 
-export default CancelModal;
+export default MatchCommitteeStartModal;

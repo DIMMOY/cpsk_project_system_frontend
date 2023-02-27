@@ -40,11 +40,13 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
   const [advisors, setAdvisors] = useState<Array<any>>([]);
   const [matchCommittee, setMatchCommittee] = useState<any>(null);
   const [projects, setProjects] = useState<any>([]);
-  const [sortSelect, setSortSelect] = useState<string>("committee");
+  const [sortSelect, setSortSelect] = useState<string>("advisor");
   const isBigScreen = useMediaQuery({ query: "(min-width: 650px)" });
 
   const [currentGroup, setCurrentGroup] = useState<any>(null);
+  const [currentIndexGroup, setCurrentIndextGroup] = useState<number>(0);
   const [currentProject, setCurrentProject] = useState<any>(null);
+  const [currentIndexProject, setCurrentIndextProject] = useState<number>(0);
   const [projectFilter, setProjectFilter] = useState<any>([]);
   const [advisorFilter, setAdvisorFilter] = useState<any>([]);
 
@@ -67,15 +69,17 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
     setSortSelect(event.target.value as string);
   };
 
-  const handleOnAddGroupToProject = (groudId: any, projectFilter: Array<any>) => {
+  const handleOnAddGroupToProject = (groudId: any, projectFilter: Array<any>, index: number) => {
     setCurrentGroup(groudId);
     setOpenAddGroupToProject(true);
     setProjectFilter(projectFilter)
+    setCurrentIndextGroup(index)
   }
 
-  const handleOnAddGroupToProjectOnlyOne = (projectId: any) => {
-    setCurrentProject(projectId);
+  const handleOnAddGroupToProjectOnlyOne = (project: any, index: number) => {
+    setCurrentProject(project);
     setOpenAddGroupToProjectOnlyOne(true);
+    setCurrentIndextProject(index)
   }
 
   const getData = async (sort: string) => {
@@ -168,21 +172,18 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
               onClose={() => setOpenAddGroupToProject(false)}
               refresh={() => getData(sortSelect)}
               projects={projects}
-              ordGroup={matchCommittee.committeeGroup.length + 1} 
+              ordGroup={currentIndexGroup} 
               matchCommitteeId={matchCommitteeId} 
               matchCommitteeHasGroup={currentGroup} 
               projectsInGroup={projectFilter}            
             />
 
-            {
-              /*ทำตรงนี้ต่อ ตอนเช้า */
-            }
             <AddCommitteeToProjectOnlyOne
               open={openAddGroupToProjectOnlyOne}
               onClose={() => setOpenAddGroupToProjectOnlyOne(false)}
               refresh={() => getData(sortSelect)}
-              advisors={advisors}
-              ordGroup={matchCommittee.committeeGroup.length + 1}
+              committee={matchCommittee.committeeGroup}
+              ordGroup={currentIndexProject}
               project={currentProject}
             />
 
@@ -241,7 +242,7 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
                               <ActivateButton 
                                 sx={{ width: "7rem" }} 
                                 onClick={() => handleOnAddGroupToProject(data, projects.filter((project: { committeeGroupId: any; }) => 
-                                  project.committeeGroupId && project.committeeGroupId._id.toString() === data._id.toString()))}
+                                  project.committeeGroupId && project.committeeGroupId._id.toString() === data._id.toString()), index + 1)}
                               >
                                 โปรเจกต์
                               </ActivateButton>
@@ -372,7 +373,7 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
                               <EditButton 
                                 sx={{ width: "1rem" }} 
                                 onClick={() => 
-                                  handleOnAddGroupToProjectOnlyOne(data._id)}
+                                  handleOnAddGroupToProjectOnlyOne(data, index + 1)}
                               >
                                 แก้ไข
                               </EditButton>

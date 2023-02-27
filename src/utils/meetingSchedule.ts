@@ -195,7 +195,7 @@ export const cancelSendMeetingSchedule = async (
   }
 };
 
-export const disabeMeetingScheduleInClass = async (
+export const disableMeetingScheduleInClass = async (
   classId: string,
   mtId: string
 ) => {

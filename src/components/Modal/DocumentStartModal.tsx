@@ -92,7 +92,7 @@ const DocumentStartModal = ({
       sx={{
         display: "flex",
         justifyContent: "center",
-        top: "25%",
+        alignItems: "center",
         overflow: "auto",
       }}
       disableEnforceFocus
@@ -103,7 +103,6 @@ const DocumentStartModal = ({
           sx={{
             position: "absolute",
             display: "flex",
-            height: 300,
             width: "40vw",
             minWidth: 350,
             bgcolor: theme.color.background.default,
@@ -126,51 +125,6 @@ const DocumentStartModal = ({
           >
             เปิดใช้งาน {documentName}
           </Typography>
-          <Button
-            onClick={handleCancel}
-            sx={{
-              width: "7rem",
-              height: "2.8rem",
-              fontSize: 20,
-              background: theme.color.button.disable,
-              borderRadius: "10px",
-              color: theme.color.text.secondary,
-              boxShadow: "none",
-              textTransform: "none",
-              transform: "translate(-50%, -50%)",
-              position: "absolute",
-              right: 130,
-              bottom: 10,
-              "&:hover": { background: theme.color.button.default },
-            }}
-          >
-            ยกเลิก
-          </Button>
-          <LoadingButton
-            onClick={handleSetDate}
-            loading={loading}
-            sx={{
-              width: "7rem",
-              height: "2.8rem",
-              fontSize: 20,
-              background: theme.color.button.disable,
-              borderRadius: "10px",
-              color: theme.color.text.primary,
-              boxShadow: "none",
-              textTransform: "none",
-              transform: "translateY(-50%)",
-              position: "absolute",
-              right: "3rem",
-              bottom: 10,
-              "&:hover": { background: theme.color.button.default },
-              "&:disabled": {
-                backgroundColor: theme.color.button.disable,
-              },
-            }}
-            disabled={!canSubmit}
-          >
-            ยืนยัน
-          </LoadingButton>
           <Box sx={{ display: "flex", flexDirection: "row" }}>
             <TextField
               id="start-datetime-local"
@@ -200,6 +154,53 @@ const DocumentStartModal = ({
               }}
               onChange={(e) => handleEndDateChange(e.target.value)}
             />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              marginTop: 5,
+              justifyContent: "right",
+            }}
+          >
+            <Button
+              onClick={handleCancel}
+              sx={{
+                width: "7rem",
+                height: "2.8rem",
+                fontSize: 20,
+                background: theme.color.button.disable,
+                borderRadius: "10px",
+                color: theme.color.text.secondary,
+                boxShadow: "none",
+                textTransform: "none",
+                "&:hover": { background: theme.color.button.default },
+                marginRight: 2,
+              }}
+            >
+              ยกเลิก
+            </Button>
+            <LoadingButton
+              onClick={handleSetDate}
+              loading={loading}
+              sx={{
+                width: "7rem",
+                height: "2.8rem",
+                fontSize: 20,
+                background: theme.color.button.disable,
+                borderRadius: "10px",
+                color: theme.color.text.primary,
+                boxShadow: "none",
+                textTransform: "none",
+                "&:hover": { background: theme.color.button.default },
+                "&:disabled": {
+                  background: theme.color.button.disable,
+                },
+              }}
+              disabled={!canSubmit}
+            >
+              ยืนยัน
+            </LoadingButton>
           </Box>
         </Box>
       </Grow>

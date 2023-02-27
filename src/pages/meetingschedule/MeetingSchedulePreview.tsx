@@ -18,7 +18,7 @@ import moment from "moment";
 import applicationStore from "../../stores/applicationStore";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import {
-  disabeMeetingScheduleInClass,
+  disableMeetingScheduleInClass,
   listMeetingScheduleInClass,
 } from "../../utils/meetingSchedule";
 import MeetingScheduleStartModal from "../../components/Modal/MeetingScheduleStartModal";
@@ -143,7 +143,7 @@ const MeetingSchedulePreview = observer(() => {
   const handleCloseCancelModal = () => setOpenCancel(false);
 
   const handleCancelSubmit = async () => {
-    const result = await disabeMeetingScheduleInClass(
+    const result = await disableMeetingScheduleInClass(
       classId,
       lastMeetingScheduleId as string
     );

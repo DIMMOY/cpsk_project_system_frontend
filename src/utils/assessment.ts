@@ -23,6 +23,30 @@ export const createAssessment = async (reqBody: any) => {
   }
 };
 
+export const setDateAssessment = async (reqBody: any) => {
+  try {
+    await refreshToken();
+    const { startDate, endDate, matchCommitteeId } = reqBody;
+    console.log(reqBody)
+    const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/class/${
+      reqBody.classId as string
+    }/assessment/${reqBody.assessmentId as string}/date`;
+    await axios.put(url, { startDate, endDate, matchCommitteeId });
+    return {
+      statusCode: 200,
+      message: "Set assessment due date successful",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "Set assessment due date error",
+      errorMsg: "สร้างรายการส่ง assessment ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+};
+
 export const listAssessment = async (reqQuery: any) => {
   try {
     await refreshToken();
@@ -36,6 +60,55 @@ export const listAssessment = async (reqQuery: any) => {
       statusCode: 400,
       message: "List assessment error",
       errorMsg: "ค้นหา Assessment ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+};
+
+export const listAssessmentInClass = async (
+  reqQuery: any,
+  classId: string
+) => {
+  try {
+    await refreshToken();
+    const url = `${
+      process.env.REACT_APP_API_BASE_URL_CLIENT as string
+    }/class/${classId}/assessment`;
+    const resAxios = await axios.get(url, { params: reqQuery });
+    return {
+      data: resAxios.data.data,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "List assessment in class error",
+      errorMsg: "ค้นหา assessment ในคลาสผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+};
+
+export const disableAssessmentInClass = async (
+  classId: string,
+  mtId: string
+) => {
+  try {
+    await refreshToken();
+    const url = `${
+      process.env.REACT_APP_API_BASE_URL_CLIENT as string
+    }/class/${classId}/assessment/${mtId}/date/status`;
+    await axios.patch(url, { status: false });
+    return {
+      statusCode: 200,
+      message: "Disable assessment in class successful",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "Disable assessment in class error",
+      errorMsg: "ยกเลิก assessment ในคลาสผิดพลาด กรุณาลองใหม่ในภายหลัง",
       error,
     };
   }

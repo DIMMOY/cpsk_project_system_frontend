@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import { Box, Grid, MenuItem, Select, Button, Dialog, DialogTitle, DialogContent, DialogActions, Checkbox, Table, TableBody, TableRow, TableCell, TableHead, Grow, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, Checkbox, Table, TableBody, TableRow, TableCell, TableHead, Grow, Typography } from '@mui/material';
 import { theme } from '../../styles/theme';
 import { LoadingButton } from '@mui/lab';
-import { createMatchCommitteeHasGroupInClass, createMatchCommitteeHasGroupToProject } from '../../utils/matchCommittee';
+import { createMatchCommitteeHasGroupToProject } from '../../utils/matchCommittee';
 
 interface DialogProps {
     open: boolean;
@@ -117,12 +115,12 @@ const AddCommitteeToProject = ({ open, onClose, refresh, projects, ordGroup, mat
           <Table>
             <TableHead>
               <TableRow>
-                  <TableCell align="center" sx={{fontSize: 16, color: theme.color.text.secondary, width: "10%"}}>ลำดับ</TableCell>
-                  <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "30%"}}>ชื่อโปรเจกต์ภาษาไทย</TableCell>
-                  <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "20%"}}>นิสิต</TableCell>
-                  <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "20%"}}>อาจารย์ที่ปรึกษา</TableCell>
-                  <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "20%"}}>กรรมการคุมสอบ</TableCell>
-                  <TableCell></TableCell>
+                <TableCell align="center" sx={{fontSize: 16, color: theme.color.text.secondary, width: "10%"}}>ลำดับ</TableCell>
+                <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "30%"}}>ชื่อโปรเจกต์ภาษาไทย</TableCell>
+                <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "20%"}}>นิสิต</TableCell>
+                <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "20%"}}>อาจารย์ที่ปรึกษา</TableCell>
+                <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "20%"}}>กรรมการคุมสอบ</TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableHead>
           <TableBody>
@@ -140,10 +138,10 @@ const AddCommitteeToProject = ({ open, onClose, refresh, projects, ordGroup, mat
                 sx={{
                   "&:hover": { background: theme.color.button.default },
                   backgroundColor: advisorIdInGroup && 
-                  !data.advisor
-                  .map((a: { _id: any; }) => a._id)
-                  .filter((id: any) => advisorIdInGroup.includes(id)).length ? 
-                  "none" : theme.color.button.default
+                    !data.advisor
+                      .map((a: { _id: any; }) => a._id)
+                      .filter((id: any) => advisorIdInGroup.includes(id)).length ? 
+                      "none" : theme.color.button.default
                 }}
               >
                   <TableCell align="center">

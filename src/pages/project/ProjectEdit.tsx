@@ -70,7 +70,7 @@ const ProjectEdit = ({ newProject }: PreviewProps) => {
   };
 
   const handleOnNameTHChange = (value: string) => {
-    const regex = /^[\u0E00-\u0E7F 0-9(),.-]*$/;
+    const regex = /^[\u0E00-\u0E7F A-Za-z 0-9(),.-]*$/;
     if (regex.test(value)) {
       setNameTH(value);
     }

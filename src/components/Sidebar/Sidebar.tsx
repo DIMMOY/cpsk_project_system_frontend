@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  Button,
-  Divider,
   Drawer,
   List,
   ListItem,
@@ -10,9 +8,13 @@ import {
   ListItemIcon,
   ListItemText,
   Toolbar,
-  IconButton,
+  Typography,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { theme } from "../../styles/theme";
+import { useMediaQuery } from "react-responsive";
+import applicationStore from "../../stores/applicationStore";
+import { observer } from "mobx-react";
 
 // Icon
 import FolderSharedIcon from "@mui/icons-material/FolderShared";
@@ -20,13 +22,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import GroupsIcon from "@mui/icons-material/Groups";
 import GradingIcon from "@mui/icons-material/Grading";
 import PeopleIcon from "@mui/icons-material/People";
-import ClassIcon from "@mui/icons-material/Class";
-import Typography from "@mui/material/Typography";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { theme } from "../../styles/theme";
-import { useMediaQuery } from "react-responsive";
-import applicationStore from "../../stores/applicationStore";
-import { observer } from "mobx-react";
+
 
 const Sidebar = observer(() => {
   const { pathname } = window.location;

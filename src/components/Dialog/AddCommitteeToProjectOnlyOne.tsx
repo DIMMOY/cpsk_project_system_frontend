@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import { Box, Grid, MenuItem, Select, Button, Dialog, DialogTitle, DialogContent, DialogActions, Checkbox, Table, TableBody, TableRow, TableCell, TableHead, Grow } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, Checkbox, Table, TableBody, TableRow, TableCell, TableHead, Grow, Typography, Radio } from '@mui/material';
 import { theme } from '../../styles/theme';
 import { LoadingButton } from '@mui/lab';
-import { createMatchCommitteeHasGroupInClass } from '../../utils/matchCommittee';
+import { createMatchCommitteeHasGroupToProject } from '../../utils/matchCommittee';
 
 interface DialogProps {
     open: boolean;
     onClose: () => void;
     refresh: () => void;
-    advisors: Array<any>;
-    ordGroup: number
+    committee: Array<any>;
     project: any;
+    ordGroup: number
   }
 
-const AddCommitteeToProjectOnlyOne = ({ open, onClose, refresh, advisors, ordGroup, project }: DialogProps) => {
-  const [checked, setChecked] = useState<Array<string>>([]);
+const AddCommitteeToProjectOnlyOne = ({ open, onClose, refresh, committee, ordGroup, project }: DialogProps) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
 
   const currentPathName = window.location.pathname.endsWith("/")
     ? window.location.pathname.slice(0, -1)
@@ -27,43 +26,40 @@ const AddCommitteeToProjectOnlyOne = ({ open, onClose, refresh, advisors, ordGro
   const classId = pathname[2];
   const committeeId = pathname[4];
 
-  const handleCheckboxChange = (value: string) => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
+  useEffect(() => {
+    if (open) {
+      setSelectedId(project.committeeGroupId._id);
     }
+  }, [open, project]);
 
-    setChecked(newChecked);
+  const handleChange = (id: string) => {
+    setSelectedId(id);
   };
 
   const handleClose = () => {
     onClose()
     setTimeout(() => {
-        setChecked([])
+      setSelectedId(null)
     }, 100)
   }
 
   const handleSubmit = async () => {
     setLoading(true)
-    const res = await createMatchCommitteeHasGroupInClass(classId, committeeId, checked)
+    const res = await createMatchCommitteeHasGroupToProject(classId, committeeId, selectedId as string, [project._id], [])
     if (res.statusCode !== 201) {
       console.error(res.message)
       setTimeout(() => {
         setLoading(false);
-        setChecked([])
+        setSelectedId(null)
         onClose()
-      }, 1300);
+      }, 500);
     } else {
       setTimeout(() => {
         setLoading(false);
-        setChecked([])
+        setSelectedId(null)
         onClose()
         refresh()
-      }, 1300);
+      }, 500);
     }
   }
 
@@ -88,47 +84,72 @@ const AddCommitteeToProjectOnlyOne = ({ open, onClose, refresh, advisors, ordGro
           color: theme.color.text.primary 
         }}
       >
-          {`กลุ่มที่ ${ordGroup}`}
+          {`โปรเจกต์ที่ ${ordGroup}`}
       </DialogTitle>
       <DialogContent sx={{height: "35rem", width: "30rem"}}>
           <Table>
             <TableHead>
               <TableRow>
-                  <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "50%"}}>ชื่อ</TableCell>
-                  <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "30%"}}>อีเมล</TableCell>
+                  <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "20%"}}>ลำดับ</TableCell>
+                  <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "70%"}}>รายชื่อกรรมการคุมสอบ</TableCell>
                   <TableCell></TableCell>
               </TableRow>
             </TableHead>
           <TableBody>
-              {advisors.map((data) => (
+              {committee.map((data, index) => (
               <TableRow 
                 key={data._id} 
-                onClick={() => handleCheckboxChange(data.userId._id)}
+                onClick={() =>
+                  project && 
+                  !project.advisor
+                    .map((a: any) => a._id)
+                    .filter((id: any) => data.userId.map((a: any) => a._id).includes(id)).length ? 
+                  handleChange(data._id) : 
+                  {}
+                }
                 sx={{
                   "&:hover": { background: theme.color.button.default },
+                  backgroundColor: project && 
+                    !project.advisor
+                      .map((a: any) => a._id)
+                      .filter((id: any) => data.userId.map((a: any) => a._id).includes(id)).length ? 
+                      "none" : theme.color.button.default
                 }}
               >
-                  <TableCell sx={{fontSize: 16, color: theme.color.text.secondary}}>
-                      {data.userId.displayName ? data.userId.displayName : "..."}
-                  </TableCell>
-                  <TableCell sx={{fontSize: 16, color: theme.color.text.secondary}}>
-                      {data.userId.email}
+                  <TableCell align="center" sx={{fontSize: 16, color: theme.color.text.secondary}}>
+                      {index + 1}
                   </TableCell>
                   <TableCell>
-                      <Checkbox
-                          sx={{
-                              padding: 0,
-                              boxShadow: "none",
-                              color: theme.color.background.secondary,
-                              "&.Mui-checked": {
-                                  color: theme.color.background.secondary,
-                              },
-                              "& .MuiSvgIcon-root": { fontSize: 28 },
-                          }}
-                          checked={checked.indexOf(data.userId._id) !== -1}
-                          onChange={(event) => handleCheckboxChange(event.target.value)}
-                          value={data.userId._id}
-                      />
+                    {data.userId.map((user: any) => (
+                      <Typography
+                        key={data._id + " " + user._id} 
+                        sx={{fontSize: 16, color: theme.color.text.secondary}}
+                      >
+                        {user.displayName ? user.displayName : "..."}
+                      </Typography>
+                    ))}
+                  </TableCell>
+                  <TableCell>
+                    { project && 
+                      !project.advisor
+                        .map((a: any) => a._id)
+                        .filter((id: any) => data.userId.map((a: any) => a._id).includes(id)).length ?
+                      <Radio
+                        sx={{
+                            padding: 0,
+                            boxShadow: "none",
+                            color: theme.color.background.secondary,
+                            "&.Mui-checked": {
+                                color: theme.color.background.secondary,
+                            },
+                            "& .MuiSvgIcon-root": { fontSize: 28 },
+                        }}
+                        checked={selectedId === data._id}
+                        onChange={() => handleChange(data._id)}
+                        value={data._id}
+                      /> : 
+                      <></>
+                    }
                   </TableCell>
               </TableRow>
               ))}
@@ -171,7 +192,7 @@ const AddCommitteeToProjectOnlyOne = ({ open, onClose, refresh, advisors, ordGro
               background: theme.color.button.disable,
             },
           }}
-          disabled={!checked.length}
+          disabled={!selectedId}
         >
           ยืนยัน
         </LoadingButton>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -14,6 +14,7 @@ import { listProjectInClass } from "../../utils/project";
 import { theme } from "../../styles/theme";
 import { observer } from "mobx-react";
 import NotFound from "../other/NotFound";
+import { listMatchCommitteeInClass } from "../../utils/matchCommittee";
 
 const ProjectPreview = observer(() => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const ProjectPreview = observer(() => {
 
   const classId = window.location.pathname.split("/")[2];
   const sortOptions = ["createdAtDESC", "createdAtASC", "name"];
+  const roleOptions = ["advisor", "committee"]
   const sortCheck =
     search.get("sort") &&
     sortOptions.find(
@@ -33,30 +35,50 @@ const ProjectPreview = observer(() => {
   const [sortSelect, setSortSelect] = useState<string>(
     sortCheck || "createdAtDESC"
   );
+  const roleCheck =
+  search.get("role") &&
+    roleOptions.find(
+      (e) => search.get("role")?.toLowerCase() == e.toLowerCase()
+    )
+      ? search.get("role")
+      : "advisor";
+  const [roleSelect, setRoleSelect] = useState<string>(roleCheck || "advisor")
 
   const isBigScreen = useMediaQuery({ query: "(min-width: 650px)" });
   const [projects, setProjects] = useState<Array<any>>([]);
+  const [mathCommittee, setMatchCommittee] = useState<Array<any>>([]);
   const [notFound, setNotFound] = useState<number>(2);
 
   useEffect(() => {
     applicationStore.setIsShowMenuSideBar(true);
     async function getData() {
-      const result = await listProjectInClass({ sort: sortSelect }, classId);
-      if (result.data) {
-        setProjects(result.data as Array<any>);
+      const projectData = await listProjectInClass({ sort: sortSelect, role: roleSelect }, classId);
+      if (currentRole === 1) {
+        const matchCommittee = await listMatchCommitteeInClass({}, classId)
+      }
+      if (projectData.data) {
+        setProjects(projectData.data as Array<any>);
         setNotFound(1);
       } else setNotFound(0);
     }
     getData();
-  }, [sortSelect]);
+  }, [sortSelect, roleSelect]);
 
   const handleSortChange = (event: SelectChangeEvent) => {
     setSortSelect(event.target.value as string);
     navigate({
       pathname: window.location.pathname,
-      search: `?sort=${event.target.value}`,
+      search: `?sort=${event.target.value}&role=${roleSelect}`,
     });
   };
+
+  const handleRoleChange = (role: string) => {
+    setRoleSelect(role)
+    navigate({
+      pathname: window.location.pathname,
+      search: `sort=${sortSelect}&role=${role}`
+    })
+  }
 
   if (notFound === 1) {
     return (
@@ -94,6 +116,19 @@ const ProjectPreview = observer(() => {
               </Select>
             </FormControl>
           </Box>
+          
+          {
+            currentRole === 1 ?
+            <Box>
+              <Button sx={{marginRight: "1rem"}} onClick={() => handleRoleChange('advisor')}>
+                โปรเจกต์ที่เป็นที่ปรึกษา
+              </Button>
+              <Button onClick={() => handleRoleChange('committee')}>
+                โปรเจกต์ที่เป็นกรรมการคุมสอบ
+              </Button>     
+            </Box> : 
+            <></>
+          }
 
           <Box sx={{ flexDirection: "column", display: "flex" }}>
             {projects.map((c) => (

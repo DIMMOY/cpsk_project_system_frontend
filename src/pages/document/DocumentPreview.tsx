@@ -239,7 +239,7 @@ const DocumentPreview = observer(() => {
             refresh={getData}
             defaultStartDate={startDate}
             defaultEndDate={endDate}
-          ></DocumentStartModal>
+          />
 
           <CancelModal
             open={openCancel}
@@ -251,7 +251,7 @@ const DocumentPreview = observer(() => {
 
           <Box sx={{ flexDirection: "column", display: "flex" }}>
             {documents.map((c) => (
-              <ListPreviewButton key={c._id} sx={{ zIndex: 1 }}>
+              <ListPreviewButton key={c._id} sx={{ zIndex: 1 }} onClick={() => console.log("TEST")}>
                 <Typography
                   sx={{
                     top: "1.5rem",

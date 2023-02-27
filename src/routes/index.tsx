@@ -10,7 +10,6 @@ import Login from "../pages/login/login";
 import ProjectHomePreview from "../pages/project/ProjectHomePreview";
 import DocumentHomePreview from "../pages/document/DocumentHomePreview";
 import MeetingScheduleHomePreview from "../pages/meetingschedule/MeetingScheduleHomePreview";
-import AssessmentPreview from "../pages/assessment/AssessmentPreview";
 import ClassPreview from "../pages/class/ClassPreview";
 import AdminProjectPreview from "../pages/admin/AdminProjectPreview";
 import DocumentDetail from "../pages/document/DocumentDetail";
@@ -32,6 +31,7 @@ import NotAdvisorRoute from "./NotAdvisorRoute";
 import AdminRoleSetting from "../pages/admin/AdminRoleSetting";
 import MatchCommitteePreview from "../pages/committee/MatchCommitteePreview";
 import MatchCommitteeEdit from "../pages/committee/MatchCommitteeEdit";
+import AssessmentPreview from "../pages/assessment/AssessmentPreview";
 
 const Routers: React.FC = (): JSX.Element => {
   return (
@@ -75,7 +75,7 @@ const Routers: React.FC = (): JSX.Element => {
               path="/class/:id/document/overview"
               element={<DocumentPreview />}
             />
-            <Route path="/class/:id/assessment" element={<ProjectPreview />} />
+            <Route path="/class/:id/assessment" element={<AssessmentPreview />} />
             <Route path="/class/:id/committee" element={<MatchCommitteePreview />} />
             <Route path="/class/:id/committee/:committeeId" element={<MatchCommitteeEdit newForm={true}/>}/>
             <Route

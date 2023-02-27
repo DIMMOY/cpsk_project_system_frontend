@@ -77,7 +77,7 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
       sx={{
         display: "flex",
         justifyContent: "center",
-        top: "25%",
+        alignItems: "center",
         overflow: "auto",
       }}
       disableEnforceFocus
