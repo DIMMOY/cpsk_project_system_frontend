@@ -68,7 +68,7 @@ const AssessmentStartModal = ({
     if (defaultStartDate && !startDate)
       setStartDate(moment(defaultStartDate).format("YYYY-MM-DDTHH:mm"));
     
-    setCanSubmit(true);
+    setCanSubmit(startDate && endDate ? true : false);
 
     setChecked(newChecked);
   };

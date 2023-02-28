@@ -28,7 +28,7 @@ const AddCommitteeToProjectOnlyOne = ({ open, onClose, refresh, committee, ordGr
 
   useEffect(() => {
     if (open) {
-      setSelectedId(project.committeeGroupId._id);
+      setSelectedId(project.committeeGroupId ? project.committeeGroupId._id : null);
     }
   }, [open, project]);
 

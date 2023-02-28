@@ -339,8 +339,7 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
                 )}
               </>
             )}
-            {(!isStudent && isAdvisor && status === 3) ||
-            (status === 1 && currentRole === 1) ? (
+            {!isStudent && isAdvisor && (status === 3 || status === 2 || status === 2) && currentRole === 1 ? (
               <>
                 <CancelModal
                   open={open}
