@@ -42,7 +42,7 @@ onAuthStateChanged(firebaseAuth, async (user) => {
           classroom._id
         );
         const project = projectInClassRes.data
-          ? projectInClassRes.data.projectId
+          ? projectInClassRes.data
           : null;
         applicationStore.setProject(project);
       }

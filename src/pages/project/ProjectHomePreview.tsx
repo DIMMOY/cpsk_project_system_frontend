@@ -5,8 +5,9 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import GroupsIcon from "@mui/icons-material/Groups";
 import GradingIcon from "@mui/icons-material/Grading";
 import { ProjectPreviewButton } from "../../styles/layout/_button";
+import SettingsIcon from '@mui/icons-material/Settings';
 import { useMediaQuery } from "react-responsive";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ProjectPreviewContainer,
   ProjectPreviewDetail,
@@ -30,6 +31,7 @@ const ProjectHomePreview = observer(
   (props: { isStudent: boolean; isCommittee: boolean }) => {
     const { isStudent, isCommittee } = props;
     const { currentRole, project } = applicationStore;
+    const navigate = useNavigate();
     const classes = useStyles();
     const [nameTH, setNameTH] = useState<string>(".....");
     const [nameEN, setNameEN] = useState<string>(".....");
@@ -57,7 +59,7 @@ const ProjectHomePreview = observer(
           setNotFound(1);
         }
       }
-      if (isStudent) {
+      if (isStudent && currentRole === 0) {
         setNameTH(project.nameTH);
         setNameEN(project.nameEN);
         setDescription(project.description);
@@ -75,9 +77,24 @@ const ProjectHomePreview = observer(
       return (
         <ProjectPreviewContainer>
           <ProjectPreviewDetail>
+            {
+              currentRole === 0 ? 
+              <IconButton 
+                sx={{
+                  position: "absolute",
+                  right: "1rem",
+                  top: "1rem"
+                }}
+                onClick={() => navigate('/project')}
+              >
+                <SettingsIcon fontSize="large"></SettingsIcon>
+              </IconButton>
+              :
+              <></>
+            }
             <Typography
               sx={{
-                fontSize: 50,
+                fontSize: 45,
                 fontWeight: 500,
                 color: theme.color.text.primary,
                 overflowY: "hidden",
@@ -85,6 +102,7 @@ const ProjectHomePreview = observer(
                 whiteSpace: "",
                 display: "inline-block",
                 textAlign: "left",
+                width: "90%",
               }}
             >
               {nameTH}
@@ -150,7 +168,7 @@ const ProjectHomePreview = observer(
                 isBigScreen={isBigScreen}
                 onClick={scrollTop}
               >
-                คะแนน
+                ประเมิน
                 <IconButton className={classes.iconSize} disabled>
                   <GradingIcon />
                 </IconButton>

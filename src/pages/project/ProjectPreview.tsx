@@ -32,7 +32,7 @@ const ProjectPreview = observer(() => {
     )
       ? search.get("sort")
       : "createdAtDESC";
-  const [sortSelect, setSortSelect] = useState<string>(
+  const [selectedSort, setSelectedSort] = useState<string>(
     sortCheck || "createdAtDESC"
   );
   const roleCheck =
@@ -42,42 +42,71 @@ const ProjectPreview = observer(() => {
     )
       ? search.get("role")
       : "advisor";
-  const [roleSelect, setRoleSelect] = useState<string>(roleCheck || "advisor")
+  const matchCommitteeCheck =
+  search.get("matchCommittee")
+      ? search.get("matchCommittee")
+      : "";
+  const [selectedRole, setSelectedRole] = useState<string>(roleCheck || "advisor")
+  const [selectedMatchCommittee, setSelectedMatchCommittee] = useState<string>(matchCommitteeCheck || '');
 
   const isBigScreen = useMediaQuery({ query: "(min-width: 650px)" });
   const [projects, setProjects] = useState<Array<any>>([]);
-  const [mathCommittee, setMatchCommittee] = useState<Array<any>>([]);
+  const [matchCommittee, setMatchCommittee] = useState<Array<any> | null>(null);
   const [notFound, setNotFound] = useState<number>(2);
 
   useEffect(() => {
     applicationStore.setIsShowMenuSideBar(true);
     async function getData() {
-      const projectData = await listProjectInClass({ sort: sortSelect, role: roleSelect }, classId);
-      if (currentRole === 1) {
-        const matchCommittee = await listMatchCommitteeInClass({}, classId)
+      let projectData;
+      if (currentRole === 1 && selectedRole === 'committee') {
+        const matchCommittee = await listMatchCommitteeInClass({ sort: 'createdAtDESC' }, classId)
+        if (matchCommittee.data) {
+          setMatchCommittee(matchCommittee.data)
+          if (selectedMatchCommittee === "") {
+            if (matchCommittee.data.length) {
+              const matchCommitteeId = matchCommittee.data[0]._id
+              setSelectedMatchCommittee(matchCommitteeId)
+              projectData = await listProjectInClass({ sort: selectedSort, role: selectedRole, matchCommitteeId }, classId);
+            } else projectData = { data: [] };
+          } else {
+            projectData = await listProjectInClass({ sort: selectedSort, role: selectedRole, matchCommitteeId: selectedMatchCommittee }, classId);
+          }
+        }
+      } else {
+        projectData = await listProjectInClass({ sort: selectedSort, role: selectedRole }, classId);
       }
-      if (projectData.data) {
+      if (projectData && projectData.data) {
         setProjects(projectData.data as Array<any>);
         setNotFound(1);
       } else setNotFound(0);
     }
     getData();
-  }, [sortSelect, roleSelect]);
+  }, [selectedSort, selectedRole, selectedMatchCommittee]);
 
   const handleSortChange = (event: SelectChangeEvent) => {
-    setSortSelect(event.target.value as string);
+    setSelectedSort(event.target.value as string);
     navigate({
       pathname: window.location.pathname,
-      search: `?sort=${event.target.value}&role=${roleSelect}`,
+      search: `?sort=${event.target.value}&role=${selectedRole}`,
+    });
+  };
+
+  const handleMatchCommitteeChange = (event: SelectChangeEvent) => {
+    setSelectedMatchCommittee(event.target.value as string);
+    navigate({
+      pathname: window.location.pathname,
+      search: `?sort=${selectedSort}&role=${selectedRole}&matchCommittee=${event.target.value}`,
     });
   };
 
   const handleRoleChange = (role: string) => {
-    setRoleSelect(role)
-    navigate({
-      pathname: window.location.pathname,
-      search: `sort=${sortSelect}&role=${role}`
-    })
+    if (role !== selectedRole) {
+      setSelectedRole(role)
+      navigate({
+        pathname: window.location.pathname,
+        search: `sort=${selectedSort}&role=${role}`
+      })
+    }
   }
 
   if (notFound === 1) {
@@ -99,7 +128,7 @@ const ProjectPreview = observer(() => {
               <Select
                 labelId="select-sort-label"
                 id="select-sort"
-                value={sortSelect}
+                value={selectedSort}
                 onChange={handleSortChange}
                 label="จัดเรียงโดย"
                 sx={{
@@ -119,13 +148,64 @@ const ProjectPreview = observer(() => {
           
           {
             currentRole === 1 ?
-            <Box>
-              <Button sx={{marginRight: "1rem"}} onClick={() => handleRoleChange('advisor')}>
+            <Box sx={{margin: "0.5rem 0 1.25rem 0", }}>
+              <Button 
+                sx={{
+                  marginRight: "1.25rem", 
+                  borderRadius: "10px",
+                  color: selectedRole === "advisor" ? theme.color.text.default : theme.color.text.primary,
+                  backgroundColor: selectedRole === "advisor" ? theme.color.background.primary : theme.color.background.default,
+                  height: 45,
+                  padding: "1rem",
+                  fontSize: 16,
+                  "&:hover": { background: selectedRole === "advisor" ? "#B07CFF" : theme.color.background.tertiary }
+                }} 
+                onClick={() => handleRoleChange('advisor')}
+              >
                 โปรเจกต์ที่เป็นที่ปรึกษา
               </Button>
-              <Button onClick={() => handleRoleChange('committee')}>
+              <Button 
+                sx={{
+                  marginRight: "1.25rem", 
+                  borderRadius: "10px", 
+                  color: selectedRole === "committee" ? theme.color.text.default : theme.color.text.primary,
+                  backgroundColor: selectedRole === "committee" ? theme.color.background.primary : theme.color.background.default,
+                  height: 45,
+                  padding: "1rem",
+                  fontSize: 16,
+                  "&:hover": { background: selectedRole === "committee" ? "#B07CFF" : theme.color.background.tertiary }
+                }} 
+                onClick={() => handleRoleChange('committee')}
+              >
                 โปรเจกต์ที่เป็นกรรมการคุมสอบ
-              </Button>     
+              </Button> 
+              {
+                selectedRole === 'committee' && matchCommittee && matchCommittee.length ? 
+                <FormControl sx={{ marginRight: "1.5rem", position: "relative" }}>
+                  <InputLabel id="select-match-committee-label">รายการคุมสอบ</InputLabel>
+                  <Select
+                    labelId="select-match-committee-label"
+                    id="select-match-committee"
+                    value={selectedMatchCommittee}
+                    onChange={handleMatchCommitteeChange}
+                    label="รายการคุมสอบ"
+                    sx={{
+                      borderRadius: "10px",
+                      color: theme.color.background.primary,
+                      height: 45,
+                      fontWeight: 500,
+                      width: 180,
+                    }}
+                  >
+                    {
+                      matchCommittee.map((data) => (
+                        <MenuItem key={data._id} value={data._id}>{data.name}</MenuItem>
+                      ))
+                    }
+                  </Select>
+                </FormControl>
+                : <></>
+              }    
             </Box> : 
             <></>
           }

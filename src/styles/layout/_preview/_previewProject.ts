@@ -9,6 +9,7 @@ export const ProjectPreviewDetail = styled(Box)({
   background: "#F3F3F3",
   borderRadius: "20px",
   padding: "20px 30px 20px 30px",
+  position: "relative"
 });
 
 export const ProjectPreviewContainer = styled(Box)({

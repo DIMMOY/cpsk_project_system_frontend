@@ -239,3 +239,28 @@ export const updateDocument = async (
     };
   }
 };
+
+export const listProjectSendDocumentInClass = async (documentId: null | string, classId: string, sort: string) => {
+  try {
+    await refreshToken();
+    const url = `${
+      process.env.REACT_APP_API_BASE_URL_CLIENT as string
+    }/class/${classId}/document/overview`;
+    const params = { params: documentId ? { id: documentId, sort } : { sort } };
+    const resAxios = await axios.get(url, params);
+    return {
+      statusCode: 200,
+      message: "List project send document in class successful",
+      data: resAxios.data.data,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "List project send document in class error",
+      errorMsg: "ค้นหา project send document ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+
+}

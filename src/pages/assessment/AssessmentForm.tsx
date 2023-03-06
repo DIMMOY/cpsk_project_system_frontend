@@ -24,7 +24,7 @@ interface PreviewProps {
   newForm: boolean;
 }
 
-const AssessmentEdit = ({ newForm }: PreviewProps) => {
+const AssessmentForm = ({ newForm }: PreviewProps) => {
   const { isAdmin, currentRole } = applicationStore;
 
   const location = useLocation();
@@ -678,4 +678,4 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
   );
 };
 
-export default AssessmentEdit;
+export default AssessmentForm;

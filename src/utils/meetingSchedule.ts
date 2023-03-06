@@ -124,9 +124,7 @@ export const listSendMeetingScheduleInClass = async (
   projectId: string
 ) => {
   try {
-    console.log("OLD: " + axios.defaults.headers.common["Authorization"]);
     await refreshToken();
-    console.log("NEW: " + axios.defaults.headers.common["Authorization"]);
     const url = `${
       process.env.REACT_APP_API_BASE_URL_CLIENT as string
     }/class/${classId}/project/${projectId}/meeting-schedule`;
@@ -270,3 +268,27 @@ export const changeStatusMeetingSchedule = async (
     };
   }
 };
+
+export const listProjectSendMeetingScheduleInClass = async (mtId: null | string, classId: string, sort: string) => {
+  try {
+    await refreshToken();
+    const url = `${
+      process.env.REACT_APP_API_BASE_URL_CLIENT as string
+    }/class/${classId}/meeting-schedule/overview`;
+    const params = { params: mtId ? { id: mtId, sort } : { sort } };
+    const resAxios = await axios.get(url, params);
+    return {
+      statusCode: 200,
+      message: "List project send meeting schedule in class successful",
+      data: resAxios.data.data,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "List project send meeting schedule in class error",
+      errorMsg: "ค้นหา project send meeting schedule ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+}

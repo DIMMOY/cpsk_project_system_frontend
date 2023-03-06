@@ -31,7 +31,7 @@ const DocumentPreview = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
-  const { isAdmin, currentRole } = applicationStore;
+  const { isAdmin, currentRole, classroom } = applicationStore;
 
   const sortOptions = ["createdAtDESC", "createdAtASC", "name"];
   const statisOptions = ["all", "true", "false"];
@@ -151,6 +151,12 @@ const DocumentPreview = observer(() => {
     }
   };
 
+  const handleClick = async (statusInClass: number, id: string) => {
+    if (statusInClass) {
+      navigate(`/class/${classroom._id as string}/document/overview/${id as string}`)
+    }
+  }
+
   if (notFound === 1) {
     return (
       <AdminCommonPreviewContainer>
@@ -223,9 +229,9 @@ const DocumentPreview = observer(() => {
                 height: 45,
                 weight: 42,
                 fontSize: 16,
-                padding: 1,
+                padding: "1rem",
               }}
-              onClick={() => navigate(`overview`)}
+              onClick={() => navigate(`/class/${classroom._id as string}/document/overview`)}
             >
               ดูภาพรวม
             </Button>
@@ -251,7 +257,11 @@ const DocumentPreview = observer(() => {
 
           <Box sx={{ flexDirection: "column", display: "flex" }}>
             {documents.map((c) => (
-              <ListPreviewButton key={c._id} sx={{ zIndex: 1 }} onClick={() => console.log("TEST")}>
+              <ListPreviewButton 
+                key={c._id} 
+                sx={{ zIndex: 1 }} 
+                onClick={() => handleClick(c.statusInClass, c._id)}
+              >
                 <Typography
                   sx={{
                     top: "1.5rem",

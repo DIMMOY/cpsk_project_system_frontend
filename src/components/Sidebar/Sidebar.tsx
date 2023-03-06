@@ -73,7 +73,7 @@ const Sidebar = observer(() => {
 
   useEffect(() => {
     const index = params.findIndex(
-      (p) => p === pathname.substring(pathname.lastIndexOf("/") + 1)
+      (p) => p === window.location.pathname.split("/")[3]
     );
     if (index === -1) {
       navigate("/");

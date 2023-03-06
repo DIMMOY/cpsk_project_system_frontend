@@ -98,3 +98,43 @@ export const checkRoleInProject = async (
     };
   }
 };
+
+export const createProjectInClass = async (body: any, classId: string) => {
+  try {
+    await refreshToken();
+    const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/class/${classId}/project`;
+    const resAxios = await axios.post(url, body);
+    return {
+      statusCode: resAxios.data.statusCode,
+      message: resAxios.data.message,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "Create Project error",
+      errorMsg: "สร้าง project ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+}
+
+export const updateProjectInClass = async (body: any, classId: string, projectId: string) => {
+  try {
+    await refreshToken();
+    const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/class/${classId}/project/${projectId}`;
+    const resAxios = await axios.put(url, body);
+    return {
+      statusCode: resAxios.data.statusCode,
+      message: resAxios.data.message,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "Create Project error",
+      errorMsg: "สร้าง project ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+}

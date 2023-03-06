@@ -40,6 +40,23 @@ export const listUser = async (reqQuery: any) => {
   }
 };
 
+export const listStudentInClass = async (classId: string, project: string) => {
+  try {
+    await refreshToken();
+    const result = await axios.get(`${url}/class/${classId}`, { params: { project }});
+    return {
+      data: result.data.data,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "List user in class error",
+      errorMsg: "ค้นหา User ในคลาสผิดพลาด กรุณาลองใหม่อีกครั้งในภายหลัง",
+    };
+  }
+};
+
 export const addRoleInUser = async (reqBody: any) => {
   try {
     await refreshToken();

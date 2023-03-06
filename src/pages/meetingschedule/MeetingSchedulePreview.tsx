@@ -32,7 +32,7 @@ const MeetingSchedulePreview = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
-  const { isAdmin, isAdvisor, currentRole } = applicationStore;
+  const { isAdmin, isAdvisor, currentRole, classroom } = applicationStore;
 
   const sortOptions = ["createdAtDESC", "createdAtASC", "name"];
   const statisOptions = ["all", "true", "false"];
@@ -152,6 +152,12 @@ const MeetingSchedulePreview = observer(() => {
     }
   };
 
+  const handleClick = async (statusInClass: number, id: string) => {
+    if (statusInClass) {
+      navigate(`/class/${classroom._id as string}/meeting-schedule/overview/${id as string}`)
+    }
+  }
+
   if (notFound === 1) {
     return (
       <AdminCommonPreviewContainer>
@@ -224,9 +230,9 @@ const MeetingSchedulePreview = observer(() => {
                 height: 45,
                 weight: 42,
                 fontSize: 16,
-                padding: 1,
+                padding: "1rem",
               }}
-              onClick={() => navigate(`overview`)}
+              onClick={() => navigate(`/class/${classroom._id as string}/meeting-schedule/overview`)}
             >
               ดูภาพรวม
             </Button>
@@ -255,7 +261,7 @@ const MeetingSchedulePreview = observer(() => {
               <ListPreviewButton
                 key={c._id}
                 sx={{ zIndex: 1 }}
-                onClick={() => console.log("TEST")}
+                onClick={() => handleClick(c.statusInClass, c._id)}
               >
                 <Typography
                   sx={{
