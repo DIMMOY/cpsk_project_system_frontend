@@ -66,6 +66,7 @@ const Sidebar = observer(() => {
   const handleOnClick = (param: string, text: string) => {
     if (text !== currentSelect) {
       setCurrentSelect(text);
+      console.log(classroom)
       navigate(`/class/${classroom._id as string}/${param}`);
       applicationStore.setIsShowSideBar(false);
     }

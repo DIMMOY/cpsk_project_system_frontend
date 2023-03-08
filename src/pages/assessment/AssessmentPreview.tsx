@@ -254,7 +254,7 @@ const AssessmentPreview = observer(() => {
               <ListPreviewButton
                 key={c._id}
                 sx={{ zIndex: 1 }}
-                onClick={() => console.log("TEST")}
+                onClick={() => navigate(`/class/${classId}/assessment/overview/${c._id}`)}
               >
                 <Typography
                   sx={{

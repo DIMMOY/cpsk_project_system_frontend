@@ -140,19 +140,14 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
   };
 
   const handleOnCancelSubmitMeetingSchedule = async () => {
-    setLoading(true);
-    console.log("TST");
     const result = await changeStatusMeetingSchedule(
       false,
       projectId,
       meetingScheduleId
     );
     if (result.statusCode === 200) {
-      setTimeout(async () => {
-        await getData("");
-        setLoading(false);
-      }, 1300);
-    } else setLoading(false);
+      await getData("");
+    }
   };
 
   const handleOnOpenModal = () => setOpen(true);
@@ -339,14 +334,14 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
                 )}
               </>
             )}
-            {!isStudent && isAdvisor && (status === 3 || status === 2 || status === 2) && currentRole === 1 ? (
+            {!isStudent && isAdvisor && (status === 3 || status === 2 || status === 1) && currentRole === 1 ? (
               <>
                 <CancelModal
                   open={open}
                   onClose={handleOnCloseModal}
-                  onSubmit={handleOnCancelSendMeetingSchedule}
+                  onSubmit={handleOnCancelSubmitMeetingSchedule}
                   title={`ยกเลิกการยืนยัน ${name}`}
-                  description="เมื่อยกเลิกแล้วจะต้องให้ที่ปรึกษายืนยันใหม่อีกครั้ง"
+                  description="เมื่อยกเลิกแล้วจะกลับสู่สถานะรอยืนยัน"
                 />
 
                 <LoadingButton
@@ -377,7 +372,7 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
                   onClick={
                     status === 3
                       ? handleOnSubmitMeetingSchedule
-                      : handleOnCancelSubmitMeetingSchedule
+                      : handleOnOpenModal
                   }
                   disabled={!submit}
                 >

@@ -4,13 +4,14 @@ import { Navigate, Outlet } from "react-router-dom";
 import applicationStore from "../stores/applicationStore";
 import NotFound from "../pages/other/NotFound";
 import ProjectEdit from "../pages/project/ProjectEdit";
+import ProfileEdit from "../pages/other/ProfileEdit";
 
-const HaveProjectRoute = observer(() => {
-  const { project, currentRole, isStudent } = applicationStore;
-  if (currentRole === 0 && isStudent)
+const HaveProjectOrDisplayNameRoute = observer(() => {
+  const { project, currentRole, isStudent, user } = applicationStore;
+  if (currentRole === 0 && isStudent) {
     return project ? <Outlet /> : <ProjectEdit newProject={true} />;
-  else
+  } else
     return <Outlet />
 });
 
-export default HaveProjectRoute;
+export default HaveProjectOrDisplayNameRoute;

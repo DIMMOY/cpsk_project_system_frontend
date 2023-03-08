@@ -93,6 +93,24 @@ export const deleteRoleInUser = async (reqBody: any) => {
   }
 };
 
+export const updateUser = async (name: string, surname: string) => {
+  try {
+    await refreshToken();
+    const res = await axios.patch(`${url}/name`, { name, surname });
+    return {
+      statusCode: res.data.statusCode,
+      message: res.data.message,
+    };
+  } catch (error: any) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "Update user error",
+      errorMsg: error.response.data.message,
+    }
+  }
+}
+
 export const joinClass = async (reqBody: any) => {
   try {
     await refreshToken();

@@ -95,7 +95,7 @@ const ProjectHomePreview = observer(
             <Typography
               sx={{
                 fontSize: 45,
-                fontWeight: 500,
+                fontWeight: 600,
                 color: theme.color.text.primary,
                 overflowY: "hidden",
                 textOverflow: "ellipsis",
@@ -137,7 +137,7 @@ const ProjectHomePreview = observer(
                 isBigScreen={isBigScreen}
                 onClick={scrollTop}
               >
-                ส่งเอกสาร
+                เอกสาร
                 <IconButton className={classes.iconSize} disabled>
                   <DescriptionIcon />
                 </IconButton>

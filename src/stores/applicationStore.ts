@@ -20,7 +20,7 @@ class applicationStore {
     makeAutoObservable(this);
   }
 
-  setUser(user: User | null) {
+  setUser(user: any) {
     this.user = user as User;
   }
 

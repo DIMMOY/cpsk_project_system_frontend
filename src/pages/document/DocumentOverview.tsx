@@ -108,8 +108,8 @@ const DocumentOverview = observer(() => {
 
           <Table sx={{ width: isBigScreen ? "60%" : "100%"}}>
             <TableHead>
-              <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "70%"}}>โปรเจกต์</TableCell>
-              <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "30%"}}>สถานะ</TableCell>
+              <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "70%", fontWeight: 600}}>โปรเจกต์</TableCell>
+              <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "30%", fontWeight: 600}}>สถานะ</TableCell>
             </TableHead>
             <TableBody>
               {
@@ -121,10 +121,10 @@ const DocumentOverview = observer(() => {
                     }}
                     onClick={() => navigate(`/class/${classId}/project/${data._id as string}/document/${document._id as string}`)}
                   >
-                    <TableCell sx={{fontSize: 18, color: theme.color.text.secondary}}>
+                    <TableCell sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}>
                       {data.nameTH}
                     </TableCell>
-                    <TableCell align="center" sx={{fontSize: 20, color: data.document.length ? statusList[data.document[0].sendStatus].color : statusList[0].color}}> 
+                    <TableCell align="center" sx={{fontSize: 20, color: data.document.length ? statusList[data.document[0].sendStatus].color : statusList[0].color, fontWeight: 600}}> 
                       {data.document.length ? statusList[data.document[0].sendStatus].message : "ยังไม่ส่ง" }
                     </TableCell>
                   </TableRow>

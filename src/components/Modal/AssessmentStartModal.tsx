@@ -68,7 +68,7 @@ const AssessmentStartModal = ({
     if (defaultStartDate && !startDate)
       setStartDate(moment(defaultStartDate).format("YYYY-MM-DDTHH:mm"));
     
-    setCanSubmit(startDate && endDate ? true : false);
+    setCanSubmit((defaultEndDate && defaultStartDate) || (startDate && endDate)  ? true : false);
 
     setChecked(newChecked);
   };
@@ -111,7 +111,8 @@ const AssessmentStartModal = ({
   };
 
   useEffect(() => {
-    setChecked(assessment ? assessment.matchCommitteeId ? assessment.matchCommitteeId : [] : []);
+    if (open) 
+      setChecked(assessment ? assessment.matchCommitteeId ? assessment.matchCommitteeId : [] : []);
   }, [open])
 
   return (

@@ -18,7 +18,6 @@ onAuthStateChanged(firebaseAuth, async (user) => {
     const accessToken = await user.getIdTokenResult();
     axios.defaults.headers.common["Authorization"] =
       "Bearer " + accessToken.token;
-    applicationStore.setUser(user);
     applicationStore.setExpiredTime(
       new Date(accessToken.expirationTime).getTime() - 120000
     );
@@ -28,6 +27,7 @@ onAuthStateChanged(firebaseAuth, async (user) => {
     });
     const userData = userRes.data.data;
     applicationStore.setRole(userData.role);
+    applicationStore.setUser({ ...user, displayName: userData.displayName });
 
     // find class when user is student
     if (applicationStore.currentRole === 0) {

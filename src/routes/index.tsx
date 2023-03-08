@@ -29,10 +29,13 @@ import MatchCommitteePreview from "../pages/committee/MatchCommitteePreview";
 import MatchCommitteeEdit from "../pages/committee/MatchCommitteeEdit";
 import AssessmentPreview from "../pages/assessment/AssessmentPreview";
 import HaveClassRoute from "./HaveClassRoute";
-import HaveProjectRoute from "./HaveProjectRoute";
+import HaveProjectOrDisplayNameRoute from "./HaveProjectRoute";
 import ProjectPage from "../pages/project";
 import DocumentOverview from "../pages/document/DocumentOverview";
 import MeetingScheduleOverview from "../pages/meetingschedule/MeetingScheduleOverview";
+import AssessmentForm from "../pages/assessment/AssessmentForm";
+import AssessmentOverview from "../pages/assessment/AssessmentOverview";
+import ProfileEdit from "../pages/other/ProfileEdit";
 
 const Routers: React.FC = (): JSX.Element => {
   return (
@@ -45,6 +48,7 @@ const Routers: React.FC = (): JSX.Element => {
 
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/profile" element={<ProfileEdit />} />
 
           <Route element={<NotStudentRoute />}>
             <Route element={<NotAdvisorRoute />}>
@@ -85,6 +89,8 @@ const Routers: React.FC = (): JSX.Element => {
               element={<DocumentOverview />}
             />
             <Route path="/class/:id/assessment" element={<AssessmentPreview />} />
+            <Route path="/class/:id/assessment/overview/:assessmentId" element={<AssessmentOverview />} />
+            <Route path="/class/:id/assessment/:assessmentId/project/:projectId/form" element={<AssessmentForm />} />
             <Route path="/class/:id/committee" element={<MatchCommitteePreview />} />
             <Route path="/class/:id/committee/:committeeId" element={<MatchCommitteeEdit newForm={true}/>}/>
             <Route
@@ -103,7 +109,7 @@ const Routers: React.FC = (): JSX.Element => {
 
           <Route element={<NotAdvisorRoute />}>
             <Route element={<HaveClassRoute />}>
-              <Route element={<HaveProjectRoute />}>
+              <Route element={<HaveProjectOrDisplayNameRoute />}>
                 <Route path="/project" element={<ProjectPage />} />
                 <Route path="/document" element={<DocumentPage />} />
                 <Route

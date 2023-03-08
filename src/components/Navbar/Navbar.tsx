@@ -323,7 +323,7 @@ export const NavBar = observer(() => {
                 color: theme.color.text.default,
               }}
             >
-              {applicationStore.user?.displayName?.split(" ")[0].toUpperCase()}
+              {applicationStore.user?.displayName?.split(" ")[0]}
             </Typography>
           ) : (
             <></>
@@ -357,8 +357,13 @@ export const NavBar = observer(() => {
           }}
           sx={{ top: "0.5rem" }}
         >
-          <MenuItem onClick={handleClose} disabled>
-            แก้ไขโปรไฟล์
+          <MenuItem 
+            onClick={() => { 
+              navigate('/profile') 
+              handleClose()
+            }}
+          >
+            แก้ไขชื่อ - นามสกุล
           </MenuItem>
           {menuItems.map((menu) => (
             <MenuItem
