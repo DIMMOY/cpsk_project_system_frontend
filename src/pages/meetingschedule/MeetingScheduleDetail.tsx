@@ -74,18 +74,21 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
     }
   };
 
-  useEffect(() => {
-    async function getRoleInProject() {
-      const checkRole = await checkRoleInProject(classId, projectId);
-      console.log(checkRole);
+  const getRoleInProject = async () => {
+    const checkRole = await checkRoleInProject(classId, projectId);
       if (checkRole.data) {
         const { data } = checkRole;
         // check role is advisor in this project or not
-        if (data.filter((e: number) => e === 2).length) {
+        if (data.filter((e: any) => e.role === 2).length) {
           setIsAdvisor(true);
+        } else {
+          setNotFound(0)
+          return
         }
       }
-    }
+  }
+
+  useEffect(() => {
     if (currentRole === 1) {
       getRoleInProject();
     }

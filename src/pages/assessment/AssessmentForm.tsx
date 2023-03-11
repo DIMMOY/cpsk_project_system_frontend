@@ -23,6 +23,7 @@ import Select from "@mui/material/Select";
 import { LoadingButton } from "@mui/lab";
 import { createAssessment, createSendAssessment, getProjectHasAssessmentInClass as getProjectHasAssessmentInClass, updateAssessment } from "../../utils/assessment";
 import NotFound from "../other/NotFound";
+import { checkRoleInProject } from "../../utils/project";
 
 interface PreviewProps {
   newForm: boolean;
@@ -32,6 +33,7 @@ const AssessmentForm = () => {
   const { isAdmin, currentRole, user } = applicationStore;
 
   const location = useLocation();
+  const search = new URLSearchParams(location.search);
 
   const [id, setId] = useState(null);
   const [name, setName] = useState<string>("");
@@ -60,11 +62,21 @@ const AssessmentForm = () => {
   const assessmentId = pathname[4];
   const projectId = pathname[6];
 
+  const roleCheck =
+    (search.get("role") === "advisor" || search.get("role") === "committee")
+      ? (search.get("role") === "advisor" ? 2 : 3)
+      : 2;
+
+  const matchCommitteeIdCheck =
+    search.get("matchCommittee")
+      ? search.get("matchCommittee")
+      : null;
+
   const getData = async () => {
-    const assessmentData = await getProjectHasAssessmentInClass(classId, assessmentId, projectId);
+    const assessmentData = await getProjectHasAssessmentInClass(classId, assessmentId, projectId, roleCheck, matchCommitteeIdCheck);
     if (assessmentData.data) {
       const { assessmentResults, assessment, project } = assessmentData.data
-      const { name, description, feedBack, form, score } = assessment;
+      const { name, description, feedBack, form, score, assessBy } = assessment;
       setName(name)
       setProjectNameTH(project.nameTH)
       setDescription(description)
@@ -96,13 +108,12 @@ const AssessmentForm = () => {
 
   useEffect(() => {
     if (currentRole == 0) navigate("/");
-    getData()
+    if ((roleCheck === 2 && matchCommitteeIdCheck) || (roleCheck === 3 && matchCommitteeIdCheck === '')) {
+      setNotFound(0)
+    } else {
+      getData()
+    }
   }, []);
-
-  useEffect(() => {
-    if (scrollToBottom) window.scrollTo(0, document.body.scrollHeight);
-  }, [scrollToBottom]);
-
 
   const handleOnSubmit = async () => {
     const rawScore = formInput.map((score, index) => score * form[index].weight).reduce((a, b) => a + b);
@@ -111,12 +122,15 @@ const AssessmentForm = () => {
     setLoading(true);
 
     const body = { rawScore, sumScore, form: formInput, feedBack: feedBackInput !== '' ? feedBackInput : null };
-    const res = await createSendAssessment(body, projectId, assessmentId);
+    const res = await createSendAssessment(body, projectId, assessmentId, roleCheck, matchCommitteeIdCheck);
 
     if (res.statusCode === 201) {
       setTimeout(() => {
         setLoading(false);
-        navigate(`/class/${classId}/assessment/overview/${assessmentId}`);
+        navigate({
+          pathname: `/class/${classId}/assessment/overview/${assessmentId}`,
+          search: `?role=${search.get("role") as string}${roleCheck === 3 ? `&matchCommittee=${matchCommitteeIdCheck as string}` : ''}`
+        });
       } , 1300);
     } else {
       setTimeout(() => {

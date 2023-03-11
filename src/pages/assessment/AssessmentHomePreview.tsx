@@ -1,21 +1,17 @@
-import { Container, Box, IconButton, Button, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { fontFamily, fontWeight, Stack } from "@mui/system";
-import React, { Component, useEffect, useState } from "react";
-import { KeyObjectType } from "crypto";
-import { padding } from "@mui/system/spacing";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { ListPreviewButton } from "../../styles/layout/_button";
-import { listSendMeetingScheduleInClass } from "../../utils/meetingSchedule";
 import moment from "moment";
 import { CommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
 import { theme } from "../../styles/theme";
 import { observer } from "mobx-react";
 import applicationStore from "../../stores/applicationStore";
 import NotFound from "../other/NotFound";
-import { checkRoleInProject } from "../../utils/project";
+import { listAssessmentInClass } from "../../utils/assessment";
 
 const useStyles = makeStyles({
   iconSize: {
@@ -29,8 +25,8 @@ interface PreviewProps {
   isStudent: boolean;
 }
 
-const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
-  const [meetingSchedules, setMeetingSchedules] = useState<Array<any>>([]);
+const AssessmentHomePreview = observer(({ isStudent }: PreviewProps) => {
+  const [assessments, setAssessments] = useState<Array<any>>([]);
   const [notFound, setNotFound] = useState<number>(2);
   const { currentRole, classroom, project } = applicationStore;
   const classes = useStyles();
@@ -53,31 +49,20 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
   const classId = isStudent ? classroom._id : pathname[2];
   const projectId = isStudent ? project._id : pathname[4];
 
-  useEffect(() => {
-    async function getData() {
-      if (currentRole === 1) {
-        const checkRole = await checkRoleInProject(classId, projectId);
-        if (checkRole.data) {
-          const { data } = checkRole;
-          // check role is advisor in this project or not
-          if (!data.filter((e: any) => e.role === 2).length) {
-            setNotFound(0);
-            return;
-          }
-        }
-      }
-      const meetingScheduleData = await listSendMeetingScheduleInClass(
-        { sort: "createdAtDESC" },
-        classId,
-        projectId
-      );
-      if (!meetingScheduleData.data) {
-        setNotFound(0);
-      } else {
-        setMeetingSchedules(meetingScheduleData.data as Array<any>);
-        setNotFound(1);
-      }
+  const getData = async () => {
+    const assessmentData = await listAssessmentInClass(
+      { sort: "sortSelect", status: "true" },
+      classId
+    );
+    if (!assessmentData.data) {
+      setNotFound(0);
+    } else {
+      setAssessments(assessmentData.data as Array<any>);
+      setNotFound(1);
     }
+  }
+
+  useEffect(() => {
     getData();
   }, []);
 
@@ -114,30 +99,30 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
               color: theme.color.text.primary,
             }}
           >
-            รายงานการพบอาจารย์ที่ปรึกษา
+            ประเมิน
           </Typography>
         </Box>
         <Box sx={{ flexDirection: "column", display: "flex" }}>
-          {meetingSchedules.map((mtSchedule) => (
+          {assessments.map((data) => (
             <ListPreviewButton
-              key={mtSchedule._id}
+              key={data._id}
               onClick={() => {
                 navigate(
                   isStudent && currentRole === 0
-                    ? `/meeting-schedule/${
-                        mtSchedule.meetingScheduleId as string
+                    ? `/assessment/${
+                        data._id as string
                       }`
                     : `${currentPathName}/${
-                        mtSchedule.meetingScheduleId as string
+                        data._id as string
                       }`,
                   {
                     replace: true,
                     state: {
-                      name: mtSchedule.name,
-                      status: mtSchedule.sendStatus,
-                      detail: mtSchedule.detail ? mtSchedule.detail : "",
-                      statusType: mtSchedule.statusType,
-                      dueDate: moment(mtSchedule.endDate).format(
+                      name: data.name,
+                      status: data.sendStatus,
+                      detail: data.detail ? data.detail : "",
+                      statusType: data.statusType,
+                      dueDate: moment(data.endDate).format(
                         "DD/MM/YYYY HH:mm"
                       ),
                     },
@@ -156,21 +141,7 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
                   color: theme.color.text.primary,
                 }}
               >
-                {mtSchedule.name}
-              </Typography>
-              <Typography
-                sx={{
-                  top: isBigScreen ? "1.5rem" : "1.95rem",
-                  right: "calc(20px + 1vw)",
-                  position: "absolute",
-                  fontSize: isBigScreen
-                    ? "calc(30px + 0.2vw)"
-                    : "calc(15px + 2vw)",
-                  color: statusList[mtSchedule.sendStatus].color,
-                  fontWeight: 600,
-                }}
-              >
-                {statusList[mtSchedule.sendStatus].message}
+                {data.name}
               </Typography>
               <Typography
                 sx={{
@@ -182,8 +153,7 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
                   fontWeight: 600,
                 }}
               >
-                ภายในวันที่{" "}
-                {moment(mtSchedule.endDate).format("DD/MM/YYYY HH:mm")}
+                {`ประเมินโดย ${data.assessBy === 0 ? 'อาจารย์ที่ปรึกษาและกรรมการคุมสอบ' : data.assessBy === 1 ? 'อาจารย์ที่ปรึกษา' : 'กรรมการคุมสอบ'}`} 
               </Typography>
             </ListPreviewButton>
           ))}
@@ -197,4 +167,4 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
   }
 });
 
-export default MeetingScheduleHomePreview;
+export default AssessmentHomePreview;

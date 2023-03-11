@@ -15,7 +15,7 @@ import {
 import { theme } from "../../styles/theme";
 import { observer } from "mobx-react";
 import applicationStore from "../../stores/applicationStore";
-import { findProjectInClass } from "../../utils/project";
+import { checkRoleInProject, findProjectInClass } from "../../utils/project";
 import NotFound from "../other/NotFound";
 
 const useStyles = makeStyles({
@@ -30,24 +30,32 @@ const useStyles = makeStyles({
 const ProjectHomePreview = observer(
   (props: { isStudent: boolean; isCommittee: boolean }) => {
     const { isStudent, isCommittee } = props;
-    const { currentRole, project } = applicationStore;
+    const { currentRole, project, classroom } = applicationStore;
     const navigate = useNavigate();
     const classes = useStyles();
     const [nameTH, setNameTH] = useState<string>(".....");
     const [nameEN, setNameEN] = useState<string>(".....");
     const [notFound, setNotFound] = useState<number>(2);
     const [description, setDescription] = useState<string>(".....");
+    const [isAdvisor, setIsAdvisor] = useState<boolean>(false);
     const isBigScreen = useMediaQuery({ query: "(min-width: 1440px)" });
 
-    const cuurentPathName = window.location.pathname.endsWith("/")
+    const currentPathName = window.location.pathname.endsWith("/")
       ? window.location.pathname.slice(0, -1)
       : window.location.pathname;
 
+
     useEffect(() => {
       async function getData() {
-        const pathname = cuurentPathName.split("/");
+        const pathname = currentPathName.split("/");
         const classId = pathname[2];
         const projectId = pathname[4];
+        const checkRole = await checkRoleInProject(classId, projectId);
+        if (checkRole.data) {
+          const { data } = checkRole;
+          // check role is advisor in this project or not
+          setIsAdvisor(data.filter((e: any) => e.role === 2).length ? true : false)
+        }
         const projectData = await findProjectInClass(classId, projectId);
         if (!projectData.data) {
           setNotFound(0);
@@ -129,7 +137,7 @@ const ProjectHomePreview = observer(
           <Box sx={{ textAlign: "center" }}>
             <Link
               to={
-                currentRole === 0 ? "/document" : `${cuurentPathName}/document`
+                currentRole === 0 ? "/document" : `${currentPathName}/document`
               }
               style={{ textDecoration: "none" }}
             >
@@ -143,12 +151,12 @@ const ProjectHomePreview = observer(
                 </IconButton>
               </ProjectPreviewButton>
             </Link>
-            {!isCommittee && (
+            {(isAdvisor || currentRole === 0) && (
               <Link
                 to={
                   currentRole === 0
                     ? "/meeting-schedule"
-                    : `${cuurentPathName}/meeting-schedule`
+                    : `${currentPathName}/meeting-schedule`
                 }
                 style={{ textDecoration: "none" }}
               >
@@ -156,14 +164,18 @@ const ProjectHomePreview = observer(
                   isBigScreen={isBigScreen}
                   onClick={scrollTop}
                 >
-                  รายงานอาจารย์ที่ปรึกษา
+                  รายงานพบอาจารย์ที่ปรึกษา
                   <IconButton className={classes.iconSize} disabled>
                     <GroupsIcon />
                   </IconButton>
                 </ProjectPreviewButton>
               </Link>
             )}
-            <Link to="/score" style={{ textDecoration: "none" }}>
+            <Link to={
+                  currentRole === 0
+                    ? "/assessment"
+                    : `${currentPathName}/assessment`
+                } style={{ textDecoration: "none" }}>
               <ProjectPreviewButton
                 isBigScreen={isBigScreen}
                 onClick={scrollTop}

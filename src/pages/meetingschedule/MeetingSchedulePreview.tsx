@@ -219,7 +219,9 @@ const MeetingSchedulePreview = observer(() => {
                 <MenuItem value={"name"}>ชื่อเอกสาร</MenuItem>
               </Select>
             </FormControl>
-            <Button
+            {
+              meetingSchedules.length ? 
+              <Button
               sx={{
                 background: theme.color.button.primary,
                 color: theme.color.text.default,
@@ -233,9 +235,10 @@ const MeetingSchedulePreview = observer(() => {
                 padding: "1rem",
               }}
               onClick={() => navigate(`/class/${classroom._id as string}/meeting-schedule/overview`)}
-            >
-              ดูภาพรวม
-            </Button>
+              >
+                ดูภาพรวม
+              </Button> : <></>
+            }
           </Box>
 
           <MeetingScheduleStartModal

@@ -112,7 +112,7 @@ const MatchCommitteePreview = observer(() => {
               display: "flex",
               padding: "0 auto",
               margin: "1.25rem 0 1.25rem 0",
-              flexDirection: isBigScreen ? "row" : "column",
+              flexDirection: "row",
               maxWidth: 700,
             }}
           >

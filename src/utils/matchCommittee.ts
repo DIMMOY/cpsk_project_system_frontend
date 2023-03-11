@@ -97,6 +97,28 @@ export const createMatchCommitteeHasGroupInClass = async (classId: string, commi
   }
 };
 
+export const deleteMatchCommitteeHasGroupInClass = async (classId: string, committeeId: string, groupId: string) => {
+  try {
+    await refreshToken();
+    const url = `${
+      process.env.REACT_APP_API_BASE_URL_CLIENT as string
+    }/class/${classId}/committee/${committeeId}/group/${groupId}`;
+    const resAxios = await axios.delete(url);
+    return {
+      statusCode: resAxios.data.statusCode,
+      message: resAxios.data.message,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "Delete match committee has group error",
+      errorMsg: "ลบ match committee has group ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+};
+
 export const createMatchCommitteeHasGroupToProject = async (classId: string, committeeId: string, groudId: string, createP: Array<string>, deleteP: Array<string>) => {
   try {
     await refreshToken();
@@ -132,6 +154,27 @@ export const setDateMatchCommittee = async (reqBody: any) => {
       reqBody.classId as string
     }/committee/${reqBody.matchCommitteeId as string}/date`;
     await axios.put(url, { startDate });
+    return {
+      statusCode: 200,
+      message: "Set match committee due date successful",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "Set match committee due date error",
+      errorMsg: "สร้างรายการส่ง match committee ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+};
+
+export const changeStartDateOfMatchCommitteeInProject = async (reqBody: any) => {
+  try {
+    await refreshToken();
+    const { startDate, projectId, matchCommitteeId } = reqBody;
+    const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/project/${projectId as string}/committee/${matchCommitteeId as string}/date`;
+    await axios.patch(url, { startDate });
     return {
       statusCode: 200,
       message: "Set match committee due date successful",

@@ -218,23 +218,26 @@ const DocumentPreview = observer(() => {
                 <MenuItem value={"name"}>ชื่อเอกสาร</MenuItem>
               </Select>
             </FormControl>
-            <Button
-              sx={{
-                background: theme.color.button.primary,
-                color: theme.color.text.default,
-                borderRadius: "10px",
-                boxShadow: "none",
-                textTransform: "none",
-                "&:hover": { background: "#B07CFF" },
-                height: 45,
-                weight: 42,
-                fontSize: 16,
-                padding: "1rem",
-              }}
-              onClick={() => navigate(`/class/${classroom._id as string}/document/overview`)}
-            >
-              ดูภาพรวม
-            </Button>
+            {
+              documents.length ?
+              <Button
+                sx={{
+                  background: theme.color.button.primary,
+                  color: theme.color.text.default,
+                  borderRadius: "10px",
+                  boxShadow: "none",
+                  textTransform: "none",
+                  "&:hover": { background: "#B07CFF" },
+                  height: 45,
+                  weight: 42,
+                  fontSize: 16,
+                  padding: "1rem",
+                }}
+                onClick={() => navigate(`/class/${classroom._id as string}/document/overview`)}
+              >
+                ดูภาพรวม
+              </Button> : <></>
+            }
           </Box>
 
           <DocumentStartModal

@@ -6,7 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AdminCommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
-import { ListPreviewButton } from "../../styles/layout/_button";
+import { EditButton, ListPreviewButton } from "../../styles/layout/_button";
 import { useMediaQuery } from "react-responsive";
 import applicationStore from "../../stores/applicationStore";
 import Sidebar from "../../components/Sidebar/Sidebar";
@@ -15,6 +15,8 @@ import { theme } from "../../styles/theme";
 import { observer } from "mobx-react";
 import NotFound from "../other/NotFound";
 import { listMatchCommitteeInClass } from "../../utils/matchCommittee";
+import moment from "moment";
+import MatchCommitteeChangeStartModal from "../../components/Modal/MatchCommitteeChangeStartModal";
 
 const ProjectPreview = observer(() => {
   const navigate = useNavigate();
@@ -51,13 +53,20 @@ const ProjectPreview = observer(() => {
 
   const isBigScreen = useMediaQuery({ query: "(min-width: 650px)" });
   const [projects, setProjects] = useState<Array<any>>([]);
-  const [matchCommittee, setMatchCommittee] = useState<Array<any> | null>(null);
+  const [matchCommittee, setMatchCommittee] = useState<Array<any> | null>([]);
   const [notFound, setNotFound] = useState<number>(2);
+  const [currentProjectId, setCurrentProjectId] = useState<string>('');
+  const [currentProjectName, setCurrentProjectName] = useState<string>('');
+  const [currentStartDate, setCurrentStartDate] = useState<string>('');
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   useEffect(() => {
     applicationStore.setIsShowMenuSideBar(true);
-    async function getData() {
-      let projectData;
+    getData();
+  }, [selectedSort, selectedRole, selectedMatchCommittee]);
+
+  const getData = async () => {
+    let projectData;
       if (currentRole === 1 && selectedRole === 'committee') {
         const matchCommittee = await listMatchCommitteeInClass({ sort: 'createdAtDESC' }, classId)
         if (matchCommittee.data) {
@@ -79,9 +88,7 @@ const ProjectPreview = observer(() => {
         setProjects(projectData.data as Array<any>);
         setNotFound(1);
       } else setNotFound(0);
-    }
-    getData();
-  }, [selectedSort, selectedRole, selectedMatchCommittee]);
+  }
 
   const handleSortChange = (event: SelectChangeEvent) => {
     setSelectedSort(event.target.value as string);
@@ -109,10 +116,29 @@ const ProjectPreview = observer(() => {
     }
   }
 
+  const handleOpenModal = (id: string, name: string, startDate: string, event: any) => {
+    event.stopPropagation();
+    setCurrentProjectId(id);
+    setCurrentProjectName(name);
+    setCurrentStartDate(startDate);
+    setOpenModal(true)
+  }
+
   if (notFound === 1) {
     return (
       <AdminCommonPreviewContainer>
         <Sidebar />
+
+        <MatchCommitteeChangeStartModal
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          projectId={currentProjectId}
+          projectName={currentProjectName}
+          matchCommitteeId={selectedMatchCommittee}
+          refresh={getData}
+          defaultStartDate={currentStartDate}
+        />
+
         <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
           <Box
             sx={{
@@ -214,6 +240,7 @@ const ProjectPreview = observer(() => {
             {projects.map((c) => (
               <ListPreviewButton
                 key={c._id}
+                sx={{ zIndex: 1 }} 
                 onClick={() => navigate(`/class/${classId}/project/${c._id}`)}
               >
                 <Typography
@@ -245,8 +272,33 @@ const ProjectPreview = observer(() => {
                     fontWeight: 600,
                   }}
                 >
-                  {c.nameEN}
+                  {
+                    selectedRole === "committee" ? 
+                      `สอบวันที่ ${moment(c.startDate).format("DD/MM/YYYY HH:mm")}` : 
+                      c.nameEN
+                  }
                 </Typography>
+                {
+                  selectedRole === "committee" ? 
+                  <EditButton 
+                    sx={{
+                      width: "7rem",
+                      position: "absolute",
+                      right: "calc(20px + 1vw)",
+                      zIndex: 2,
+                    }}
+                    onClick={(event) => 
+                      handleOpenModal(
+                        c._id, 
+                        c.nameTH, 
+                        c.startDate,
+                        event,
+                      )}
+                  >
+                    แก้ไขวันที่
+                  </EditButton>
+                  : <></>
+                }
               </ListPreviewButton>
             ))}
           </Box>

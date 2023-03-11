@@ -62,7 +62,7 @@ const DocumentHomePreview = observer(({ isStudent }: PreviewProps) => {
   if (notFound === 1) {
     return (
       <CommonPreviewContainer>
-        <Box sx={{ display: "flex", padding: "0 auto" }}>
+        <Box sx={{ display: "flex", padding: "0 auto", alignItems: "center" }}>
           <Link
             to={
               isStudent
@@ -99,7 +99,7 @@ const DocumentHomePreview = observer(({ isStudent }: PreviewProps) => {
               key={document._id}
               onClick={() => {
                 navigate(
-                  isStudent
+                  isStudent && currentRole === 0
                     ? `/document/${document.documentId as string}`
                     : `${currentPathName}/${document.documentId as string}`,
                   {

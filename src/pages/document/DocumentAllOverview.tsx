@@ -6,6 +6,7 @@ import { useMediaQuery } from "react-responsive";
 import applicationStore from "../../stores/applicationStore";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import {
+  listDocumentInClass,
   listProjectSendDocumentInClass,
 } from "../../utils/document";
 import { theme } from "../../styles/theme";
@@ -13,7 +14,7 @@ import { observer } from "mobx-react";
 import NotFound from "../other/NotFound";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
-const DocumentOverview = observer(() => {
+const DocumentAllOverview = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
@@ -42,22 +43,34 @@ const DocumentOverview = observer(() => {
   const isBigScreen = useMediaQuery({ query: "(min-width: 900px)" });
   const [document, setDocument] = useState<any>([]);
   const [projects, setProjects] = useState<Array<any>>([]);
+  const [documents, setDocuments] = useState<Array<any>>([]);
   const currentPathName = window.location.pathname.endsWith("/")
     ? window.location.pathname.slice(0, -1)
     : window.location.pathname;
 
   const pathname = currentPathName.split("/");
   const classId = pathname[2];
-  const documentId = pathname[5];
 
   const getData = async () => {
-    const sendDocumentData = await listProjectSendDocumentInClass(documentId, classId, sortSelect);
+    const sendDocumentData = await listProjectSendDocumentInClass(null, classId, sortSelect);
 
     if (!sendDocumentData?.data) {
       setNotFound(0);
     } else {
       setDocument(sendDocumentData.data.document);
       setProjects(sendDocumentData.data.project);
+      setNotFound(1);
+    }
+
+    const documentData = await listDocumentInClass(
+      { sort: sortSelect, status: "true" },
+      classId
+    );
+
+    if (!documentData?.data) {
+      setNotFound(0);
+    } else {
+      setDocuments(documentData.data as Array<any>);
       setNotFound(1);
     }
   };
@@ -100,37 +113,65 @@ const DocumentOverview = observer(() => {
             </Link>
 
             <Typography sx={{ color: theme.color.text.primary, fontSize: "calc(30px + 0.2vw)", fontWeight: 600, }}> 
-              {document.name}
+              ภาพรวม เอกสาร
             </Typography>
           </Box>
 
-          <Table sx={{ width: isBigScreen ? "60%" : "100%"}}>
-            <TableHead>
-              <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "70%", fontWeight: 600}}>โปรเจกต์</TableCell>
-              <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "30%", fontWeight: 600}}>สถานะ</TableCell>
-            </TableHead>
-            <TableBody>
-              {
-                projects.map((data) => (
-                  <TableRow 
-                    key={data._id}
-                    sx={{
-                      "&:hover": { background: theme.color.button.default },
-                    }}
-                    onClick={() => navigate(`/class/${classId}/project/${data._id as string}/document/${document._id as string}`)}
-                  >
-                    <TableCell sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}>
-                      {data.nameTH}
+          <Box sx={{ maxWidth: isBigScreen ? "80%" : "100%", overflowX: "auto", maxHeight: 700 }}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: 300, fontWeight: 600}}>โปรเจกต์</TableCell>
+                {
+                  documents.map((data: any) => (
+                    <TableCell 
+                      key={data._id} 
+                      align="center" 
+                      sx={{fontSize: 20, color: theme.color.text.secondary, width: 100, fontWeight: 600}}
+                    >
+                      {data.name}
                     </TableCell>
-                    <TableCell align="center" sx={{fontSize: 20, color: data.document.length ? statusList[data.document[0].sendStatus].color : statusList[0].color, fontWeight: 600}}> 
-                      {data.document.length ? statusList[data.document[0].sendStatus].message : "ยังไม่ส่ง" }
-                    </TableCell>
-                  </TableRow>
-                ))
-              }
-              
-            </TableBody>
-          </Table>
+                  ))
+                }
+              </TableHead>
+              <TableBody>
+                {
+                  projects.map((data) => (
+                    <TableRow 
+                      key={data._id}
+                      sx={{
+                        "&:hover": { background: theme.color.button.default },
+                      }}
+                      onClick={() => navigate(`/class/${classId}/project/${data._id as string}/document`)}
+                    >
+                      <TableCell sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}>
+                        {data.nameTH}
+                      </TableCell>
+                      {
+                        documents.map((document) => (
+                          <TableCell 
+                            key={data._id + document._id} 
+                            align="center" 
+                            sx={{
+                              fontSize: 20, 
+                              color: data.document.find((e: any) => e._id.toString() === document._id.toString()) ? 
+                                statusList[data.document.find((e: any) => e._id.toString() === document._id.toString()).sendStatus].color : 
+                                statusList[0].color, 
+                              fontWeight: 600
+                            }}>
+                            {data.document.find((e: any) => e._id.toString() === document._id.toString()) ? 
+                              statusList[data.document.find((e: any) => e._id.toString() === document._id.toString()).sendStatus].message : 
+                              statusList[0].message
+                            }
+                          </TableCell>
+                        ))
+                      }
+                    </TableRow>
+                  ))
+                }
+                
+              </TableBody>
+            </Table>
+          </Box>
         </Box>
       </AdminCommonPreviewContainer>
     );
@@ -145,4 +186,4 @@ const DocumentOverview = observer(() => {
   }
 });
 
-export default DocumentOverview;
+export default DocumentAllOverview;

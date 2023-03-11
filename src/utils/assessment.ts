@@ -112,17 +112,43 @@ export const listProjectHasAssessment = async (
   }
 }
 
+export const listAllProjectHasAssessmentInProject = async (
+  projectId: string,
+  assessmentId: string,
+) => {
+  try {
+    await refreshToken();
+    const url = `${
+      process.env.REACT_APP_API_BASE_URL_CLIENT as string
+    }/project/${projectId}/assessment/${assessmentId}`;
+    const resAxios = await axios.get(url);
+    return {
+      data: resAxios.data.data,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "List project has assessment error",
+      errorMsg: "ค้นหา project has assessment ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+}
+
 export const getProjectHasAssessmentInClass = async (
   classId: string,
   assessmentId: string,
   projectId: string,
+  role: number,
+  matchCommitteeId: string | null,
 ) => {
   try {
     await refreshToken();
     const url = `${
       process.env.REACT_APP_API_BASE_URL_CLIENT as string
     }/class/${classId}/assessment/${assessmentId}/project/${projectId}/form`;
-    const resAxios = await axios.get(url);
+    const resAxios = await axios.get(url, { params: {role, matchCommitteeId }});
     return {
       data: resAxios.data.data,
     };
@@ -205,12 +231,18 @@ export const updateAssessment = async (id: string, reqBody: any) => {
   }
 };
 
-export const createSendAssessment = async (reqBody: any, projectId: string, assessmentId: string) => {
+export const createSendAssessment = async (
+  reqBody: any, 
+  projectId: string, 
+  assessmentId: string,
+  role: number,
+  matchCommitteeId: string | null,
+) => {
   try {
     await refreshToken();
     const url = `${
       process.env.REACT_APP_API_BASE_URL_CLIENT as string
-    }/project/${projectId}/assessment/${assessmentId}`;
+    }/project/${projectId}/assessment/${assessmentId}?role=${role}${matchCommitteeId ? `&matchCommitteeId=${matchCommitteeId}` : ''}`;
     await axios.post(url, reqBody);
     return {
       statusCode: 201,
@@ -222,6 +254,30 @@ export const createSendAssessment = async (reqBody: any, projectId: string, asse
       statusCode: 400,
       message: "Create send assessment error",
       errorMsg: "สร้าง Send assessment ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+}
+
+export const deleteSendAssessment = async (
+  formId: string, 
+) => {
+  try {
+    await refreshToken();
+    const url = `${
+      process.env.REACT_APP_API_BASE_URL_CLIENT as string
+    }/assessment/form/${formId}`;
+    await axios.delete(url);
+    return {
+      statusCode: 201,
+      message: "Delete send assessment in class successful",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "Delete send assessment error",
+      errorMsg: "ลบ Send assessment ผิดพลาด กรุณาลองใหม่ในภายหลัง",
       error,
     };
   }

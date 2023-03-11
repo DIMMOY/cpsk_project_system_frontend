@@ -36,6 +36,9 @@ import MeetingScheduleOverview from "../pages/meetingschedule/MeetingScheduleOve
 import AssessmentForm from "../pages/assessment/AssessmentForm";
 import AssessmentOverview from "../pages/assessment/AssessmentOverview";
 import ProfileEdit from "../pages/other/ProfileEdit";
+import DocumentAllOverview from "../pages/document/DocumentAllOverview";
+import MeetingScheduleAllOverview from "../pages/meetingschedule/MeetingScheduleAllOverview";
+import AssessmentDetail from "../pages/assessment/AssessmentDetail";
 
 const Routers: React.FC = (): JSX.Element => {
   return (
@@ -82,7 +85,7 @@ const Routers: React.FC = (): JSX.Element => {
             <Route path="/class/:id/document" element={<DocumentPreview />} />
             <Route
               path="/class/:id/document/overview"
-              element={<DocumentPreview />}
+              element={<DocumentAllOverview />}
             />
             <Route
               path="/class/:id/document/overview/:documentId"
@@ -99,7 +102,7 @@ const Routers: React.FC = (): JSX.Element => {
             />
             <Route
               path="/class/:id/meeting-schedule/overview"
-              element={<MeetingSchedulePreview />}
+              element={<MeetingScheduleAllOverview />}
             />
             <Route
               path="/class/:id/meeting-schedule/overview/:mtId"
@@ -122,6 +125,7 @@ const Routers: React.FC = (): JSX.Element => {
                   element={<MeetingScheduleDetail isStudent={true} />}
                 />
                 <Route path="/assessment" element={<AssessmentPage />} />
+                <Route path="/assessment/:assessmentId" element={<AssessmentDetail isStudent={true} />} />
               </Route>
             </Route>
 

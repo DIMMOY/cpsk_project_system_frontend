@@ -16,6 +16,7 @@ import { observer } from "mobx-react";
 import applicationStore from "../../stores/applicationStore";
 import NotFound from "../other/NotFound";
 import { checkRoleInProject } from "../../utils/project";
+import { getAssessmentInClass, listAllProjectHasAssessmentInProject, listAssessmentInClass } from "../../utils/assessment";
 
 const useStyles = makeStyles({
   iconSize: {
@@ -29,8 +30,9 @@ interface PreviewProps {
   isStudent: boolean;
 }
 
-const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
-  const [meetingSchedules, setMeetingSchedules] = useState<Array<any>>([]);
+const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
+  const [assessment, setAssessment] = useState<any>({});
+  const [projectHasAssessments, setProjectHasAssessments] = useState<Array<any>>([]);
   const [notFound, setNotFound] = useState<number>(2);
   const { currentRole, classroom, project } = applicationStore;
   const classes = useStyles();
@@ -51,33 +53,40 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
 
   const pathname = currentPathName.split("/");
   const classId = isStudent ? classroom._id : pathname[2];
-  const projectId = isStudent ? project._id : pathname[4];
+  const projectId = isStudent ? project._id : '';
+  const assessmentId = isStudent ? pathname[2] : pathname[4];
+
+  const getData = async () => {
+    if (isStudent && currentRole !== 0) {
+      navigate('/');
+    } 
+    const assessmentData = await getAssessmentInClass(
+      classId,
+      assessmentId,
+    );
+    if (!assessmentData.data) {
+      setNotFound(0);
+      return;
+    } else {
+      console.log(assessmentData.data)
+      setAssessment(assessmentData.data as any);
+      setNotFound(1);
+    }
+
+    const projectHasAssessments = await listAllProjectHasAssessmentInProject(
+      projectId,
+      assessmentId,
+    )
+    if (!projectHasAssessments.data) {
+      setNotFound(0);
+      return;
+    } else {
+      setProjectHasAssessments(projectHasAssessments.data as Array<any>);
+      setNotFound(1);
+    }
+  }
 
   useEffect(() => {
-    async function getData() {
-      if (currentRole === 1) {
-        const checkRole = await checkRoleInProject(classId, projectId);
-        if (checkRole.data) {
-          const { data } = checkRole;
-          // check role is advisor in this project or not
-          if (!data.filter((e: any) => e.role === 2).length) {
-            setNotFound(0);
-            return;
-          }
-        }
-      }
-      const meetingScheduleData = await listSendMeetingScheduleInClass(
-        { sort: "createdAtDESC" },
-        classId,
-        projectId
-      );
-      if (!meetingScheduleData.data) {
-        setNotFound(0);
-      } else {
-        setMeetingSchedules(meetingScheduleData.data as Array<any>);
-        setNotFound(1);
-      }
-    }
     getData();
   }, []);
 
@@ -88,7 +97,7 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
           <Link
             to={
               isStudent
-                ? "/"
+                ? "/assessment"
                 : currentPathName.slice(0, currentPathName.lastIndexOf("/"))
             }
           >
@@ -114,36 +123,36 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
               color: theme.color.text.primary,
             }}
           >
-            รายงานการพบอาจารย์ที่ปรึกษา
+            {assessment.assessment ? assessment.assessment.name : ''}
           </Typography>
         </Box>
         <Box sx={{ flexDirection: "column", display: "flex" }}>
-          {meetingSchedules.map((mtSchedule) => (
+          {projectHasAssessments.map((data) => (
             <ListPreviewButton
-              key={mtSchedule._id}
-              onClick={() => {
-                navigate(
-                  isStudent && currentRole === 0
-                    ? `/meeting-schedule/${
-                        mtSchedule.meetingScheduleId as string
-                      }`
-                    : `${currentPathName}/${
-                        mtSchedule.meetingScheduleId as string
-                      }`,
-                  {
-                    replace: true,
-                    state: {
-                      name: mtSchedule.name,
-                      status: mtSchedule.sendStatus,
-                      detail: mtSchedule.detail ? mtSchedule.detail : "",
-                      statusType: mtSchedule.statusType,
-                      dueDate: moment(mtSchedule.endDate).format(
-                        "DD/MM/YYYY HH:mm"
-                      ),
-                    },
-                  }
-                );
-              }}
+              key={data._id}
+              // onClick={() => {
+              //   navigate(
+              //     isStudent && currentRole === 0
+              //       ? `/assessment/${
+              //           data._id as string
+              //         }`
+              //       : `${currentPathName}/${
+              //           data._id as string
+              //         }`,
+              //     {
+              //       replace: true,
+              //       state: {
+              //         name: data.name,
+              //         status: data.sendStatus,
+              //         detail: data.detail ? data.detail : "",
+              //         statusType: data.statusType,
+              //         dueDate: moment(data.endDate).format(
+              //           "DD/MM/YYYY HH:mm"
+              //         ),
+              //       },
+              //     }
+              //   );
+              // }}
             >
               <Typography
                 sx={{
@@ -156,22 +165,51 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
                   color: theme.color.text.primary,
                 }}
               >
-                {mtSchedule.name}
+                {data.assessBy === 1 ? "อาจารย์ที่ปรึกษา" : data.matchCommitteeId.name}
               </Typography>
-              <Typography
-                sx={{
-                  top: isBigScreen ? "1.5rem" : "1.95rem",
-                  right: "calc(20px + 1vw)",
-                  position: "absolute",
-                  fontSize: isBigScreen
-                    ? "calc(30px + 0.2vw)"
-                    : "calc(15px + 2vw)",
-                  color: statusList[mtSchedule.sendStatus].color,
-                  fontWeight: 600,
-                }}
-              >
-                {statusList[mtSchedule.sendStatus].message}
-              </Typography>
+              <Box sx={{
+                top: isBigScreen ? "1.5rem" : "1.95rem",
+                position: "absolute",
+                right: "calc(20px + 1vw)",
+                display: "flex",
+                flexDirection: "row",
+              }}>
+                <Typography
+                  sx={{
+                    marginRight: "0.5rem",
+                    fontSize: isBigScreen
+                      ? "calc(30px + 0.2vw)"
+                      : "calc(15px + 2vw)",
+                    fontWeight: 600,
+                    color: theme.color.text.primary
+                  }}
+                >
+                  {data.sumScore}
+                </Typography>
+                <Typography
+                  sx={{      
+                    marginRight: "0.5rem",
+                    fontSize: isBigScreen
+                      ? "calc(30px + 0.2vw)"
+                      : "calc(15px + 2vw)",
+                    fontWeight: 600,
+                    color: theme.color.text.secondary
+                  }}
+                >
+                  {`/`}
+                </Typography>
+                <Typography
+                  sx={{      
+                    fontSize: isBigScreen
+                      ? "calc(30px + 0.2vw)"
+                      : "calc(15px + 2vw)",
+                    fontWeight: 600,
+                    color: theme.color.text.secondary
+                  }}
+                >
+                  {assessment.assessment.score}
+                </Typography>
+              </Box>
               <Typography
                 sx={{
                   top: "5rem",
@@ -182,8 +220,7 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
                   fontWeight: 600,
                 }}
               >
-                ภายในวันที่{" "}
-                {moment(mtSchedule.endDate).format("DD/MM/YYYY HH:mm")}
+                {`ประเมินโดย ${data.assessBy === 1 ? data.userId.displayName : "กรรมการคุมสอบ"}`} 
               </Typography>
             </ListPreviewButton>
           ))}
@@ -197,4 +234,4 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
   }
 });
 
-export default MeetingScheduleHomePreview;
+export default AssessmentDetail;

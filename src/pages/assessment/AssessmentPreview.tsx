@@ -211,7 +211,7 @@ const AssessmentPreview = observer(() => {
                 <MenuItem value={"name"}>ชื่อเอกสาร</MenuItem>
               </Select>
             </FormControl>
-            <Button
+            {/* <Button
               sx={{
                 background: theme.color.button.primary,
                 color: theme.color.text.default,
@@ -227,7 +227,7 @@ const AssessmentPreview = observer(() => {
               onClick={() => navigate(`overview`)}
             >
               ดูภาพรวม
-            </Button>
+            </Button> */}
           </Box>
 
           <AssessmentStartModal
@@ -270,7 +270,7 @@ const AssessmentPreview = observer(() => {
                     whiteSpace: "nowrap",
                     display: "inline-block",
                     textAlign: "left",
-                    width: isBigScreen ? "70%" : "40%",
+                    width: isBigScreen || currentRole === 1 ? "70%" : "40%",
                   }}
                 >
                   {c.name}

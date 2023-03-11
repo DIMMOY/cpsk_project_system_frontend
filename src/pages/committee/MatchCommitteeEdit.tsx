@@ -21,12 +21,13 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import AddIcon from "@mui/icons-material/Add";
 import { listUser } from "../../utils/user";
 import SelectAdvisorToGroupDialog from "../../components/Dialog/SelectAdvisorToGroupDialog";
-import { getMatchCommitteeInClass } from "../../utils/matchCommittee";
+import { deleteMatchCommitteeHasGroupInClass, getMatchCommitteeInClass } from "../../utils/matchCommittee";
 import NotFound from "../other/NotFound";
 import { ActivateButton, CancelButton, EditButton } from "../../styles/layout/_button";
 import { listProjectInClass } from "../../utils/project";
 import AddCommitteeToProject from "../../components/Dialog/AddCommitteeToProject";
 import AddCommitteeToProjectOnlyOne from "../../components/Dialog/AddCommitteeToProjectOnlyOne";
+import CancelModal from "../../components/Modal/CancelModal";
 
 interface PreviewProps {
   newForm: boolean;
@@ -49,6 +50,9 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
   const [currentIndexProject, setCurrentIndextProject] = useState<number>(0);
   const [projectFilter, setProjectFilter] = useState<any>([]);
   const [advisorFilter, setAdvisorFilter] = useState<any>([]);
+  const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
+  const [currentIndexDelete, setCurrentIndexDelete] = useState<number>(0);
+  const [currentGroupIdDelete, setCurrentGroupIdDelete] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -82,9 +86,9 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
     setCurrentIndextProject(index)
   }
 
-  const getData = async (sort: string) => {
+  const getData = async () => {
     const matchCommittee = await getMatchCommitteeInClass(classId, matchCommitteeId)
-    const projects = await listProjectInClass({ sort, matchCommitteeId }, classId)
+    const projects = await listProjectInClass({ sort: sortSelect, matchCommitteeId }, classId)
     const advisors = await listUser({ n: 1 });
     if (!matchCommittee.data || !projects.data || !advisors.data) {
       setNotFound(0)
@@ -92,7 +96,7 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
       setMatchCommittee(matchCommittee.data)
       const advisorHasGroup = matchCommittee.data?.committeeGroup.map((group: { userId: any; }) => group.userId.map((user: { _id: string; }) => user._id))
       const scanAdvisors: Array<any> = [];
-      advisors.data.forEach((advisor: any, index: number) => {
+      advisors.data.forEach((advisor: any) => {
         if (!advisorHasGroup.find((subArr: string | any[]) => subArr.includes(advisor.userId._id))) {
           scanAdvisors.push(advisor)
         }
@@ -100,12 +104,22 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
       setAdvisors(scanAdvisors)
       setProjects(projects.data)
       setNotFound(1)
-
     }
   }
 
+  const handleDelete = async () => {
+    await deleteMatchCommitteeHasGroupInClass(classId, matchCommittee._id, currentGroupIdDelete);
+    getData()
+  }
+
+  const handleOpenDeleteModal = async (id: string, index: number) => {
+    setCurrentGroupIdDelete(id);
+    setCurrentIndexDelete(index);
+    setOpenCancelModal(true);
+  }
+
   useEffect(() => {
-    getData(sortSelect)
+    getData()
   }, [sortSelect]);
 
   useEffect(() => {
@@ -162,7 +176,7 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
             <SelectAdvisorToGroupDialog
               open={openAddGroup}
               onClose={() => setOpenAddGroup(false)}
-              refresh={() => getData(sortSelect)}
+              refresh={() => getData()}
               advisors={advisors}
               ordGroup={matchCommittee.committeeGroup.length + 1}
             />
@@ -170,7 +184,7 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
             <AddCommitteeToProject
               open={openAddGroupToProject}
               onClose={() => setOpenAddGroupToProject(false)}
-              refresh={() => getData(sortSelect)}
+              refresh={() => getData()}
               projects={projects}
               ordGroup={currentIndexGroup} 
               matchCommitteeId={matchCommitteeId} 
@@ -181,13 +195,22 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
             <AddCommitteeToProjectOnlyOne
               open={openAddGroupToProjectOnlyOne}
               onClose={() => setOpenAddGroupToProjectOnlyOne(false)}
-              refresh={() => getData(sortSelect)}
+              refresh={() => getData()}
               committee={matchCommittee.committeeGroup}
               ordGroup={currentIndexProject}
               project={currentProject}
             />
 
           </Box>
+
+          <CancelModal
+            open={openCancelModal}
+            onClose={() => setOpenCancelModal(false)}
+            title={`ลบกลุ่มที่ ${currentIndexDelete}`}
+            description="เมื่อลบแล้ว จะทำการลบกรรมการคุมสอบในโปรเจกต์ที่ใช้กลุ่มนี้คุมสอบ"
+            onSubmit={handleDelete}
+          />
+
 
           <Box 
             sx={{ 
@@ -204,11 +227,11 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
               (
                 <Table>
                   <TableHead>
-                    <TableCell align="center" sx={{fontSize: 16, color: theme.color.text.secondary, width: "10%"}}>กลุ่ม</TableCell>
-                    <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "50%"}}>รายชื่ออาจารย์</TableCell>
-                    <TableCell align="center" sx={{fontSize: 16, color: theme.color.text.secondary, width: "10%"}}>จำนวน</TableCell>
-                    <TableCell align="center" sx={{fontSize: 16, color: theme.color.text.secondary, width: "20%"}}></TableCell>
-                    <TableCell align="center" sx={{fontSize: 16, color: theme.color.text.secondary, width: "10%"}}></TableCell>
+                    <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "10%", fontWeight: 600}}>กลุ่ม</TableCell>
+                    <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "50%", fontWeight: 600}}>รายชื่ออาจารย์</TableCell>
+                    <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "10%", fontWeight: 600}}>จำนวน</TableCell>
+                    <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "20%", fontWeight: 600}}></TableCell>
+                    <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "10%", fontWeight: 600}}></TableCell>
                   </TableHead>
                   <TableBody>
                       {
@@ -216,7 +239,7 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
                           <TableRow key={data._id}>
                             <TableCell align="center">
                               <Typography 
-                                sx={{fontSize: 16, color: theme.color.text.secondary}}
+                                sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
                               >
                                 {index + 1}
                               </Typography>
@@ -225,7 +248,7 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
                               {data.userId.map((user: any) => (
                                 <Typography
                                   key={data._id + " " + user._id} 
-                                  sx={{fontSize: 16, color: theme.color.text.secondary}}
+                                  sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
                                 >
                                   {user.displayName ? user.displayName : "..."}
                                 </Typography>
@@ -233,7 +256,7 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
                             </TableCell>
                             <TableCell align="center">
                               <Typography 
-                                  sx={{fontSize: 16, color: theme.color.text.secondary}}
+                                  sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
                               >
                                 {projects.filter((project: { committeeGroupId: any; }) => project.committeeGroupId && project.committeeGroupId._id.toString() === data._id.toString()).length}
                               </Typography>
@@ -248,7 +271,10 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
                               </ActivateButton>
                             </TableCell>
                             <TableCell align="center">
-                              <CancelButton sx={{ width: "1rem" }}>
+                              <CancelButton 
+                                sx={{ width: "1rem" }}
+                                onClick={() => handleOpenDeleteModal(data._id, index + 1)}
+                              >
                                 ลบ
                               </CancelButton>
                             </TableCell>
@@ -314,11 +340,11 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
               (
                 <Table>
                   <TableHead>
-                    <TableCell align="center" sx={{fontSize: 16, color: theme.color.text.secondary, width: "10%"}}>ลำดับ</TableCell>
-                    <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "30%"}}>ชื่อโปรเจกต์ภาษาไทย</TableCell>
-                    <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "20%"}}>นิสิต</TableCell>
-                    <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "20%"}}>อาจารย์ที่ปรึกษา</TableCell>
-                    <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "20%"}}>กรรมการคุมสอบ</TableCell>
+                    <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "10%", fontWeight: 600}}>ลำดับ</TableCell>
+                    <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "30%", fontWeight: 600}}>ชื่อโปรเจกต์ภาษาไทย</TableCell>
+                    <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "20%", fontWeight: 600}}>นิสิต</TableCell>
+                    <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "20%", fontWeight: 600}}>อาจารย์ที่ปรึกษา</TableCell>
+                    <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "20%", fontWeight: 600}}>กรรมการคุมสอบ</TableCell>
                     <TableCell align="center"></TableCell>
                   </TableHead>
                   <TableBody>
@@ -327,14 +353,14 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
                           <TableRow key={data._id}>
                             <TableCell align="center">
                               <Typography 
-                                sx={{fontSize: 16, color: theme.color.text.secondary}}
+                                sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
                               >
                                 {index + 1}
                               </Typography>
                             </TableCell>
                             <TableCell>
                               <Typography 
-                                  sx={{fontSize: 16, color: theme.color.text.secondary}}
+                                  sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
                               >
                                 {data.nameTH}
                               </Typography>
@@ -343,7 +369,7 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
                               {data.student.map((user: any) => (
                                 <Typography
                                   key={data._id + " " + user._id} 
-                                  sx={{fontSize: 16, color: theme.color.text.secondary}}
+                                  sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
                                 >
                                   {user.displayName ? user.displayName : "..."}
                                 </Typography>
@@ -353,7 +379,7 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
                               {data.advisor.map((user: any) => (
                                 <Typography
                                   key={data._id + " " + user._id} 
-                                  sx={{fontSize: 16, color: theme.color.text.secondary}}
+                                  sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
                                 >
                                   {user.displayName ? user.displayName : "..."}
                                 </Typography>
@@ -363,7 +389,7 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
                               {data.committee.map((user: any) => (
                                 <Typography
                                   key={data._id + " " + user._id} 
-                                  sx={{fontSize: 16, color: theme.color.text.secondary}}
+                                  sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
                                 >
                                   {user.displayName ? user.displayName : "..."}
                                 </Typography>

@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { Box, Button, IconButton, Typography } from "@mui/material";
+import React, { Fragment, useEffect, useState } from "react";
+import { Box, Button, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AdminCommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
-import { ActivateButton, CancelButton, EditButton, ListPreviewButton } from "../../styles/layout/_button";
+import { ActivateButton, CancelButton, EditButton } from "../../styles/layout/_button";
 import { useMediaQuery } from "react-responsive";
 import applicationStore from "../../stores/applicationStore";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import { listProjectInClass } from "../../utils/project";
 import { theme } from "../../styles/theme";
 import { observer } from "mobx-react";
 import NotFound from "../other/NotFound";
-import { listMatchCommitteeInClass } from "../../utils/matchCommittee";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { getAssessmentInClass, getProjectHasAssessmentInClass, listProjectHasAssessment } from "../../utils/assessment";
+import { deleteSendAssessment, getAssessmentInClass, listProjectHasAssessment } from "../../utils/assessment";
+import CancelModal from "../../components/Modal/CancelModal";
 
 const AssessmentOverview = observer(() => {
   const navigate = useNavigate();
@@ -55,6 +54,9 @@ const AssessmentOverview = observer(() => {
   const [notFound, setNotFound] = useState<number>(2);
   const [assessment, setAssessment] = useState<any>(null);
   const [projects, setProjects] = useState<Array<any>>([]);
+  const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
+  const [currentCancelProjectName, setCurrentCancelProjectName] = useState<string>('');
+  const [currentCancelFormId, setCurrentCancelFormId] = useState<string>('');
 
   const currentPathName = window.location.pathname.endsWith("/")
     ? window.location.pathname.slice(0, -1)
@@ -66,47 +68,45 @@ const AssessmentOverview = observer(() => {
 
   useEffect(() => {
     applicationStore.setIsShowMenuSideBar(true);
-    async function getData() {
-      const assessmentData = await getAssessmentInClass(classId, assessmentId);
-      if (assessmentData.data) {
-        setAssessment(assessmentData.data.assessment);
-        if (assessmentData.data.assessment.assessBy === 2) {
-          setSelectedRole("committee")
-        }
-        if (assessmentData.data.assessment.assessBy !== 1) {
-          if (assessmentData.data.matchCommitteeId.length) {
-            setMatchCommittee(assessmentData.data.matchCommitteeId)
-            setSelectedMatchCommittee(assessmentData.data.matchCommitteeId[0]._id)
-          } else {
-            if (selectedRole === 'committee') {
-              setProjects([])
-              setNotFound(1)
-              return
-            }
-          }
-        }
-      } else {
-        setNotFound(0);
-        return;
-      }
-      
-      const params = assessmentData.data.assessment.assessBy !== 2 && selectedRole === 'advisor' ? 
-        { id: assessmentId, role: 2 } : 
-        { id: assessmentId, role: 3, matchCommitteeId: selectedMatchCommittee };
-
-      const projectHasAssessment = await listProjectHasAssessment(classId, params);
-      if (projectHasAssessment.data) {
-        setAssessment(projectHasAssessment.data.assessment)
-        setProjects(projectHasAssessment.data.project)
-        if (projectHasAssessment.data.assessment.assessBy === 2)
-          setSelectedRole("committee")
-        setNotFound(1) 
-      } else {
-        setNotFound(0)
-      }
-    }
     getData();
   }, [selectedRole, selectedMatchCommittee]);
+
+  const getData = async () => {
+    const assessmentData = await getAssessmentInClass(classId, assessmentId);
+    if (assessmentData.data) {
+      setAssessment(assessmentData.data.assessment);
+      if (assessmentData.data.assessment.assessBy === 2) {
+        setSelectedRole("committee")
+      }
+      if (assessmentData.data.assessment.assessBy !== 1) {
+        if (assessmentData.data.matchCommitteeId.length) {
+          setMatchCommittee(assessmentData.data.matchCommitteeId)
+          if (selectedMatchCommittee === "")
+            setSelectedMatchCommittee(assessmentData.data.matchCommitteeId[0]._id)
+        } else {
+          if (selectedRole === 'committee') {
+            setProjects([])
+            setNotFound(1)
+            return
+          }
+        }
+      }
+    } else {
+      setNotFound(0);
+      return;
+    }
+      
+    const params = assessmentData.data.assessment.assessBy !== 2 && selectedRole === 'advisor' ? 
+      { id: assessmentId, role: 2 } : 
+      { id: assessmentId, role: 3, matchCommitteeId: selectedMatchCommittee };
+
+    const projectHasAssessment = await listProjectHasAssessment(classId, params);
+    if (projectHasAssessment.data) {
+      setAssessment(projectHasAssessment.data.assessment)
+      setProjects(projectHasAssessment.data.project)
+      setNotFound(1) 
+    }
+  }
 
   const handleMatchCommitteeChange = (event: SelectChangeEvent) => {
     setSelectedMatchCommittee(event.target.value as string);
@@ -115,6 +115,12 @@ const AssessmentOverview = observer(() => {
       search: `?sort=${selectedSort}&role=${selectedRole}&matchCommittee=${event.target.value}`,
     });
   };
+
+  const handleOpenCancelModal = (name: string, id: string) => {
+    setOpenCancelModal(true)
+    setCurrentCancelProjectName(name)
+    setCurrentCancelFormId(id)
+  }
 
   const handleRoleChange = (role: string) => {
     if (role !== selectedRole) {
@@ -125,11 +131,23 @@ const AssessmentOverview = observer(() => {
       })
     }
   }
+  
+  const handleSubmitToCancel = async () => {
+    await deleteSendAssessment(currentCancelFormId);
+    getData()
+  }
 
   if (notFound === 1) {
     return (
       <AdminCommonPreviewContainer>
         <Sidebar />
+        <CancelModal
+          open={openCancelModal}
+          onClose={() => setOpenCancelModal(false)}
+          onSubmit={handleSubmitToCancel}
+          title={`ยกเลิกการประเมินโปรเจกต์`}
+          description={`${currentCancelProjectName}`}
+        />
         <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
           <Box sx={{ display: "flex", padding: "0 auto", alignItems: "center", marginBottom: "1.25rem" }}>
             <Link
@@ -154,7 +172,7 @@ const AssessmentOverview = observer(() => {
           </Box>
           
           {
-            currentRole === 1 && assessment ?
+            assessment ?
             <Box sx={{margin: "0.5rem 0 1.25rem 0", }}>
               {
                 assessment.assessBy === 0 || assessment.assessBy === 1 ?
@@ -171,7 +189,7 @@ const AssessmentOverview = observer(() => {
                   }} 
                   onClick={() => handleRoleChange('advisor')}
                 >
-                  โปรเจกต์ที่เป็นที่ปรึกษา
+                  อาจารย์ที่ปรึกษาลงคะแนน
                 </Button> : <></>
               } 
               {
@@ -189,7 +207,7 @@ const AssessmentOverview = observer(() => {
                   }} 
                   onClick={() => handleRoleChange('committee')}
                 >
-                  โปรเจกต์ที่เป็นกรรมการคุมสอบ
+                  กรรมการคุมสอบลงคะแนน
                 </Button> : <></>
               }
               {
@@ -223,97 +241,255 @@ const AssessmentOverview = observer(() => {
             <></>
           }
 
-          <Box sx={{ flexDirection: "column", display: "flex" }}>
-            {projects.map((data) => (
-              <ListPreviewButton
-                key={data._id}
-                onClick={() =>
-                  navigate(`/class/${classId}/assessment/${assessmentId}/project/${data._id as string}/form`)
+          <Typography 
+            sx={{ 
+              color: theme.color.text.primary, 
+              fontSize: 20, 
+              fontWeight: 600,
+              marginBottom: "1.25rem",
+            }}
+          >
+            {`คะแนนเต็ม ${assessment.score} คะแนน (คะแนนดิบแบบยังไม่หาร ${assessment.form.map((question: any) => question.limitScore * question.weight).reduce((a: any, b: any) => a + b)} คะแนน)`}
+          </Typography>
+
+          <Box sx={{ maxWidth: "100%", overflowX: "auto", maxHeight: 700 }}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "40%", fontWeight: 600}}>
+                    โปรเจกต์
+                  </TableCell>
+                  <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "10%", fontWeight: 600}}>
+                    คะแนนดิบ
+                  </TableCell>
+                  <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "10%", fontWeight: 600}}>
+                    คะแนนรวม
+                  </TableCell>
+                  <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "20%", fontWeight: 600}}>
+                    ประเมินโดย
+                  </TableCell>
+                  {
+                    currentRole === 1 && isAdvisor ? 
+                    <>
+                      <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "10%", fontWeight: 600}}></TableCell>
+                      <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "10%", fontWeight: 600}}></TableCell>
+                    </>
+                    : <></>
+                  }
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {
+                  projects.map((data) => (
+                    <Fragment key={data._id}>
+                      <TableRow>
+                        <TableCell 
+                          rowSpan={
+                            data.assessmentResults.length ? 
+                              data.assessmentResults.length + 1 + (!data.assessmentResults.find((data: any) => data.userId.email === user?.email) ? 1 : 0): 
+                              2
+                          }
+                          sx={{
+                            fontSize: 18, 
+                            color: theme.color.text.secondary, 
+                            fontWeight: 500
+                          }}>
+                          {data.nameTH}
+                        </TableCell>
+                      </TableRow>
+                      {
+                        currentRole === 1 && isAdvisor && data.assessmentResults.length && !data.assessmentResults.find((data: any) => data.userId.email === user?.email) ? 
+                        <TableRow>
+                          <TableCell 
+                            align="center"
+                            sx={{
+                              fontSize: 18, 
+                              color: theme.color.text.secondary, 
+                              fontWeight: 500
+                            }}
+                            >
+                              -
+                          </TableCell>
+                          <TableCell 
+                            align="center"
+                            sx={{
+                              fontSize: 18, 
+                              color: theme.color.text.secondary, 
+                              fontWeight: 500
+                            }}
+                          >
+                            -
+                          </TableCell>
+                          <TableCell 
+                            align="center"
+                            sx={{
+                              fontSize: 18, 
+                              color: theme.color.text.secondary, 
+                              fontWeight: 500
+                            }}
+                          >
+                            -
+                          </TableCell>
+                          {
+                            currentRole === 1 && isAdvisor ?
+                            <>
+                              <TableCell>
+                              </TableCell>
+                              <TableCell>
+                                <ActivateButton
+                                  onClick={() =>
+                                    navigate({
+                                      pathname: `/class/${classId}/assessment/${assessmentId}/project/${data._id as string}/form`,
+                                      search: `role=${selectedRole}${selectedRole === "committee" ? `&matchCommittee=${selectedMatchCommittee}` : ''}`
+                                    })
+                                  }
+                                >
+                                  ประเมิน
+                                </ActivateButton>
+                              </TableCell> 
+                            </>
+                            : <></>
+                          }
+                         </TableRow>
+                        : <></>
+                      }
+                      {
+                        data.assessmentResults.length ? 
+                          data.assessmentResults.sort((a: any, b: any) => {
+                            if (a.userId.email === user?.email)
+                              return -1;
+                            else if (b.userId.email === user?.email)
+                              return 1;
+                            else {
+                              return a.userId.displayName - b.userId.displayName
+                            }
+                          }).map((result: any, indexForm: number) => (
+                            <TableRow key={data._id + " " + result._id}>
+                              <TableCell
+                                align="center" 
+                                sx={{
+                                  fontSize: 18, 
+                                  color: theme.color.text.secondary, 
+                                  fontWeight: 600
+                                }}
+                              >
+                                {result.rawScore}
+                              </TableCell>
+                              <TableCell
+                                align="center" 
+                                sx={{
+                                  fontSize: 18, 
+                                  color: theme.color.text.primary, 
+                                  fontWeight: 600
+                                }}
+                              >
+                                {result.sumScore}
+                              </TableCell>
+                              <TableCell
+                                align="center" 
+                                sx={{
+                                  fontSize: 18, 
+                                  color: theme.color.text.secondary, 
+                                  fontWeight: 500
+                                }}
+                              >
+                                {result.userId.displayName ? result.userId.displayName : "..."}
+                              </TableCell>
+                              {
+                                currentRole === 1 && isAdvisor && result.userId.email === user?.email ? 
+                                <>
+                                  <TableCell>
+                                    <EditButton
+                                      onClick={() =>
+                                        navigate({
+                                          pathname: `/class/${classId}/assessment/${assessmentId}/project/${data._id as string}/form`,
+                                          search: `role=${selectedRole}${selectedRole === "committee" ? `&matchCommittee=${selectedMatchCommittee}` : ''}`
+                                        })
+                                      }
+                                    >
+                                      แก้ไข
+                                    </EditButton>
+                                  </TableCell>
+                                  <TableCell>
+                                    <CancelButton
+                                      onClick={() =>
+                                        handleOpenCancelModal(data.nameTH, result._id)
+                                      }
+                                    >
+                                      ยกเลิก
+                                    </CancelButton>    
+                                  </TableCell> 
+                                </> : (
+                                  currentRole === 1 && isAdvisor ? 
+                                  <>
+                                  <TableCell></TableCell>
+                                  <TableCell></TableCell>
+                                  </> :
+                                  <></>
+                                )
+                              }
+                            </TableRow>
+                          ))
+                         : 
+                         <TableRow>
+                          <TableCell 
+                            align="center"
+                            sx={{
+                              fontSize: 18, 
+                              color: theme.color.text.secondary, 
+                              fontWeight: 500
+                            }}
+                            >
+                              -
+                          </TableCell>
+                          <TableCell 
+                            align="center"
+                            sx={{
+                              fontSize: 18, 
+                              color: theme.color.text.secondary, 
+                              fontWeight: 500
+                            }}
+                          >
+                            -
+                          </TableCell>
+                          <TableCell 
+                            align="center"
+                            sx={{
+                              fontSize: 18, 
+                              color: theme.color.text.secondary, 
+                              fontWeight: 500
+                            }}
+                          >
+                            -
+                          </TableCell>
+                          {
+                            currentRole === 1 && isAdvisor ?
+                            <>
+                              <TableCell>
+                              </TableCell>
+                              <TableCell>
+                                <ActivateButton
+                                  onClick={() =>
+                                    navigate({
+                                      pathname: `/class/${classId}/assessment/${assessmentId}/project/${data._id as string}/form`,
+                                      search: `role=${selectedRole}${selectedRole === "committee" ? `&matchCommittee=${selectedMatchCommittee}` : ''}`
+                                    })
+                                  }
+                                >
+                                  ประเมิน
+                                </ActivateButton>
+                              </TableCell> 
+                            </>
+                            : <></>
+                          }
+                         </TableRow>
+                      }
+                    </Fragment>
+                  ))
                 }
-              >
-                <Typography
-                  sx={{
-                    top: "1.5rem",
-                    left: "calc(20px + 1vw)",
-                    position: "absolute",
-                    fontSize: "calc(30px + 0.2vw)",
-                    fontFamily: "Prompt",
-                    fontWeight: 600,
-                    color: theme.color.text.primary,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    display: "inline-block",
-                    textAlign: "left",
-                    width: "70%",
-                  }}
-                >
-                  {data.nameTH}
-                </Typography>
-                <Typography
-                  sx={{
-                    top: "5rem",
-                    left: "calc(20px + 1vw)",
-                    position: "absolute",
-                    fontSize: "calc(15px + 0.3vw)",
-                    color: theme.color.text.secondary,
-                    fontWeight: 600,
-                    textAlign: "left",
-                    width: "70%",
-                  }}
-                >
-                  {data.nameEN}
-                </Typography>
-                {!data.assessmentResults.find((data: any) => user?.email === data.userId.email) && isAdvisor && currentRole === 1 ? (
-                  <ActivateButton
-                    sx={{
-                      position: "absolute",
-                      right: "calc(20px + 1vw)",
-                      zIndex: 2,
-                    }}
-                    onClick={() =>
-                      navigate(`/class/${classId}/assessment/${assessmentId}/project/${data._id as string}/form`)
-                    }
-                  >
-                    ประเมิน
-                  </ActivateButton>
-                ) : (
-                  <></>
-                )}
-                {data.assessmentResults.find((data: any) => user?.email === data.userId.email) && isAdvisor && currentRole === 1 ? (
-                  <EditButton
-                    sx={{
-                      position: "absolute",
-                      right: "calc(150px + 1vw)",
-                      zIndex: 2,
-                    }}
-                    onClick={() =>
-                      navigate(`/class/${classId}/assessment/${assessmentId}/project/${data._id as string}/form`)
-                    }
-                  >
-                    แก้ไข
-                  </EditButton>
-                ) : (
-                  <></>
-                )}
-                {data.assessmentResults.find((data: any) => user?.email === data.userId.email) && isAdvisor && currentRole === 1 ? (
-                  <CancelButton
-                    sx={{
-                      position: "absolute",
-                      right: "calc(20px + 1vw)",
-                      zIndex: 2,
-                    }}
-                    // onClick={(event) =>
-                    //   handleOpenCancelModal(c.name, c._id, event)
-                    // }
-                  >
-                    ยกเลิก
-                  </CancelButton>
-                ) : (
-                  <></>
-                )}
-              </ListPreviewButton>
-            ))}
+
+              </TableBody>
+            </Table>
           </Box>
         </Box>
       </AdminCommonPreviewContainer>

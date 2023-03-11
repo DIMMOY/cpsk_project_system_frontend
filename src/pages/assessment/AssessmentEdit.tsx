@@ -213,6 +213,20 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
           {"แบบฟอร์มประเมิน ( * คือต้องใส่ )"}
         </Typography>
 
+        {
+          !newForm ? 
+          <Typography
+            sx={{
+              fontSize: 30,
+              fontWeight: 600,
+              color: theme.color.text.error,
+            }}
+          >
+            การแก้ไขจะมีผลต่อคลาสที่ยังไม่เคยเปิดใช้งานเท่านั้น !
+          </Typography>
+          : <></>
+        }
+
         <Typography
           sx={{
             fontSize: 30,
