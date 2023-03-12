@@ -16,6 +16,7 @@ import NotFound from "../other/NotFound";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { deleteSendAssessment, getAssessmentInClass, listProjectHasAssessment } from "../../utils/assessment";
 import CancelModal from "../../components/Modal/CancelModal";
+import { exportXLSX } from "../../utils/excel";
 
 const AssessmentOverview = observer(() => {
   const navigate = useNavigate();
@@ -47,7 +48,8 @@ const AssessmentOverview = observer(() => {
       ? search.get("matchCommittee")
       : "";
   const [selectedRole, setSelectedRole] = useState<string>(roleCheck || "advisor")
-  const [selectedMatchCommittee, setSelectedMatchCommittee] = useState<string>(matchCommitteeCheck || '');
+  const [selectedMatchCommitteeId, setSelectedMatchCommitteeId] = useState<string>(matchCommitteeCheck || '');
+  const [selectedMatchCommitteeName, setSelectedMatchCommitteeName] = useState<string>('');
 
   const isBigScreen = useMediaQuery({ query: "(min-width: 650px)" });
   const [matchCommittee, setMatchCommittee] = useState<Array<any> | null>(null);
@@ -66,10 +68,14 @@ const AssessmentOverview = observer(() => {
   const classId = pathname[2];
   const assessmentId = pathname[5];
 
+  // XLSX
+  const [heading, setHeading] = useState<Array<string>>([])
+  const [datasheet, setDataSheet] = useState<Array<any>>([]);
+
   useEffect(() => {
     applicationStore.setIsShowMenuSideBar(true);
     getData();
-  }, [selectedRole, selectedMatchCommittee]);
+  }, [selectedRole, selectedMatchCommitteeId]);
 
   const getData = async () => {
     const assessmentData = await getAssessmentInClass(classId, assessmentId);
@@ -81,8 +87,10 @@ const AssessmentOverview = observer(() => {
       if (assessmentData.data.assessment.assessBy !== 1) {
         if (assessmentData.data.matchCommitteeId.length) {
           setMatchCommittee(assessmentData.data.matchCommitteeId)
-          if (selectedMatchCommittee === "")
-            setSelectedMatchCommittee(assessmentData.data.matchCommitteeId[0]._id)
+          if (selectedMatchCommitteeId === "") {
+            setSelectedMatchCommitteeId(assessmentData.data.matchCommitteeId[0]._id)
+            setSelectedMatchCommitteeName(assessmentData.data.matchCommitteeId[0].name)
+          }
         } else {
           if (selectedRole === 'committee') {
             setProjects([])
@@ -98,18 +106,57 @@ const AssessmentOverview = observer(() => {
       
     const params = assessmentData.data.assessment.assessBy !== 2 && selectedRole === 'advisor' ? 
       { id: assessmentId, role: 2 } : 
-      { id: assessmentId, role: 3, matchCommitteeId: selectedMatchCommittee };
+      { id: assessmentId, role: 3, matchCommitteeId: matchCommitteeCheck ? matchCommitteeCheck : assessmentData.data.matchCommitteeId[0]._id };
 
     const projectHasAssessment = await listProjectHasAssessment(classId, params);
     if (projectHasAssessment.data) {
-      setAssessment(projectHasAssessment.data.assessment)
-      setProjects(projectHasAssessment.data.project)
+      const { assessment, project } = projectHasAssessment.data;
+      setAssessment(assessment)
+      setProjects(project)
       setNotFound(1) 
+
+      const heading = [
+        "ชื่อโปรเจกต์", 
+        ...assessment.form.map((data: any) => `${data.question as string}\nน้ำหนัก = ${data.weight as number}`),
+        `คะแนนดิบ (เต็ม ${assessment.form.map((data: any) => data.limitScore * data.weight).reduce((a: any, b: any) => a + b) as number})`,
+        `คะแนนรวม (เต็ม ${assessment.score as number})`,
+      ];
+      if (assessment.feedBack) heading.push("ข้อเสนอแนะ")
+      setHeading(heading);
+      const datasheet: Array<any> = [];
+      project.forEach((data: any) => {
+        const { assessmentResults } = data
+        if (assessmentResults.length) {
+          assessmentResults.map((result: any) => {
+            const res = 
+              [
+                data.nameTH,
+                ...result.form,
+                result.rawScore,
+                result.sumScore,
+              ]
+            if (assessment.feedBack) res.push(result.feedBack);
+            datasheet.push(res);
+          });
+        } else {
+          const res = 
+            [
+              data.nameTH,
+              ...Array.from({ length: assessment.form.length }, () => "-"),
+              "-",
+              "-",
+            ]
+          if (assessment.feedBack) res.push("-");
+          datasheet.push(res)
+        }
+      });
+      setDataSheet(datasheet);
     }
   }
 
   const handleMatchCommitteeChange = (event: SelectChangeEvent) => {
-    setSelectedMatchCommittee(event.target.value as string);
+    setSelectedMatchCommitteeId(event.target.value as string);
+    setSelectedMatchCommitteeName(matchCommittee?.find((data: any) => data._id.toString() === event.target.value).name)
     navigate({
       pathname: window.location.pathname,
       search: `?sort=${selectedSort}&role=${selectedRole}&matchCommittee=${event.target.value}`,
@@ -217,7 +264,7 @@ const AssessmentOverview = observer(() => {
                   <Select
                     labelId="select-match-committee-label"
                     id="select-match-committee"
-                    value={selectedMatchCommittee}
+                    value={selectedMatchCommitteeId}
                     onChange={handleMatchCommitteeChange}
                     label="รายการคุมสอบ"
                     sx={{
@@ -241,16 +288,48 @@ const AssessmentOverview = observer(() => {
             <></>
           }
 
-          <Typography 
-            sx={{ 
-              color: theme.color.text.primary, 
-              fontSize: 20, 
-              fontWeight: 600,
-              marginBottom: "1.25rem",
-            }}
-          >
-            {`คะแนนเต็ม ${assessment.score} คะแนน (คะแนนดิบแบบยังไม่หาร ${assessment.form.map((question: any) => question.limitScore * question.weight).reduce((a: any, b: any) => a + b)} คะแนน)`}
-          </Typography>
+          <Box sx={{display: "flex", flexDirection: "row", alignItems: "center", marginBottom: "1.25rem"}}> 
+            <Typography 
+              sx={{ 
+                color: theme.color.text.primary, 
+                fontSize: 20, 
+                fontWeight: 600,
+                marginRight: "1.25rem",
+              }}
+            >
+              {`คะแนนเต็ม ${assessment.score} คะแนน (คะแนนดิบแบบยังไม่หาร ${assessment.form.map((question: any) => question.limitScore * question.weight).reduce((a: any, b: any) => a + b)} คะแนน)`}
+            </Typography>
+            <Button
+              sx={{
+                background: theme.color.button.primary,
+                color: theme.color.text.default,
+                borderRadius: "10px",
+                boxShadow: "none",
+                textTransform: "none",
+                "&:hover": { background: "#B07CFF" },
+                height: 45,
+                weight: 42,
+                fontSize: isBigScreen ? 16 : 13,
+                padding: isBigScreen ? 1 : 0.5,
+                marginRight: "1.5rem",
+              }}
+              onClick={() => 
+                exportXLSX(
+                  heading, 
+                  datasheet, 
+                  "ประเมิน", 
+                  null, 
+                  selectedRole === "advisor" ? 
+                    [[assessment.name], ["สำหรับอาจารย์ที่ปรึกษา"]] :
+                    [[assessment.name], [`สำหรับกรรรมการคุมสอบ รายการ ${selectedMatchCommitteeName}`]]
+                  ,
+                )
+              }
+            >
+              ดาวน์โหลดรายละเอียด
+            </Button>
+
+          </Box>
 
           <Box sx={{ maxWidth: "100%", overflowX: "auto", maxHeight: 700 }}>
             <Table stickyHeader>
@@ -340,7 +419,7 @@ const AssessmentOverview = observer(() => {
                                   onClick={() =>
                                     navigate({
                                       pathname: `/class/${classId}/assessment/${assessmentId}/project/${data._id as string}/form`,
-                                      search: `role=${selectedRole}${selectedRole === "committee" ? `&matchCommittee=${selectedMatchCommittee}` : ''}`
+                                      search: `role=${selectedRole}${selectedRole === "committee" ? `&matchCommittee=${selectedMatchCommitteeId}` : ''}`
                                     })
                                   }
                                 >
@@ -403,7 +482,7 @@ const AssessmentOverview = observer(() => {
                                       onClick={() =>
                                         navigate({
                                           pathname: `/class/${classId}/assessment/${assessmentId}/project/${data._id as string}/form`,
-                                          search: `role=${selectedRole}${selectedRole === "committee" ? `&matchCommittee=${selectedMatchCommittee}` : ''}`
+                                          search: `role=${selectedRole}${selectedRole === "committee" ? `&matchCommittee=${selectedMatchCommitteeId}` : ''}`
                                         })
                                       }
                                     >
@@ -472,7 +551,7 @@ const AssessmentOverview = observer(() => {
                                   onClick={() =>
                                     navigate({
                                       pathname: `/class/${classId}/assessment/${assessmentId}/project/${data._id as string}/form`,
-                                      search: `role=${selectedRole}${selectedRole === "committee" ? `&matchCommittee=${selectedMatchCommittee}` : ''}`
+                                      search: `role=${selectedRole}${selectedRole === "committee" ? `&matchCommittee=${selectedMatchCommitteeId}` : ''}`
                                     })
                                   }
                                 >

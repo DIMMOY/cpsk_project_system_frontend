@@ -363,7 +363,7 @@ export const NavBar = observer(() => {
               handleClose()
             }}
           >
-            แก้ไขชื่อ - นามสกุล
+            ตั้งค่า
           </MenuItem>
           {menuItems.map((menu) => (
             <MenuItem

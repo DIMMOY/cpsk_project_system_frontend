@@ -6,23 +6,24 @@ import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AdminCommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
-import { EditButton, ListPreviewButton } from "../../styles/layout/_button";
+import { ActivateButton, CancelButton, EditButton, ListPreviewButton } from "../../styles/layout/_button";
 import { useMediaQuery } from "react-responsive";
 import applicationStore from "../../stores/applicationStore";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import { listProjectInClass } from "../../utils/project";
+import { acceptProjectByAdvisor, listProjectInClass } from "../../utils/project";
 import { theme } from "../../styles/theme";
 import { observer } from "mobx-react";
 import NotFound from "../other/NotFound";
 import { listMatchCommitteeInClass } from "../../utils/matchCommittee";
 import moment from "moment";
 import MatchCommitteeChangeStartModal from "../../components/Modal/MatchCommitteeChangeStartModal";
+import CancelModal from "../../components/Modal/CancelModal";
 
 const ProjectPreview = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
-  const { isAdmin, currentRole, classroom } = applicationStore;
+  const { isAdmin, currentRole, classroom, user } = applicationStore;
 
   const classId = window.location.pathname.split("/")[2];
   const sortOptions = ["createdAtDESC", "createdAtASC", "name"];
@@ -58,9 +59,15 @@ const ProjectPreview = observer(() => {
   const [currentProjectId, setCurrentProjectId] = useState<string>('');
   const [currentProjectName, setCurrentProjectName] = useState<string>('');
   const [currentStartDate, setCurrentStartDate] = useState<string>('');
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openStartDateModal, setOpenStartDateModal] = useState<boolean>(false);
+
+  const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
+  const [currentTitle, setCurrentTitle] = useState<string>('');
+  const [currentDescription, setCurrentDescription] = useState<string>('');
+  const [currentAccept, setCurrentAccept] = useState<boolean>(false);
 
   useEffect(() => {
+    setProjects([])
     applicationStore.setIsShowMenuSideBar(true);
     getData();
   }, [selectedSort, selectedRole, selectedMatchCommittee]);
@@ -116,12 +123,27 @@ const ProjectPreview = observer(() => {
     }
   }
 
-  const handleOpenModal = (id: string, name: string, startDate: string, event: any) => {
+  const handleOpenStartdateModal = (id: string, name: string, startDate: string, event: any) => {
     event.stopPropagation();
     setCurrentProjectId(id);
     setCurrentProjectName(name);
     setCurrentStartDate(startDate);
-    setOpenModal(true)
+    setOpenStartDateModal(true)
+  }
+
+  const handleOpenAcceptModal = (id: string, name: string, accept: boolean, event:any) => {
+    event.stopPropagation();
+    if (accept) setCurrentTitle("ยอมรับโปรเจกต์");
+    else setCurrentTitle("ปฏิเสธโปรเจกต์");
+    setCurrentDescription(name);
+    setCurrentProjectId(id);
+    setOpenCancelModal(true);
+    setCurrentAccept(accept)
+  }
+
+  const handleSubmitToAcceptOrRefuseProject = async () => {
+    await acceptProjectByAdvisor(classId, currentProjectId, currentAccept);
+    getData()
   }
 
   if (notFound === 1) {
@@ -129,9 +151,17 @@ const ProjectPreview = observer(() => {
       <AdminCommonPreviewContainer>
         <Sidebar />
 
+        <CancelModal
+          open={openCancelModal}
+          onClose={() => setOpenCancelModal(false)}
+          title={currentTitle}
+          description={currentDescription}
+          onSubmit={handleSubmitToAcceptOrRefuseProject}
+        />
+
         <MatchCommitteeChangeStartModal
-          open={openModal}
-          onClose={() => setOpenModal(false)}
+          open={openStartDateModal}
+          onClose={() => setOpenStartDateModal(false)}
           projectId={currentProjectId}
           projectName={currentProjectName}
           matchCommitteeId={selectedMatchCommittee}
@@ -237,11 +267,14 @@ const ProjectPreview = observer(() => {
           }
 
           <Box sx={{ flexDirection: "column", display: "flex" }}>
-            {projects.map((c) => (
+            {projects.map((data) => (
               <ListPreviewButton
-                key={c._id}
+                key={data._id}
                 sx={{ zIndex: 1 }} 
-                onClick={() => navigate(`/class/${classId}/project/${c._id}`)}
+                onClick={
+                  () =>  currentRole === 2 || data.advisor.find((u: any) => u.email === user?.email).isAccept ? 
+                    navigate(`/class/${classId}/project/${data._id}`) : {}
+                }
               >
                 <Typography
                   sx={{
@@ -257,10 +290,10 @@ const ProjectPreview = observer(() => {
                     whiteSpace: "nowrap",
                     display: "inline-block",
                     textAlign: "left",
-                    width: "90%",
+                    width: isBigScreen ? "65%" : "40%",
                   }}
                 >
-                  {c.nameTH}
+                  {data.nameTH}
                 </Typography>
                 <Typography
                   sx={{
@@ -274,10 +307,35 @@ const ProjectPreview = observer(() => {
                 >
                   {
                     selectedRole === "committee" ? 
-                      `สอบวันที่ ${moment(c.startDate).format("DD/MM/YYYY HH:mm")}` : 
-                      c.nameEN
+                      `สอบวันที่ ${moment(data.startDate).format("DD/MM/YYYY HH:mm")}` : 
+                      data.nameEN
                   }
                 </Typography>
+                { currentRole === 1 && data.advisor.length && !data.advisor.find((u: any) => u.email === user?.email).isAccept ?
+                  <>
+                    <ActivateButton
+                      sx={{
+                        position: "absolute",
+                        right: "calc(150px + 1vw)",
+                        zIndex: 2,
+                      }}
+                      onClick={(event) => handleOpenAcceptModal(data._id, data.nameTH, true, event)}
+                    >
+                      ยอมรับ
+                    </ActivateButton>
+                    <CancelButton
+                      sx={{
+                        position: "absolute",
+                        right: "calc(20px + 1vw)",
+                        zIndex: 2,
+                      }}
+                      onClick={(event) => handleOpenAcceptModal(data._id, data.nameTH, false, event)}
+                    >
+                      ปฏิเสธ
+                    </CancelButton>
+                  </> : 
+                  <></>
+                }
                 {
                   selectedRole === "committee" ? 
                   <EditButton 
@@ -288,10 +346,10 @@ const ProjectPreview = observer(() => {
                       zIndex: 2,
                     }}
                     onClick={(event) => 
-                      handleOpenModal(
-                        c._id, 
-                        c.nameTH, 
-                        c.startDate,
+                      handleOpenStartdateModal(
+                        data._id, 
+                        data.nameTH, 
+                        data.startDate,
                         event,
                       )}
                   >

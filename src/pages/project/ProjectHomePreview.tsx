@@ -57,6 +57,7 @@ const ProjectHomePreview = observer(
           setIsAdvisor(data.filter((e: any) => e.role === 2).length ? true : false)
         }
         const projectData = await findProjectInClass(classId, projectId);
+        console.log(projectData.data)
         if (!projectData.data) {
           setNotFound(0);
         } else {
@@ -68,6 +69,7 @@ const ProjectHomePreview = observer(
         }
       }
       if (isStudent && currentRole === 0) {
+        console.log(project)
         setNameTH(project.nameTH);
         setNameEN(project.nameEN);
         setDescription(project.description);
@@ -151,7 +153,7 @@ const ProjectHomePreview = observer(
                 </IconButton>
               </ProjectPreviewButton>
             </Link>
-            {(isAdvisor || currentRole === 0) && (
+            {(isAdvisor || currentRole === 0 || currentRole === 2) && (
               <Link
                 to={
                   currentRole === 0

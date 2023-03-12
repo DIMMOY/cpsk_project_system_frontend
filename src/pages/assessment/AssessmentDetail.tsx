@@ -17,6 +17,7 @@ import applicationStore from "../../stores/applicationStore";
 import NotFound from "../other/NotFound";
 import { checkRoleInProject } from "../../utils/project";
 import { getAssessmentInClass, listAllProjectHasAssessmentInProject, listAssessmentInClass } from "../../utils/assessment";
+import ShowScoreDialog from "../../components/Dialog/ShowScoreDialog";
 
 const useStyles = makeStyles({
   iconSize: {
@@ -34,18 +35,17 @@ const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
   const [assessment, setAssessment] = useState<any>({});
   const [projectHasAssessments, setProjectHasAssessments] = useState<Array<any>>([]);
   const [notFound, setNotFound] = useState<number>(2);
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [currentScore, setCurrentScore] = useState<Array<number>>([]);
+  const [currentTitle, setCurrentTitle] = useState<string>('');
+  const [currentAssessBy, setCurrentAssessBy] = useState<string>('');
+  const [currentFeedBack, setCurrentFeedBack] = useState<string>('');
+
   const { currentRole, classroom, project } = applicationStore;
   const classes = useStyles();
   const navigate = useNavigate();
   const isBigScreen = useMediaQuery({ query: "(min-width: 600px)" });
   const { success, warning, error, secondary } = theme.color.text;
-  const statusList = [
-    { color: error, message: "ยังไม่ส่ง" },
-    { color: success, message: "ส่งแล้ว" },
-    { color: warning, message: "ส่งช้า" },
-    { color: warning, message: "รอยืนยัน" },
-    { color: secondary, message: "----" },
-  ];
 
   const currentPathName = window.location.pathname.endsWith("/")
     ? window.location.pathname.slice(0, -1)
@@ -53,8 +53,8 @@ const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
 
   const pathname = currentPathName.split("/");
   const classId = isStudent ? classroom._id : pathname[2];
-  const projectId = isStudent ? project._id : '';
-  const assessmentId = isStudent ? pathname[2] : pathname[4];
+  const projectId = isStudent ? project._id : pathname[4];
+  const assessmentId = isStudent ? pathname[2] : pathname[6];
 
   const getData = async () => {
     if (isStudent && currentRole !== 0) {
@@ -68,7 +68,6 @@ const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
       setNotFound(0);
       return;
     } else {
-      console.log(assessmentData.data)
       setAssessment(assessmentData.data as any);
       setNotFound(1);
     }
@@ -86,6 +85,19 @@ const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
     }
   }
 
+  const handleOpenDialog = (
+    form: Array<number>, 
+    title: string, 
+    assessBy: string,
+    feedBack: string,
+  ) => {
+    setCurrentScore(form)
+    setCurrentTitle(title)
+    setCurrentAssessBy(assessBy)
+    setCurrentFeedBack(feedBack)
+    setOpenDialog(true)
+  }
+
   useEffect(() => {
     getData();
   }, []);
@@ -93,6 +105,16 @@ const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
   if (notFound === 1) {
     return (
       <CommonPreviewContainer>
+        <ShowScoreDialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          assessment={assessment.assessment ? assessment.assessment : {}}
+          score={currentScore}
+          title={currentTitle}
+          assessBy={currentAssessBy}
+          feedBack={currentFeedBack}
+        />
+
         <Box sx={{ display: "flex", padding: "0 auto", alignItems: "center" }}>
           <Link
             to={
@@ -130,29 +152,16 @@ const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
           {projectHasAssessments.map((data) => (
             <ListPreviewButton
               key={data._id}
-              // onClick={() => {
-              //   navigate(
-              //     isStudent && currentRole === 0
-              //       ? `/assessment/${
-              //           data._id as string
-              //         }`
-              //       : `${currentPathName}/${
-              //           data._id as string
-              //         }`,
-              //     {
-              //       replace: true,
-              //       state: {
-              //         name: data.name,
-              //         status: data.sendStatus,
-              //         detail: data.detail ? data.detail : "",
-              //         statusType: data.statusType,
-              //         dueDate: moment(data.endDate).format(
-              //           "DD/MM/YYYY HH:mm"
-              //         ),
-              //       },
-              //     }
-              //   );
-              // }}
+              onClick={() => (
+                currentRole !== 0 ?
+                  handleOpenDialog(
+                    data.form ? data.form : [], 
+                    data.assessBy === 1 ? "อาจารย์ที่ปรึกษา" : data.matchCommitteeId.name,
+                    `ประเมินโดย ${data.assessBy === 1 ? data.userId.displayName : "กรรมการคุมสอบ"}`,
+                    data.feedBack,
+                  ) :
+                  {}
+              )}
             >
               <Typography
                 sx={{

@@ -154,6 +154,12 @@ const MeetingScheduleHomePreview = observer(({ isStudent }: PreviewProps) => {
                   fontFamily: "Prompt",
                   fontWeight: 600,
                   color: theme.color.text.primary,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  display: "inline-block",
+                  textAlign: "left",
+                  width: isBigScreen ? "70%" : "40%",
                 }}
               >
                 {mtSchedule.name}

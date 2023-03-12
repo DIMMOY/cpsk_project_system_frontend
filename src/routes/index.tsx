@@ -39,6 +39,8 @@ import ProfileEdit from "../pages/other/ProfileEdit";
 import DocumentAllOverview from "../pages/document/DocumentAllOverview";
 import MeetingScheduleAllOverview from "../pages/meetingschedule/MeetingScheduleAllOverview";
 import AssessmentDetail from "../pages/assessment/AssessmentDetail";
+import AssessmentHomePreview from "../pages/assessment/AssessmentHomePreview";
+import StudentRoute from "./StudentRoute";
 
 const Routers: React.FC = (): JSX.Element => {
   return (
@@ -82,6 +84,14 @@ const Routers: React.FC = (): JSX.Element => {
               path="/class/:id/project/:projectId/meeting-schedule/:mtId"
               element={<MeetingScheduleDetail isStudent={false} />}
             />
+            <Route
+              path="/class/:id/project/:projectId/assessment"
+              element={<AssessmentHomePreview isStudent={false} />}
+            />
+            <Route
+              path="/class/:id/project/:projectId/assessment/:assessmentId"
+              element={<AssessmentDetail isStudent={false} />}
+            />
             <Route path="/class/:id/document" element={<DocumentPreview />} />
             <Route
               path="/class/:id/document/overview"
@@ -115,17 +125,20 @@ const Routers: React.FC = (): JSX.Element => {
               <Route element={<HaveProjectOrDisplayNameRoute />}>
                 <Route path="/project" element={<ProjectPage />} />
                 <Route path="/document" element={<DocumentPage />} />
-                <Route
-                  path="/document/:id"
-                  element={<DocumentDetail isStudent={true} />}
-                />
                 <Route path="/meeting-schedule" element={<MeetingSchedulePage />} />
-                <Route
-                  path="/meeting-schedule/:id"
-                  element={<MeetingScheduleDetail isStudent={true} />}
-                />
                 <Route path="/assessment" element={<AssessmentPage />} />
-                <Route path="/assessment/:assessmentId" element={<AssessmentDetail isStudent={true} />} />
+
+                <Route element={<StudentRoute />}>
+                  <Route
+                    path="/document/:id"
+                    element={<DocumentDetail isStudent={true} />}
+                  />
+                  <Route
+                    path="/meeting-schedule/:id"
+                    element={<MeetingScheduleDetail isStudent={true} />}
+                  />
+                  <Route path="/assessment/:assessmentId" element={<AssessmentDetail isStudent={true} />} />
+                </Route>
               </Route>
             </Route>
 

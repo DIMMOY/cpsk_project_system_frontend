@@ -7,7 +7,7 @@ import InputLabel from "@mui/material/InputLabel";
 import AddIcon from "@mui/icons-material/Add";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AdminCommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
-import { ListPreviewButton } from "../../styles/layout/_button";
+import { EditButton, ListPreviewButton } from "../../styles/layout/_button";
 import { useMediaQuery } from "react-responsive";
 import ClassCreateModal from "../../components/Modal/ClassCreateModal";
 import { listClass } from "../../utils/class";
@@ -52,8 +52,19 @@ const ClassPreview = observer(() => {
   const [open, setOpen] = useState<boolean>(false);
   const isBigScreen = useMediaQuery({ query: "(min-width: 700px)" });
   const [classes, setClasses] = useState<Array<any>>([]);
+  const [currentClass, setCurrentClass] = useState<any>(null);
 
-  const handleOpenModal = () => setOpen(true);
+  const handleOpenCreateClassModal = () => {
+    setOpen(true);
+    setCurrentClass(null);
+  }
+
+  const handleOpenUpdateClassModal = (currentClass: any, event: any) => {
+    event.stopPropagation();
+    setOpen(true);
+    setCurrentClass(currentClass);
+  };
+
   const handleCloseModal = () => setOpen(false);
   const handleClassFilterChange = (event: SelectChangeEvent) => {
     setClassFilter(event.target.value as string);
@@ -221,7 +232,7 @@ const ClassPreview = observer(() => {
                   marginRight: "1.5rem",
                 }}
                 startIcon={<AddIcon sx={{ width: 20, height: 20 }}></AddIcon>}
-                onClick={handleOpenModal}
+                onClick={handleOpenCreateClassModal}
               >
                 สร้างคลาส
               </Button>
@@ -229,6 +240,7 @@ const ClassPreview = observer(() => {
                 open={open}
                 onClose={handleCloseModal}
                 refresh={refreshData}
+                currentClass={currentClass}
               ></ClassCreateModal>
             </Box>
           ) : (
@@ -237,13 +249,14 @@ const ClassPreview = observer(() => {
         </Box>
 
         <Box sx={{ flexDirection: "column", display: "flex" }}>
-          {classes.map((c) => (
+          {classes.map((data) => (
             <ListPreviewButton
-              key={c._id}
+              key={data._id}
               onClick={() => {
-                applicationStore.setClassroom(c);
-                navigate(`/class/${c._id as string}/project`);
+                applicationStore.setClassroom(data);
+                navigate(`/class/${data._id as string}/project`);
               }}
+              sx={{zIndex: 1}}
             >
               <Typography
                 sx={{
@@ -261,19 +274,19 @@ const ClassPreview = observer(() => {
                   width: "60%",
                 }}
               >
-                {c.name}
+                {data.name}
               </Typography>
               <Typography
                 sx={{
                   top: "1.5rem",
-                  right: "calc(20px + 1vw)",
+                  right: data.complete ? "calc(33px + 1vw)" : "calc(20px + 1vw)",
                   position: "absolute",
                   fontSize: "calc(30px + 0.2vw)",
-                  color: theme.color.text.secondary,
+                  color: data.complete ? theme.color.text.success : theme.color.text.secondary,
                   fontWeight: 600,
                 }}
               >
-                {c.complete ? "เสร็จสิ้น" : "ดำเนินการ"}
+                {data.complete ? "เสร็จสิ้น" : "ดำเนินการ"}
               </Typography>
               <Typography
                 sx={{
@@ -285,8 +298,23 @@ const ClassPreview = observer(() => {
                   fontWeight: 600,
                 }}
               >
-                {`รหัสเข้าคลาส: ${c.inviteCode as string}`}
+                {`รหัสเข้าคลาส: ${data.inviteCode as string}`}
               </Typography>
+              {isAdmin && currentRole === 2 ? (
+                <EditButton
+                  sx={{
+                    position: "absolute",
+                    right: "calc(50px + 1vw)",
+                    zIndex: 2,
+                    top: "4.7rem"
+                  }}
+                  onClick={(event) =>handleOpenUpdateClassModal(data, event)}
+                >
+                  แก้ไข
+                </EditButton>
+                ) : (
+                  <></>
+                )}
             </ListPreviewButton>
           ))}
         </Box>

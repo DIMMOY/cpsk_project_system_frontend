@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useState, useEffect } from "react";
 import { Box, Button, Grow, TextField, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -6,21 +6,37 @@ import MenuItem from "@mui/material/MenuItem";
 import { LoadingButton } from "@mui/lab";
 import Modal from "@mui/material/Modal";
 import { useMediaQuery } from "react-responsive";
-import { createClass } from "../../utils/class";
+import { createClass, updateClass } from "../../utils/class";
 import { theme } from "../../styles/theme";
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
   refresh: () => void;
+  currentClass: any;
 }
 
-const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
+const ClassCreateModal = ({ open, onClose, refresh, currentClass }: ModalProps) => {
   const [majorSelect, setMajorSelect] = useState<string>("ALL");
   const [className, setClassName] = useState<string | null>(null);
+  const [completeSelect, setCompleteSelect] = useState<string>("false");
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const isBigScreen = useMediaQuery({ query: "(min-width: 600px)" });
+
+  useEffect(() => {
+    if (open) {
+      if (currentClass) {
+        setClassName(currentClass.name);
+        setMajorSelect(currentClass.major);
+        setCompleteSelect(currentClass.complete);
+      } else {
+        setClassName(null);
+        setMajorSelect("ALL");
+        setCompleteSelect("false");
+      }
+    }
+  }, [open, currentClass])
 
   const handleClassNameChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -31,20 +47,35 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
 
   const handleMajorSelectChange = (event: SelectChangeEvent) => {
     setMajorSelect(event.target.value as string);
+    if (currentClass) setCanSubmit(true)
   };
 
-  const handleCreateClass = async () => {
+  const handleCompleteSelectChange = (event: SelectChangeEvent) => {
+    setCompleteSelect(event.target.value as string);
+    if (currentClass) setCanSubmit(true)
+  };
+
+  const handleSubmitClass = async () => {
     setLoading(true);
     const reqBody = {
       name: className,
-      endDate: null,
-      complete: false,
+      endDate: completeSelect === "true" ? new Date() : null,
+      complete: completeSelect === "true",
       major: majorSelect,
     };
-    const res = await createClass(reqBody);
-    if (res.statusCode !== 201) {
-      console.error(res.errorMsg);
-      return;
+    let res;
+    if (!currentClass) {
+      res = await createClass(reqBody);
+      if (res.statusCode !== 201) {
+        console.error(res.errorMsg);
+        return;
+      }
+    } else {
+      res = await updateClass(currentClass._id, reqBody)
+      if (res.statusCode !== 200) {
+        console.error(res.errorMsg);
+        return;
+      }
     }
     setTimeout(() => {
       onClose();
@@ -109,7 +140,7 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
               color: theme.color.text.primary,
             }}
           >
-            สร้างคลาส
+            คลาส
           </Typography>
           <Typography
             id="class-description"
@@ -125,6 +156,7 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
           <TextField
             autoFocus
             required
+            value={className}
             id="class-description"
             size="medium"
             fullWidth
@@ -143,37 +175,77 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
             }}
             onChange={handleClassNameChange}
           />
-          <Typography
-            id="class-description"
-            sx={{
-              fontSize: 20,
-              fontWeight: 500,
-              marginBottom: 1,
-              color: theme.color.text.secondary,
-            }}
-          >
-            ภาค
-          </Typography>
-          <FormControl sx={{ marginBottom: 5 }}>
-            <Select
-              labelId="select-class-label"
-              id="select-class"
-              value={majorSelect}
-              onChange={handleMajorSelectChange}
-              sx={{
-                borderRadius: "10px",
-                color: theme.color.text.primary,
-                height: "2.8rem",
-                fontWeight: 500,
-                width: isBigScreen ? 300 : "100%",
-                fontSize: 20,
-              }}
-            >
-              <MenuItem value={"ALL"}>ทั้งหมด</MenuItem>
-              <MenuItem value={"CPE"}>วิศวกรรมคอมพิวเตอร์ (CPE)</MenuItem>
-              <MenuItem value={"SKE"}>วิศวกรรมซอฟต์แวร์ (SKE)</MenuItem>
-            </Select>
-          </FormControl>
+          <Box sx={{ display: "flex", flexDirection: "row"}}>
+            <Box sx={{marginRight: "1.5rem"}}>
+              <Typography
+                id="class-description"
+                sx={{
+                  fontSize: 20,
+                  fontWeight: 500,
+                  marginBottom: 1,
+                  color: theme.color.text.secondary,
+                }}
+              >
+                ภาค
+              </Typography>
+              <FormControl sx={{ marginBottom: 5 }}>
+                <Select
+                  labelId="select-class-label"
+                  id="select-class"
+                  value={majorSelect}
+                  onChange={handleMajorSelectChange}
+                  sx={{
+                    borderRadius: "10px",
+                    color: theme.color.text.primary,
+                    height: "2.8rem",
+                    fontWeight: 500,
+                    width: isBigScreen ? 300 : "100%",
+                    fontSize: 20,
+                  }}
+                >
+                  <MenuItem value={"ALL"}>ทั้งหมด</MenuItem>
+                  <MenuItem value={"CPE"}>วิศวกรรมคอมพิวเตอร์ (CPE)</MenuItem>
+                  <MenuItem value={"SKE"}>วิศวกรรมซอฟต์แวร์ (SKE)</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            {
+              currentClass ?
+                <Box>
+                <Typography
+                  id="class-description"
+                  sx={{
+                    fontSize: 20,
+                    fontWeight: 500,
+                    marginBottom: 1,
+                    color: theme.color.text.secondary,
+                  }}
+                >
+                  สถานะ
+                </Typography>
+                <FormControl sx={{ marginBottom: 5 }}>
+                  <Select
+                    labelId="select-class-label"
+                    id="select-class"
+                    value={completeSelect}
+                    onChange={handleCompleteSelectChange}
+                    sx={{
+                      borderRadius: "10px",
+                      color: theme.color.text.primary,
+                      height: "2.8rem",
+                      fontWeight: 500,
+                      width: isBigScreen ? 150 : "100%",
+                      fontSize: 20,
+                    }}
+                  >
+                    <MenuItem value={"false"}>ดำเนินการ</MenuItem>
+                    <MenuItem value={"true"}>เสร็จสิ้น</MenuItem>
+                  </Select>
+                </FormControl>
+                </Box> :
+                <></>
+            }
+          </Box>
           <Button
             onClick={handleCancel}
             sx={{
@@ -195,7 +267,7 @@ const ClassCreateModal = ({ open, onClose, refresh }: ModalProps) => {
             ยกเลิก
           </Button>
           <LoadingButton
-            onClick={handleCreateClass}
+            onClick={handleSubmitClass}
             loading={loading}
             sx={{
               width: "7rem",

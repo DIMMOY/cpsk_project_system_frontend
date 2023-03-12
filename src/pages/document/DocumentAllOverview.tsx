@@ -44,6 +44,7 @@ const DocumentAllOverview = observer(() => {
   const [document, setDocument] = useState<any>([]);
   const [projects, setProjects] = useState<Array<any>>([]);
   const [documents, setDocuments] = useState<Array<any>>([]);
+
   const currentPathName = window.location.pathname.endsWith("/")
     ? window.location.pathname.slice(0, -1)
     : window.location.pathname;

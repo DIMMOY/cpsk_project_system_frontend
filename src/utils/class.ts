@@ -23,6 +23,25 @@ export const createClass = async (reqBody: any) => {
   }
 };
 
+export const updateClass = async (classId: string, reqBody: any) => {
+  try {
+    await refreshToken();
+    await axios.put(`${url}/${classId}`, reqBody);
+    return {
+      statusCode: 200,
+      message: "Update class successful",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "Update class error",
+      errorMsg: "อัพเดท Class ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+};
+
 export const listClass = async (reqQuery: any) => {
   try {
     await refreshToken();
@@ -58,3 +77,23 @@ export const getClassById = async (id: string) => {
     };
   }
 };
+
+export const leaveClass = async (classId: string) => {
+  try {
+    await refreshToken();
+    const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/class/${classId}/leave`;
+    const resAxios = await axios.delete(url);
+    return {
+      statusCode: resAxios.data.statusCode,
+      message: resAxios.data.message,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "Leave Class error",
+      errorMsg: "ออก Class ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+}

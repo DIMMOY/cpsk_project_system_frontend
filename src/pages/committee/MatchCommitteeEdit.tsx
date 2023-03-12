@@ -28,38 +28,38 @@ import { listProjectInClass } from "../../utils/project";
 import AddCommitteeToProject from "../../components/Dialog/AddCommitteeToProject";
 import AddCommitteeToProjectOnlyOne from "../../components/Dialog/AddCommitteeToProjectOnlyOne";
 import CancelModal from "../../components/Modal/CancelModal";
+import { exportXLSX } from "../../utils/excel";
 
 interface PreviewProps {
   newForm: boolean;
 }
 
 const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
-  const { isAdmin, currentRole } = applicationStore;
+  const isBigScreen = useMediaQuery({ query: "(min-width: 650px)" });
+  const navigate = useNavigate();
 
-  const location = useLocation();
   const [notFound, setNotFound] = useState<number>(2);
   const [advisors, setAdvisors] = useState<Array<any>>([]);
   const [matchCommittee, setMatchCommittee] = useState<any>(null);
   const [projects, setProjects] = useState<any>([]);
   const [sortSelect, setSortSelect] = useState<string>("advisor");
-  const isBigScreen = useMediaQuery({ query: "(min-width: 650px)" });
-
   const [currentGroup, setCurrentGroup] = useState<any>(null);
   const [currentIndexGroup, setCurrentIndextGroup] = useState<number>(0);
   const [currentProject, setCurrentProject] = useState<any>(null);
   const [currentIndexProject, setCurrentIndextProject] = useState<number>(0);
   const [projectFilter, setProjectFilter] = useState<any>([]);
-  const [advisorFilter, setAdvisorFilter] = useState<any>([]);
   const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
   const [currentIndexDelete, setCurrentIndexDelete] = useState<number>(0);
   const [currentGroupIdDelete, setCurrentGroupIdDelete] = useState<string>('');
-
-  const navigate = useNavigate();
 
   const [scrollToBottom, setScrollToBottom] = useState<number>(0);
   const [openAddGroup, setOpenAddGroup] = useState<boolean>(false)
   const [openAddGroupToProject, setOpenAddGroupToProject] = useState<boolean>(false)
   const [openAddGroupToProjectOnlyOne, setOpenAddGroupToProjectOnlyOne] = useState<boolean>(false)
+
+  // XLSX
+  const heading = ["ลำดับ", "ชื่อโปรเจกต์ภาษาไทย", "นิสิต", "อาจารย์ที่ปรึกษา", "กรรมการคุมสอบ"]
+  const [datasheet, setDataSheet] = useState<Array<any>>([]);
 
   const currentPathName = window.location.pathname.endsWith("/")
     ? window.location.pathname.slice(0, -1)
@@ -103,6 +103,25 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
       })
       setAdvisors(scanAdvisors)
       setProjects(projects.data)
+
+      const datasheetInput: Array<any> = [];
+      projects.data.forEach((data: any, index: number) => {
+        datasheetInput.push([
+          index + 1,
+          data.nameTH,
+          data.student
+            .map((user: any) => user.displayName ? user.displayName : "...")
+            .join('\n'),
+          data.advisor
+            .map((user: any) => user.displayName ? user.displayName : "...")
+            .join('\n'),
+          data.committee
+            .map((user: any) => user.displayName ? user.displayName : "...")
+            .join('\n'),  
+        ])
+      })
+      setDataSheet(datasheetInput);
+
       setNotFound(1)
     }
   }
@@ -302,28 +321,49 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
             </Typography>
           </Box>
 
-          <FormControl sx={{ marginRight: "1.5rem", position: "relative" }}>
-              <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
-              <Select
-                labelId="select-sort-label"
-                id="select-sort"
-                value={sortSelect}
-                onChange={handleSortChange}
-                label="จัดเรียงโดย"
-                sx={{
-                  borderRadius: "10px",
-                  color: theme.color.background.primary,
-                  height: 45,
-                  fontWeight: 500,
-                  width: 180,
-                  marginBottom: "1.5rem"
-                }}
-              >
-                <MenuItem value={"name"}>ชื่อโปรเจกต์</MenuItem>
-                <MenuItem value={"advisor"}>อาจารย์ที่ปรึกษา</MenuItem>
-                <MenuItem value={"committee"}>กรรมการคุมสอบ</MenuItem>
-              </Select>
+          <Box sx={{display: "flex", flexDirection: "row"}}>
+            <FormControl sx={{ marginRight: "1.5rem", position: "relative" }}>
+                <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
+                <Select
+                  labelId="select-sort-label"
+                  id="select-sort"
+                  value={sortSelect}
+                  onChange={handleSortChange}
+                  label="จัดเรียงโดย"
+                  sx={{
+                    borderRadius: "10px",
+                    color: theme.color.background.primary,
+                    height: 45,
+                    fontWeight: 500,
+                    width: 180,
+                    marginBottom: "1.5rem"
+                  }}
+                >
+                  <MenuItem value={"name"}>ชื่อโปรเจกต์</MenuItem>
+                  <MenuItem value={"advisor"}>อาจารย์ที่ปรึกษา</MenuItem>
+                  <MenuItem value={"committee"}>กรรมการคุมสอบ</MenuItem>
+                </Select>
             </FormControl>
+
+            <Button
+              sx={{
+                background: theme.color.button.primary,
+                color: theme.color.text.default,
+                borderRadius: "10px",
+                boxShadow: "none",
+                textTransform: "none",
+                "&:hover": { background: "#B07CFF" },
+                height: 45,
+                weight: 42,
+                fontSize: isBigScreen ? 16 : 13,
+                padding: isBigScreen ? 1 : 0.5,
+                marginRight: "1.5rem",
+              }}
+              onClick={() => exportXLSX(heading, datasheet, matchCommittee.name, [2, 3, 4])}
+            >
+              ดาวน์โหลด
+            </Button>
+          </Box>
 
           <Box 
             sx={{ 

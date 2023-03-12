@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, IconButton, Button, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import { useMediaQuery } from "react-responsive";
 import { observer } from "mobx-react";
@@ -27,6 +27,7 @@ interface PreviewProps {
 
 const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { currentRole, classroom, project } = applicationStore;
   const isBigScreen = useMediaQuery({ query: "(min-width: 600px)" });
   const { success, warning, error, secondary } = theme.color.text;
@@ -89,6 +90,9 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
   }
 
   useEffect(() => {
+    if (isStudent && currentRole !== 0)
+      navigate('/')
+
     if (currentRole === 1) {
       getRoleInProject();
     }

@@ -138,3 +138,43 @@ export const updateProjectInClass = async (body: any, classId: string, projectId
     };
   }
 }
+
+export const acceptProjectByAdvisor = async (classId: string, projectId: string, accept: boolean) => {
+  try {
+    await refreshToken();
+    const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/class/${classId}/project/${projectId}/accept`;
+    const resAxios = await axios.patch(url, { accept });
+    return {
+      statusCode: resAxios.data.statusCode,
+      message: resAxios.data.message,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "Accept Or Cancel Project error",
+      errorMsg: "ยอมรับหรือยกเลิก project ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+}
+
+export const leaveProject = async (classId: string, projectId: string) => {
+  try {
+    await refreshToken();
+    const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/class/${classId}/project/${projectId}/leave`;
+    const resAxios = await axios.delete(url);
+    return {
+      statusCode: resAxios.data.statusCode,
+      message: resAxios.data.message,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "Leave Project error",
+      errorMsg: "ออก project ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+}

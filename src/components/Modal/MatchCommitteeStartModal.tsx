@@ -25,7 +25,6 @@ const MatchCommitteeStartModal = ({
   defaultStartDate,
 }: ModalProps) => {
   const currentDate = new Date();
-  const [canSubmit, setCanSubmit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<string | null>(null);
   const isBigScreen = useMediaQuery({ query: "(min-width: 600px)" });
@@ -33,7 +32,6 @@ const MatchCommitteeStartModal = ({
   const handleStartDateChange = (newDate: string | null) => {
     const date = newDate ? moment(newDate).format("YYYY-MM-DDTHH:mm") : null;
     setStartDate(date);
-    setCanSubmit(true);
   };
 
   const handleSetDate = async () => {
@@ -57,7 +55,6 @@ const MatchCommitteeStartModal = ({
           "YYYY-MM-DDTHH:mm"
         )
       );
-      setCanSubmit(false);
       setLoading(false);
     }, 1300);
   };
@@ -70,7 +67,6 @@ const MatchCommitteeStartModal = ({
           "YYYY-MM-DDTHH:mm"
         )
       );
-      setCanSubmit(false);
       setLoading(false);
     }, 300);
   };
@@ -174,7 +170,6 @@ const MatchCommitteeStartModal = ({
                   background: theme.color.button.disable,
                 },
               }}
-              disabled={!canSubmit}
             >
               ยืนยัน
             </LoadingButton>
