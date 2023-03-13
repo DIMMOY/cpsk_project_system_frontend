@@ -90,6 +90,9 @@ const AssessmentOverview = observer(() => {
           if (selectedMatchCommitteeId === "") {
             setSelectedMatchCommitteeId(assessmentData.data.matchCommitteeId[0]._id)
             setSelectedMatchCommitteeName(assessmentData.data.matchCommitteeId[0].name)
+          } else {
+            const matchCommittee = assessmentData.data.matchCommitteeId.find((data: any) => data._id.toString() === matchCommitteeCheck);
+            setSelectedMatchCommitteeName(matchCommittee ? matchCommittee.name : "....");
           }
         } else {
           if (selectedRole === 'committee') {
@@ -365,7 +368,8 @@ const AssessmentOverview = observer(() => {
                         <TableCell 
                           rowSpan={
                             data.assessmentResults.length ? 
-                              data.assessmentResults.length + 1 + (!data.assessmentResults.find((data: any) => data.userId.email === user?.email) ? 1 : 0): 
+                              data.assessmentResults.length + 1 + 
+                              (!data.assessmentResults.find((data: any) => data.userId.email === user?.email) && currentRole === 1 ? 1 : 0): 
                               2
                           }
                           sx={{

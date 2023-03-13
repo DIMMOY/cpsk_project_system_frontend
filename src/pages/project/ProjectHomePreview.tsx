@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from "react";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import DescriptionIcon from "@mui/icons-material/Description";
 import GroupsIcon from "@mui/icons-material/Groups";
@@ -17,6 +17,7 @@ import { observer } from "mobx-react";
 import applicationStore from "../../stores/applicationStore";
 import { checkRoleInProject, findProjectInClass } from "../../utils/project";
 import NotFound from "../other/NotFound";
+import moment from "moment";
 
 const useStyles = makeStyles({
   iconSize: {
@@ -37,8 +38,12 @@ const ProjectHomePreview = observer(
     const [nameEN, setNameEN] = useState<string>(".....");
     const [notFound, setNotFound] = useState<number>(2);
     const [description, setDescription] = useState<string>(".....");
+    const [committees, setCommittees] = useState<Array<any>>([]);
     const [isAdvisor, setIsAdvisor] = useState<boolean>(false);
+    const [showMore, setShowMore] = useState<boolean>(true);
+    const maxLength = 200;
     const isBigScreen = useMediaQuery({ query: "(min-width: 1440px)" });
+    const isMidScreen = useMediaQuery({ query: "(min-width: 800px)" });
 
     const currentPathName = window.location.pathname.endsWith("/")
       ? window.location.pathname.slice(0, -1)
@@ -69,10 +74,25 @@ const ProjectHomePreview = observer(
         }
       }
       if (isStudent && currentRole === 0) {
-        console.log(project)
         setNameTH(project.nameTH);
         setNameEN(project.nameEN);
         setDescription(project.description);
+        if (project.committees && project.committees.length) {
+          const today = new Date();
+          const mergeMatchCommitee: any = {}
+          const filterCommittees = project.committees.filter((data: any) => 
+            {
+              const startDate = new Date(data.matchCommitteeId.startDate);
+              return startDate.getTime() > today.getTime() && startDate.getTime() - today.getTime() <= 604800000
+            }
+          )
+          filterCommittees.forEach((data: any) => {
+            mergeMatchCommitee[data.matchCommitteeId._id] = mergeMatchCommitee[data.matchCommitteeId._id] ?
+              [...mergeMatchCommitee[data.matchCommitteeId._id], data] : [(new Date(data.matchCommitteeId.startDate)).getTime(), data.matchCommitteeId.name,data]
+          })
+          const sortMatchCommittee = Object.values(mergeMatchCommitee).sort((a: any, b: any) => a[0] - b[0])
+          setCommittees(sortMatchCommittee)
+        }
         setNotFound(1);
       } else {
         getData();
@@ -104,7 +124,7 @@ const ProjectHomePreview = observer(
             }
             <Typography
               sx={{
-                fontSize: 45,
+                fontSize: isMidScreen ? 45 : 30,
                 fontWeight: 600,
                 color: theme.color.text.primary,
                 overflowY: "hidden",
@@ -119,22 +139,76 @@ const ProjectHomePreview = observer(
             </Typography>
             <Typography
               sx={{
-                fontSize: 30,
+                fontSize: isMidScreen ? 30 : 20,
                 fontWeight: 500,
                 color: theme.color.text.secondary,
               }}
             >
               {nameEN}
             </Typography>
-            <Typography
-              sx={{
-                fontSize: 30,
-                fontWeight: 500,
-                color: theme.color.text.secondary,
-              }}
-            >
-              {description}
-            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "column"}}>
+              <Typography
+                sx={{
+                  fontSize: isMidScreen ? 30 : 20,
+                  fontWeight: 500,
+                  color: theme.color.text.secondary,
+                  
+                }}
+              >
+                {`${showMore && description.length > maxLength ? `${description.slice(0, 200)}...` : description}`}
+              </Typography>
+              {
+                showMore && description.length > maxLength ?
+                <Typography
+                  sx={{
+                    fontSize: isMidScreen ? 30 : 20,
+                    fontWeight: 500,
+                    color: theme.color.text.primary,
+                    cursor: "pointer",
+                    textDecoration: 'underline',
+                    width: "7rem",
+                  }}
+                  onClick={() => setShowMore(false)}
+                >
+                เพิ่มเติม
+              </Typography> : <></>
+              }
+            </Box>
+            { 
+              committees.length && currentRole === 0 ?
+              <Box sx={{ display: "flex", flexDirection: "column", marginTop: "1rem"}}>
+                <Typography
+                  sx={{
+                    fontSize: isMidScreen ? 30 : 20,
+                    fontWeight: 500,
+                    color: theme.color.text.error,
+                    marginRight: "1.25rem"
+                  }}
+                >
+                  มีรายละเอียดการสอบเข้ามาใหม่ !
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: isMidScreen ? 20 : 15,
+                    fontWeight: 500,
+                    color: theme.color.text.secondary,
+                    marginRight: "1.25rem"
+                  }}
+                >
+                  {`${committees[0][1] as string} วันที่ ${moment(committees[0][0]).format("DD/MM/YYYY HH:mm น.")}`}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: isMidScreen ? 20 : 15,
+                    fontWeight: 500,
+                    color: theme.color.text.secondary,
+                    marginRight: "1.25rem"
+                  }}
+                >
+                  {`กรรมการ: ${committees[0].slice(2).map((data: any) => data.displayName).join(', ') as string}`}
+                </Typography>
+              </Box> : <></>
+            }
           </ProjectPreviewDetail>
           <Box sx={{ textAlign: "center" }}>
             <Link

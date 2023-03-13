@@ -102,7 +102,7 @@ const ShowScoreDialog = ({ open, onClose, assessment, score, title, assessBy, fe
                   {maxRawScore}
                 </TableCell>
                 <TableCell align="center" sx={{fontSize: 16, color: theme.color.text.secondary, fontWeight: 500}}>
-                  {sumRawScore}
+                  {sumRawScore ? sumRawScore : "-"}
                 </TableCell>
                 <TableCell/>
               </TableRow>
@@ -116,7 +116,7 @@ const ShowScoreDialog = ({ open, onClose, assessment, score, title, assessBy, fe
                   {assessment.score ? assessment.score : 0}
                 </TableCell>
                 <TableCell align="center" sx={{fontSize: 16, color: theme.color.text.primary, fontWeight: 500}}>
-                  {assessment.score && sumRawScore && maxRawScore ? (sumRawScore * assessment.score / maxRawScore).toFixed(2) : 0 }
+                  {assessment.score && sumRawScore && maxRawScore ? (sumRawScore * assessment.score / maxRawScore).toFixed(2) : "-" }
                 </TableCell>
                 <TableCell/>
               </TableRow>
@@ -153,7 +153,7 @@ const ShowScoreDialog = ({ open, onClose, assessment, score, title, assessBy, fe
                 color: theme.color.text.secondary 
               }}
             >
-              {feedBack !== "" ? feedBack : "...."}
+              {feedBack && feedBack !== "" ? feedBack : "...."}
             </Typography>
           </Box>
       </DialogContent>

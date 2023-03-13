@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Button, Grow, TextField, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import Modal from "@mui/material/Modal";
@@ -29,6 +29,13 @@ const MatchCommitteeStartModal = ({
   const [startDate, setStartDate] = useState<string | null>(null);
   const isBigScreen = useMediaQuery({ query: "(min-width: 600px)" });
 
+  useEffect(() => {
+    if (open)
+      setStartDate(moment(defaultStartDate ? defaultStartDate : new Date()).format(
+        "YYYY-MM-DDTHH:mm"
+      ))
+  }, [open])
+
   const handleStartDateChange = (newDate: string | null) => {
     const date = newDate ? moment(newDate).format("YYYY-MM-DDTHH:mm") : null;
     setStartDate(date);
@@ -50,11 +57,7 @@ const MatchCommitteeStartModal = ({
       refresh();
     }, 1000);
     setTimeout(() => {
-      setStartDate(
-        moment(defaultStartDate ? defaultStartDate : new Date()).format(
-          "YYYY-MM-DDTHH:mm"
-        )
-      );
+      setStartDate(null);
       setLoading(false);
     }, 1300);
   };

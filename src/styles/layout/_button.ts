@@ -6,7 +6,7 @@ import { theme } from "../theme";
 export const ProjectPreviewButton = styled(Button, {
   shouldForwardProp: (prop: string) => prop !== "isBigScreen",
 })<{ isBigScreen?: boolean }>(({ isBigScreen }) => ({
-  fontSize: isBigScreen ? "1.6vw" : "1.5rem",
+  fontSize: isBigScreen ? 30 : "1.5rem",
   color: "#AD68FF",
   fontFamily: "Prompt",
   background: "#F3F3F3",
