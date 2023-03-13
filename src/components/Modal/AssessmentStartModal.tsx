@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Checkbox, Grow, TextField, Typography, Table, TableHead, TableCell, TableRow, TableBody } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Grow,
+  TextField,
+  Typography,
+  Table,
+  TableHead,
+  TableCell,
+  TableRow,
+  TableBody,
+} from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import Modal from "@mui/material/Modal";
 import { useMediaQuery } from "react-responsive";
@@ -67,8 +79,12 @@ const AssessmentStartModal = ({
 
     if (defaultStartDate && !startDate)
       setStartDate(moment(defaultStartDate).format("YYYY-MM-DDTHH:mm"));
-    
-    setCanSubmit((defaultEndDate && defaultStartDate) || (startDate && endDate)  ? true : false);
+
+    setCanSubmit(
+      (defaultEndDate && defaultStartDate) || (startDate && endDate)
+        ? true
+        : false
+    );
 
     setChecked(newChecked);
   };
@@ -111,9 +127,15 @@ const AssessmentStartModal = ({
   };
 
   useEffect(() => {
-    if (open) 
-      setChecked(assessment ? assessment.matchCommitteeId ? assessment.matchCommitteeId : [] : []);
-  }, [open])
+    if (open)
+      setChecked(
+        assessment
+          ? assessment.matchCommitteeId
+            ? assessment.matchCommitteeId
+            : []
+          : []
+      );
+  }, [open]);
 
   return (
     <Modal
@@ -195,62 +217,110 @@ const AssessmentStartModal = ({
               color: theme.color.text.secondary,
             }}
           >
-            {`ประเมินโดย ${assessment && assessment.assessBy === 0 ? "อาจารย์ที่ปรึกษาและกรรมการคุมสอบ" : (assessment && assessment.assessBy === 1 ? "อาจารย์ที่ปรึกษา" : "กรรมการคุมสอบ")}`}
+            {`ประเมินโดย ${
+              assessment && assessment.assessBy === 0
+                ? "อาจารย์ที่ปรึกษาและกรรมการคุมสอบ"
+                : assessment && assessment.assessBy === 1
+                ? "อาจารย์ที่ปรึกษา"
+                : "กรรมการคุมสอบ"
+            }`}
           </Typography>
-          {
-              assessment && assessment.assessBy !== 1 ? 
-                <Box sx={{marginTop: "1.5rem"}}>
-                  <Typography sx={{fontSize: 20, color: theme.color.text.secondary, fontWeight: 500}}>
-                    กลุ่มกรรมการคุมสอบที่ให้ประเมิน
-                  </Typography>
-                  <Box sx={{width: isBigScreen ? "50%" : "100%", maxHeight: "20rem", overflow: "auto"}}>
-                    <Table>
-                      <TableHead>
-                        <TableCell align="center" sx={{fontSize: 16, color: theme.color.text.secondary, width: "20%"}}>ลำดับ</TableCell>
-                        <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "70%"}}>ชื่อรายการ</TableCell>
-                        <TableCell></TableCell>
-                      </TableHead>
-                      <TableBody>
-                      {
-                        matchCommittee.map((data: any, index: number) => (
-                          <TableRow 
-                            key={data._id}
-                            onClick={() => handleCheckboxChange(data._id)}
+          {assessment && assessment.assessBy !== 1 ? (
+            <Box sx={{ marginTop: "1.5rem" }}>
+              <Typography
+                sx={{
+                  fontSize: 20,
+                  color: theme.color.text.secondary,
+                  fontWeight: 500,
+                }}
+              >
+                กลุ่มกรรมการคุมสอบที่ให้ประเมิน
+              </Typography>
+              <Box
+                sx={{
+                  width: isBigScreen ? "50%" : "100%",
+                  maxHeight: "20rem",
+                  overflow: "auto",
+                }}
+              >
+                <Table>
+                  <TableHead>
+                    <TableCell
+                      align="center"
+                      sx={{
+                        fontSize: 16,
+                        color: theme.color.text.secondary,
+                        width: "20%",
+                      }}
+                    >
+                      ลำดับ
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        fontSize: 16,
+                        color: theme.color.text.secondary,
+                        width: "70%",
+                      }}
+                    >
+                      ชื่อรายการ
+                    </TableCell>
+                    <TableCell></TableCell>
+                  </TableHead>
+                  <TableBody>
+                    {matchCommittee.map((data: any, index: number) => (
+                      <TableRow
+                        key={data._id}
+                        onClick={() => handleCheckboxChange(data._id)}
+                        sx={{
+                          "&:hover": { background: theme.color.button.default },
+                        }}
+                      >
+                        <TableCell
+                          align="center"
+                          sx={{
+                            fontSize: 16,
+                            color: theme.color.text.secondary,
+                            width: "10%",
+                          }}
+                        >
+                          {index + 1}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontSize: 16,
+                            color: theme.color.text.secondary,
+                            width: "10%",
+                          }}
+                        >
+                          {data.name}
+                        </TableCell>
+                        <TableCell>
+                          <Checkbox
                             sx={{
-                              "&:hover": { background: theme.color.button.default },
+                              padding: 0,
+                              boxShadow: "none",
+                              color: theme.color.background.secondary,
+                              "&.Mui-checked": {
+                                color: theme.color.background.secondary,
+                              },
+                              "& .MuiSvgIcon-root": { fontSize: 28 },
                             }}
-                          >
-                            <TableCell align="center" sx={{fontSize: 16, color: theme.color.text.secondary, width: "10%"}}>
-                              {index + 1}
-                            </TableCell>
-                            <TableCell sx={{fontSize: 16, color: theme.color.text.secondary, width: "10%"}}>
-                              {data.name}
-                            </TableCell>
-                            <TableCell>                
-                              <Checkbox
-                                sx={{
-                                    padding: 0,
-                                    boxShadow: "none",
-                                    color: theme.color.background.secondary,
-                                    "&.Mui-checked": {
-                                        color: theme.color.background.secondary,
-                                    },
-                                    "& .MuiSvgIcon-root": { fontSize: 28 },
-                                }}
-                                checked={checked.indexOf(data._id) !== -1}
-                                onChange={(event) => handleCheckboxChange(event.target.value)}
-                                value={data._id}
-                              />
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      }
-                      </TableBody>
-                    </Table>
-                  </Box> 
-                </Box> : 
-                <></>
-            }
+                            checked={checked.indexOf(data._id) !== -1}
+                            onChange={(event) =>
+                              handleCheckboxChange(event.target.value)
+                            }
+                            value={data._id}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Box>
+            </Box>
+          ) : (
+            <></>
+          )}
           <Box
             sx={{
               display: "flex",

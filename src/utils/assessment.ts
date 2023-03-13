@@ -64,10 +64,7 @@ export const listAssessment = async (reqQuery: any) => {
   }
 };
 
-export const listAssessmentInClass = async (
-  reqQuery: any,
-  classId: string
-) => {
+export const listAssessmentInClass = async (reqQuery: any, classId: string) => {
   try {
     await refreshToken();
     const url = `${
@@ -90,7 +87,7 @@ export const listAssessmentInClass = async (
 
 export const listProjectHasAssessment = async (
   classId: string,
-  params: { id: string, role: number, matchCommitteeId?: string },
+  params: { id: string; role: number; matchCommitteeId?: string }
 ) => {
   try {
     await refreshToken();
@@ -110,11 +107,11 @@ export const listProjectHasAssessment = async (
       error,
     };
   }
-}
+};
 
 export const listAllProjectHasAssessmentInProject = async (
   projectId: string,
-  assessmentId: string,
+  assessmentId: string
 ) => {
   try {
     await refreshToken();
@@ -134,21 +131,23 @@ export const listAllProjectHasAssessmentInProject = async (
       error,
     };
   }
-}
+};
 
 export const getProjectHasAssessmentInClass = async (
   classId: string,
   assessmentId: string,
   projectId: string,
   role: number,
-  matchCommitteeId: string | null,
+  matchCommitteeId: string | null
 ) => {
   try {
     await refreshToken();
     const url = `${
       process.env.REACT_APP_API_BASE_URL_CLIENT as string
     }/class/${classId}/assessment/${assessmentId}/project/${projectId}/form`;
-    const resAxios = await axios.get(url, { params: {role, matchCommitteeId }});
+    const resAxios = await axios.get(url, {
+      params: { role, matchCommitteeId },
+    });
     return {
       data: resAxios.data.data,
     };
@@ -157,7 +156,8 @@ export const getProjectHasAssessmentInClass = async (
     return {
       statusCode: 400,
       message: "Get project has assessment error",
-      errorMsg: "ค้นหา project has assessment ในคลาสผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      errorMsg:
+        "ค้นหา project has assessment ในคลาสผิดพลาด กรุณาลองใหม่ในภายหลัง",
       error,
     };
   }
@@ -165,14 +165,14 @@ export const getProjectHasAssessmentInClass = async (
 
 export const getAssessmentInClass = async (
   classId: string,
-  assessmentId: string,
+  assessmentId: string
 ) => {
   try {
     await refreshToken();
     const url = `${
       process.env.REACT_APP_API_BASE_URL_CLIENT as string
     }/class/${classId}/assessment/detail`;
-    const resAxios = await axios.get(url, {params: {id: assessmentId}});
+    const resAxios = await axios.get(url, { params: { id: assessmentId } });
     return {
       data: resAxios.data.data,
     };
@@ -232,17 +232,19 @@ export const updateAssessment = async (id: string, reqBody: any) => {
 };
 
 export const createSendAssessment = async (
-  reqBody: any, 
-  projectId: string, 
+  reqBody: any,
+  projectId: string,
   assessmentId: string,
   role: number,
-  matchCommitteeId: string | null,
+  matchCommitteeId: string | null
 ) => {
   try {
     await refreshToken();
     const url = `${
       process.env.REACT_APP_API_BASE_URL_CLIENT as string
-    }/project/${projectId}/assessment/${assessmentId}?role=${role}${matchCommitteeId ? `&matchCommitteeId=${matchCommitteeId}` : ''}`;
+    }/project/${projectId}/assessment/${assessmentId}?role=${role}${
+      matchCommitteeId ? `&matchCommitteeId=${matchCommitteeId}` : ""
+    }`;
     await axios.post(url, reqBody);
     return {
       statusCode: 201,
@@ -257,11 +259,9 @@ export const createSendAssessment = async (
       error,
     };
   }
-}
+};
 
-export const deleteSendAssessment = async (
-  formId: string, 
-) => {
+export const deleteSendAssessment = async (formId: string) => {
   try {
     await refreshToken();
     const url = `${
@@ -281,4 +281,4 @@ export const deleteSendAssessment = async (
       error,
     };
   }
-}
+};

@@ -101,11 +101,26 @@ const Routers: React.FC = (): JSX.Element => {
               path="/class/:id/document/overview/:documentId"
               element={<DocumentOverview />}
             />
-            <Route path="/class/:id/assessment" element={<AssessmentPreview />} />
-            <Route path="/class/:id/assessment/overview/:assessmentId" element={<AssessmentOverview />} />
-            <Route path="/class/:id/assessment/:assessmentId/project/:projectId/form" element={<AssessmentForm />} />
-            <Route path="/class/:id/committee" element={<MatchCommitteePreview />} />
-            <Route path="/class/:id/committee/:committeeId" element={<MatchCommitteeEdit newForm={true}/>}/>
+            <Route
+              path="/class/:id/assessment"
+              element={<AssessmentPreview />}
+            />
+            <Route
+              path="/class/:id/assessment/overview/:assessmentId"
+              element={<AssessmentOverview />}
+            />
+            <Route
+              path="/class/:id/assessment/:assessmentId/project/:projectId/form"
+              element={<AssessmentForm />}
+            />
+            <Route
+              path="/class/:id/committee"
+              element={<MatchCommitteePreview />}
+            />
+            <Route
+              path="/class/:id/committee/:committeeId"
+              element={<MatchCommitteeEdit newForm={true} />}
+            />
             <Route
               path="/class/:id/meeting-schedule"
               element={<MeetingSchedulePreview />}
@@ -125,7 +140,10 @@ const Routers: React.FC = (): JSX.Element => {
               <Route element={<HaveProjectOrDisplayNameRoute />}>
                 <Route path="/project" element={<ProjectPage />} />
                 <Route path="/document" element={<DocumentPage />} />
-                <Route path="/meeting-schedule" element={<MeetingSchedulePage />} />
+                <Route
+                  path="/meeting-schedule"
+                  element={<MeetingSchedulePage />}
+                />
                 <Route path="/assessment" element={<AssessmentPage />} />
 
                 <Route element={<StudentRoute />}>
@@ -137,7 +155,10 @@ const Routers: React.FC = (): JSX.Element => {
                     path="/meeting-schedule/:id"
                     element={<MeetingScheduleDetail isStudent={true} />}
                   />
-                  <Route path="/assessment/:assessmentId" element={<AssessmentDetail isStudent={true} />} />
+                  <Route
+                    path="/assessment/:assessmentId"
+                    element={<AssessmentDetail isStudent={true} />}
+                  />
                 </Route>
               </Route>
             </Route>

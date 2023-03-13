@@ -153,9 +153,11 @@ const DocumentPreview = observer(() => {
 
   const handleClick = async (statusInClass: number, id: string) => {
     if (statusInClass) {
-      navigate(`/class/${classroom._id as string}/document/overview/${id as string}`)
+      navigate(
+        `/class/${classroom._id as string}/document/overview/${id as string}`
+      );
     }
-  }
+  };
 
   if (notFound === 1) {
     return (
@@ -218,8 +220,7 @@ const DocumentPreview = observer(() => {
                 <MenuItem value={"name"}>ชื่อเอกสาร</MenuItem>
               </Select>
             </FormControl>
-            {
-              documents.length ?
+            {documents.length ? (
               <Button
                 sx={{
                   background: theme.color.button.primary,
@@ -233,11 +234,17 @@ const DocumentPreview = observer(() => {
                   fontSize: 16,
                   padding: "1rem",
                 }}
-                onClick={() => navigate(`/class/${classroom._id as string}/document/overview`)}
+                onClick={() =>
+                  navigate(
+                    `/class/${classroom._id as string}/document/overview`
+                  )
+                }
               >
                 ดูภาพรวม
-              </Button> : <></>
-            }
+              </Button>
+            ) : (
+              <></>
+            )}
           </Box>
 
           <DocumentStartModal
@@ -260,9 +267,9 @@ const DocumentPreview = observer(() => {
 
           <Box sx={{ flexDirection: "column", display: "flex" }}>
             {documents.map((c) => (
-              <ListPreviewButton 
-                key={c._id} 
-                sx={{ zIndex: 1 }} 
+              <ListPreviewButton
+                key={c._id}
+                sx={{ zIndex: 1 }}
                 onClick={() => handleClick(c.statusInClass, c._id)}
               >
                 <Typography

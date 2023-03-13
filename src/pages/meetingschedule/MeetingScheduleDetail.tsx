@@ -77,21 +77,20 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
 
   const getRoleInProject = async () => {
     const checkRole = await checkRoleInProject(classId, projectId);
-      if (checkRole.data) {
-        const { data } = checkRole;
-        // check role is advisor in this project or not
-        if (data.filter((e: any) => e.role === 2).length) {
-          setIsAdvisor(true);
-        } else {
-          setNotFound(0)
-          return
-        }
+    if (checkRole.data) {
+      const { data } = checkRole;
+      // check role is advisor in this project or not
+      if (data.filter((e: any) => e.role === 2).length) {
+        setIsAdvisor(true);
+      } else {
+        setNotFound(0);
+        return;
       }
-  }
+    }
+  };
 
   useEffect(() => {
-    if (isStudent && currentRole !== 0)
-      navigate('/')
+    if (isStudent && currentRole !== 0) navigate("/");
 
     if (currentRole === 1) {
       getRoleInProject();
@@ -341,7 +340,10 @@ const MeetingScheduleDetail = observer(({ isStudent }: PreviewProps) => {
                 )}
               </>
             )}
-            {!isStudent && isAdvisor && (status === 3 || status === 2 || status === 1) && currentRole === 1 ? (
+            {!isStudent &&
+            isAdvisor &&
+            (status === 3 || status === 2 || status === 1) &&
+            currentRole === 1 ? (
               <>
                 <CancelModal
                   open={open}

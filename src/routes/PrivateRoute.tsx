@@ -13,7 +13,7 @@ const PrivateRoute = observer(() => {
     return <Navigate to="/signin" />;
   }
 
-  return user.displayName ? <Outlet /> : <ProfileEdit/>;
+  return user.displayName ? <Outlet /> : <ProfileEdit />;
 });
 
 export default PrivateRoute;

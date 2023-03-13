@@ -57,7 +57,7 @@ const ClassPreview = observer(() => {
   const handleOpenCreateClassModal = () => {
     setOpen(true);
     setCurrentClass(null);
-  }
+  };
 
   const handleOpenUpdateClassModal = (currentClass: any, event: any) => {
     event.stopPropagation();
@@ -256,7 +256,7 @@ const ClassPreview = observer(() => {
                 applicationStore.setClassroom(data);
                 navigate(`/class/${data._id as string}/project`);
               }}
-              sx={{zIndex: 1}}
+              sx={{ zIndex: 1 }}
             >
               <Typography
                 sx={{
@@ -279,10 +279,14 @@ const ClassPreview = observer(() => {
               <Typography
                 sx={{
                   top: "1.5rem",
-                  right: data.complete ? "calc(33px + 1vw)" : "calc(20px + 1vw)",
+                  right: data.complete
+                    ? "calc(33px + 1vw)"
+                    : "calc(20px + 1vw)",
                   position: "absolute",
                   fontSize: "calc(30px + 0.2vw)",
-                  color: data.complete ? theme.color.text.success : theme.color.text.secondary,
+                  color: data.complete
+                    ? theme.color.text.success
+                    : theme.color.text.secondary,
                   fontWeight: 600,
                 }}
               >
@@ -306,15 +310,15 @@ const ClassPreview = observer(() => {
                     position: "absolute",
                     right: "calc(50px + 1vw)",
                     zIndex: 2,
-                    top: "4.7rem"
+                    top: "4.7rem",
                   }}
-                  onClick={(event) =>handleOpenUpdateClassModal(data, event)}
+                  onClick={(event) => handleOpenUpdateClassModal(data, event)}
                 >
                   แก้ไข
                 </EditButton>
-                ) : (
-                  <></>
-                )}
+              ) : (
+                <></>
+              )}
             </ListPreviewButton>
           ))}
         </Box>

@@ -240,7 +240,11 @@ export const updateDocument = async (
   }
 };
 
-export const listProjectSendDocumentInClass = async (documentId: null | string, classId: string, sort: string) => {
+export const listProjectSendDocumentInClass = async (
+  documentId: null | string,
+  classId: string,
+  sort: string
+) => {
   try {
     await refreshToken();
     const url = `${
@@ -262,5 +266,4 @@ export const listProjectSendDocumentInClass = async (documentId: null | string, 
       error,
     };
   }
-
-}
+};

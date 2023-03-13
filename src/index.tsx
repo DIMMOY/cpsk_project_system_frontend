@@ -41,9 +41,7 @@ onAuthStateChanged(firebaseAuth, async (user) => {
         const projectInClassRes = await findProjectInClassForStudent(
           classroom._id
         );
-        const project = projectInClassRes.data
-          ? projectInClassRes.data
-          : null;
+        const project = projectInClassRes.data ? projectInClassRes.data : null;
         applicationStore.setProject(project);
       }
     }

@@ -14,22 +14,14 @@ const HomePage = () => {
   else if (currentRole === 0 && isStudent) {
     if (classroom) {
       if (project) {
-        return (
-          <ProjectHomePreview
-            isStudent={true}
-            isCommittee={false}
-          />
-        );
+        return <ProjectHomePreview isStudent={true} isCommittee={false} />;
       } else {
-        return (
-          <ProjectEdit newProject={true}/>
-        )
+        return <ProjectEdit newProject={true} />;
       }
+    } else {
+      return <ClassJoining />;
     }
-    else {
-      return <ClassJoining/>
-    }
-  } else return <NotFound/>;
+  } else return <NotFound />;
 };
 
 export default HomePage;

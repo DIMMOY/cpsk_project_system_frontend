@@ -60,7 +60,7 @@ const AssessmentHomePreview = observer(({ isStudent }: PreviewProps) => {
       setAssessments(assessmentData.data as Array<any>);
       setNotFound(1);
     }
-  }
+  };
 
   useEffect(() => {
     getData();
@@ -109,12 +109,8 @@ const AssessmentHomePreview = observer(({ isStudent }: PreviewProps) => {
               onClick={() => {
                 navigate(
                   isStudent && currentRole === 0
-                    ? `/assessment/${
-                        data._id as string
-                      }`
-                    : `${currentPathName}/${
-                        data._id as string
-                      }`,
+                    ? `/assessment/${data._id as string}`
+                    : `${currentPathName}/${data._id as string}`,
                   {
                     replace: true,
                     state: {
@@ -122,9 +118,7 @@ const AssessmentHomePreview = observer(({ isStudent }: PreviewProps) => {
                       status: data.sendStatus,
                       detail: data.detail ? data.detail : "",
                       statusType: data.statusType,
-                      dueDate: moment(data.endDate).format(
-                        "DD/MM/YYYY HH:mm"
-                      ),
+                      dueDate: moment(data.endDate).format("DD/MM/YYYY HH:mm"),
                     },
                   }
                 );
@@ -159,7 +153,13 @@ const AssessmentHomePreview = observer(({ isStudent }: PreviewProps) => {
                   fontWeight: 600,
                 }}
               >
-                {`ประเมินโดย ${data.assessBy === 0 ? 'อาจารย์ที่ปรึกษาและกรรมการคุมสอบ' : data.assessBy === 1 ? 'อาจารย์ที่ปรึกษา' : 'กรรมการคุมสอบ'}`} 
+                {`ประเมินโดย ${
+                  data.assessBy === 0
+                    ? "อาจารย์ที่ปรึกษาและกรรมการคุมสอบ"
+                    : data.assessBy === 1
+                    ? "อาจารย์ที่ปรึกษา"
+                    : "กรรมการคุมสอบ"
+                }`}
               </Typography>
             </ListPreviewButton>
           ))}

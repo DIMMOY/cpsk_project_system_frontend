@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Box, IconButton, SelectChangeEvent, Table, TableBody, TableCell, TableHead, TableRow, Typography, MenuItem, InputLabel, FormControl, Select } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  SelectChangeEvent,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Select,
+} from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AdminCommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
 import { useMediaQuery } from "react-responsive";
@@ -35,9 +49,7 @@ const DocumentAllOverview = observer(() => {
     )
       ? search.get("sort")
       : "nameTH";
-  const [sortSelect, setSortSelect] = useState<string>(
-    sortCheck || "nameTH"
-  );
+  const [sortSelect, setSortSelect] = useState<string>(sortCheck || "nameTH");
   const [notFound, setNotFound] = useState<number>(2);
 
   const isBigScreen = useMediaQuery({ query: "(min-width: 900px)" });
@@ -53,7 +65,11 @@ const DocumentAllOverview = observer(() => {
   const classId = pathname[2];
 
   const getData = async () => {
-    const sendDocumentData = await listProjectSendDocumentInClass(null, classId, sortSelect);
+    const sendDocumentData = await listProjectSendDocumentInClass(
+      null,
+      classId,
+      sortSelect
+    );
 
     if (!sendDocumentData?.data) {
       setNotFound(0);
@@ -89,16 +105,20 @@ const DocumentAllOverview = observer(() => {
     });
   };
 
-
   if (notFound === 1) {
     return (
       <AdminCommonPreviewContainer>
         <Sidebar />
         <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-          <Box sx={{ display: "flex", padding: "0 auto", alignItems: "center", marginBottom: "1.25rem" }}>
-            <Link
-              to={`/class/${classId}/document`}
-            >
+          <Box
+            sx={{
+              display: "flex",
+              padding: "0 auto",
+              alignItems: "center",
+              marginBottom: "1.25rem",
+            }}
+          >
+            <Link to={`/class/${classId}/document`}>
               <IconButton
                 disableRipple
                 sx={{
@@ -113,63 +133,110 @@ const DocumentAllOverview = observer(() => {
               </IconButton>
             </Link>
 
-            <Typography sx={{ color: theme.color.text.primary, fontSize: "calc(30px + 0.2vw)", fontWeight: 600, }}> 
+            <Typography
+              sx={{
+                color: theme.color.text.primary,
+                fontSize: "calc(30px + 0.2vw)",
+                fontWeight: 600,
+              }}
+            >
               ภาพรวม เอกสาร
             </Typography>
           </Box>
 
-          <Box sx={{ maxWidth: isBigScreen ? "80%" : "100%", overflowX: "auto", maxHeight: 700 }}>
+          <Box
+            sx={{
+              maxWidth: isBigScreen ? "80%" : "100%",
+              overflowX: "auto",
+              maxHeight: 700,
+            }}
+          >
             <Table stickyHeader>
               <TableHead>
-                <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: 300, fontWeight: 600}}>โปรเจกต์</TableCell>
-                {
-                  documents.map((data: any) => (
-                    <TableCell 
-                      key={data._id} 
-                      align="center" 
-                      sx={{fontSize: 20, color: theme.color.text.secondary, width: 100, fontWeight: 600}}
-                    >
-                      {data.name}
-                    </TableCell>
-                  ))
-                }
+                <TableCell
+                  sx={{
+                    fontSize: 20,
+                    color: theme.color.text.secondary,
+                    width: 300,
+                    fontWeight: 600,
+                  }}
+                >
+                  โปรเจกต์
+                </TableCell>
+                {documents.map((data: any) => (
+                  <TableCell
+                    key={data._id}
+                    align="center"
+                    sx={{
+                      fontSize: 20,
+                      color: theme.color.text.secondary,
+                      width: 100,
+                      fontWeight: 600,
+                    }}
+                  >
+                    {data.name}
+                  </TableCell>
+                ))}
               </TableHead>
               <TableBody>
-                {
-                  projects.map((data) => (
-                    <TableRow 
-                      key={data._id}
+                {projects.map((data) => (
+                  <TableRow
+                    key={data._id}
+                    sx={{
+                      "&:hover": { background: theme.color.button.default },
+                    }}
+                    onClick={() =>
+                      navigate(
+                        `/class/${classId}/project/${
+                          data._id as string
+                        }/document`
+                      )
+                    }
+                  >
+                    <TableCell
                       sx={{
-                        "&:hover": { background: theme.color.button.default },
+                        fontSize: 18,
+                        color: theme.color.text.secondary,
+                        fontWeight: 500,
                       }}
-                      onClick={() => navigate(`/class/${classId}/project/${data._id as string}/document`)}
                     >
-                      <TableCell sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}>
-                        {data.nameTH}
+                      {data.nameTH}
+                    </TableCell>
+                    {documents.map((document) => (
+                      <TableCell
+                        key={data._id + document._id}
+                        align="center"
+                        sx={{
+                          fontSize: 20,
+                          color: data.document.find(
+                            (e: any) =>
+                              e._id.toString() === document._id.toString()
+                          )
+                            ? statusList[
+                                data.document.find(
+                                  (e: any) =>
+                                    e._id.toString() === document._id.toString()
+                                ).sendStatus
+                              ].color
+                            : statusList[0].color,
+                          fontWeight: 600,
+                        }}
+                      >
+                        {data.document.find(
+                          (e: any) =>
+                            e._id.toString() === document._id.toString()
+                        )
+                          ? statusList[
+                              data.document.find(
+                                (e: any) =>
+                                  e._id.toString() === document._id.toString()
+                              ).sendStatus
+                            ].message
+                          : statusList[0].message}
                       </TableCell>
-                      {
-                        documents.map((document) => (
-                          <TableCell 
-                            key={data._id + document._id} 
-                            align="center" 
-                            sx={{
-                              fontSize: 20, 
-                              color: data.document.find((e: any) => e._id.toString() === document._id.toString()) ? 
-                                statusList[data.document.find((e: any) => e._id.toString() === document._id.toString()).sendStatus].color : 
-                                statusList[0].color, 
-                              fontWeight: 600
-                            }}>
-                            {data.document.find((e: any) => e._id.toString() === document._id.toString()) ? 
-                              statusList[data.document.find((e: any) => e._id.toString() === document._id.toString()).sendStatus].message : 
-                              statusList[0].message
-                            }
-                          </TableCell>
-                        ))
-                      }
-                    </TableRow>
-                  ))
-                }
-                
+                    ))}
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </Box>

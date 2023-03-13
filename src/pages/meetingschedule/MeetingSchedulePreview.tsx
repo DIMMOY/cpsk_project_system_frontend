@@ -154,9 +154,13 @@ const MeetingSchedulePreview = observer(() => {
 
   const handleClick = async (statusInClass: number, id: string) => {
     if (statusInClass) {
-      navigate(`/class/${classroom._id as string}/meeting-schedule/overview/${id as string}`)
+      navigate(
+        `/class/${classroom._id as string}/meeting-schedule/overview/${
+          id as string
+        }`
+      );
     }
-  }
+  };
 
   if (notFound === 1) {
     return (
@@ -219,26 +223,33 @@ const MeetingSchedulePreview = observer(() => {
                 <MenuItem value={"name"}>ชื่อเอกสาร</MenuItem>
               </Select>
             </FormControl>
-            {
-              meetingSchedules.length ? 
+            {meetingSchedules.length ? (
               <Button
-              sx={{
-                background: theme.color.button.primary,
-                color: theme.color.text.default,
-                borderRadius: "10px",
-                boxShadow: "none",
-                textTransform: "none",
-                "&:hover": { background: "#B07CFF" },
-                height: 45,
-                weight: 42,
-                fontSize: 16,
-                padding: "1rem",
-              }}
-              onClick={() => navigate(`/class/${classroom._id as string}/meeting-schedule/overview`)}
+                sx={{
+                  background: theme.color.button.primary,
+                  color: theme.color.text.default,
+                  borderRadius: "10px",
+                  boxShadow: "none",
+                  textTransform: "none",
+                  "&:hover": { background: "#B07CFF" },
+                  height: 45,
+                  weight: 42,
+                  fontSize: 16,
+                  padding: "1rem",
+                }}
+                onClick={() =>
+                  navigate(
+                    `/class/${
+                      classroom._id as string
+                    }/meeting-schedule/overview`
+                  )
+                }
               >
                 ดูภาพรวม
-              </Button> : <></>
-            }
+              </Button>
+            ) : (
+              <></>
+            )}
           </Box>
 
           <MeetingScheduleStartModal

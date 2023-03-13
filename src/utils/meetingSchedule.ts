@@ -269,7 +269,11 @@ export const changeStatusMeetingSchedule = async (
   }
 };
 
-export const listProjectSendMeetingScheduleInClass = async (mtId: null | string, classId: string, sort: string) => {
+export const listProjectSendMeetingScheduleInClass = async (
+  mtId: null | string,
+  classId: string,
+  sort: string
+) => {
   try {
     await refreshToken();
     const url = `${
@@ -287,8 +291,9 @@ export const listProjectSendMeetingScheduleInClass = async (mtId: null | string,
     return {
       statusCode: 400,
       message: "List project send meeting schedule in class error",
-      errorMsg: "ค้นหา project send meeting schedule ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      errorMsg:
+        "ค้นหา project send meeting schedule ผิดพลาด กรุณาลองใหม่ในภายหลัง",
       error,
     };
   }
-}
+};

@@ -13,58 +13,75 @@ import LeaveClassModal from "../../components/Modal/LeaveClassModal";
 
 const ProfileEdit = () => {
   const { user, currentRole, classroom, project } = applicationStore;
-  const profile = 
-    user && user.photoURL
-      ? user.photoURL
-      : defaultProfile
+  const profile = user && user.photoURL ? user.photoURL : defaultProfile;
 
   const displayName = applicationStore.user?.displayName?.split(" ");
-  const [name, setName] = useState<string>(displayName && displayName[0] ? displayName[0] : '');
-  const [surname, setSurname] = useState<string>(displayName && displayName[1] ? displayName[1] : '');
+  const [name, setName] = useState<string>(
+    displayName && displayName[0] ? displayName[0] : ""
+  );
+  const [surname, setSurname] = useState<string>(
+    displayName && displayName[1] ? displayName[1] : ""
+  );
   const [loading, setLoading] = useState<boolean>(false);
-  const [openLeaveProjectModal, setOpenLeaveProjectModal] = useState<boolean>(false);
-  const [openLeaveClassModal, setOpenLeaveClassModal] = useState<boolean>(false);
+  const [openLeaveProjectModal, setOpenLeaveProjectModal] =
+    useState<boolean>(false);
+  const [openLeaveClassModal, setOpenLeaveClassModal] =
+    useState<boolean>(false);
   const navigate = useNavigate();
-  
+
   const handleNameChange = (name: string) => {
     const regex = /^[\u0E00-\u0E7F]*$/;
     if (regex.test(name)) {
       setName(name);
     }
-  }
+  };
 
   const handleSurNameChange = (surname: string) => {
     const regex = /^[\u0E00-\u0E7F]*$/;
     if (regex.test(surname)) {
       setSurname(surname);
     }
-  }
+  };
 
   const handleSubmit = async () => {
-    setLoading(true)
+    setLoading(true);
     const res = await updateUser(name, surname);
     if (res.statusCode !== 200) {
       setTimeout(() => {
-        setLoading(false)
-      }, 1000)
+        setLoading(false);
+      }, 1000);
       return;
     }
 
     setTimeout(() => {
       setLoading(false);
       applicationStore.setUser({ ...user, displayName: `${name} ${surname}` });
-      navigate('/');
-    }, 1000)
-  }
+      navigate("/");
+    }, 1000);
+  };
 
   return (
     <CommonPreviewContainer>
-      <Box sx={{ display: "flex", justifyContent: "center", flexDirection: "column"}}>
-        <Box sx={{ display: "flex", justifyContent: "center", marginTop: "2rem", flexDirection: "column", alignItems: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "2rem",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
           <img
-            style={{ 
-              width: "10rem", 
-              height: "10rem", 
+            style={{
+              width: "10rem",
+              height: "10rem",
               borderRadius: "50%",
               border: `10px solid ${theme.color.background.primary}`,
               marginBottom: "2rem",
@@ -72,7 +89,7 @@ const ProfileEdit = () => {
             src={profile}
             alt="profile"
           />
-        
+
           <Typography
             sx={{
               fontSize: 30,
@@ -163,39 +180,45 @@ const ProfileEdit = () => {
             ยืนยัน
           </LoadingButton>
 
-          <Box sx={{display: "flex", justifyContent: "center", flexDirection: "column"}}>
-            {
-              currentRole === 0 && project ?
-                <>
-                  <CancelButton 
-                    sx={{width: "12rem", marginTop: "10rem",}}
-                    onClick={() => setOpenLeaveProjectModal(true)}
-                  >
-                      ออกจากโปรเจกต์
-                  </CancelButton>
-                  <LeaveProjectModal
-                    open={openLeaveProjectModal}
-                    onClose={() => setOpenLeaveProjectModal(false)}
-                  />
-                </> : 
-                <></>   
-            }
-            {
-              currentRole === 0 && !project && classroom ?
-                  <>
-                    <CancelButton 
-                      sx={{width: "12rem", marginTop: "10rem",}}
-                      onClick={() => setOpenLeaveClassModal(true)}
-                    >
-                      ออกจากคลาส
-                    </CancelButton>
-                    <LeaveClassModal
-                      open={openLeaveClassModal}
-                      onClose={() => setOpenLeaveClassModal(false)}
-                    />
-                  </> : 
-                <></>         
-            }
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}
+          >
+            {currentRole === 0 && project ? (
+              <>
+                <CancelButton
+                  sx={{ width: "12rem", marginTop: "10rem" }}
+                  onClick={() => setOpenLeaveProjectModal(true)}
+                >
+                  ออกจากโปรเจกต์
+                </CancelButton>
+                <LeaveProjectModal
+                  open={openLeaveProjectModal}
+                  onClose={() => setOpenLeaveProjectModal(false)}
+                />
+              </>
+            ) : (
+              <></>
+            )}
+            {currentRole === 0 && !project && classroom ? (
+              <>
+                <CancelButton
+                  sx={{ width: "12rem", marginTop: "10rem" }}
+                  onClick={() => setOpenLeaveClassModal(true)}
+                >
+                  ออกจากคลาส
+                </CancelButton>
+                <LeaveClassModal
+                  open={openLeaveClassModal}
+                  onClose={() => setOpenLeaveClassModal(false)}
+                />
+              </>
+            ) : (
+              <></>
+            )}
           </Box>
         </Box>
       </Box>

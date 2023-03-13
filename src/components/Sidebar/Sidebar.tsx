@@ -23,7 +23,6 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import GradingIcon from "@mui/icons-material/Grading";
 import PeopleIcon from "@mui/icons-material/People";
 
-
 const Sidebar = observer(() => {
   const { pathname } = window.location;
   const navigate = useNavigate();

@@ -1,16 +1,16 @@
-import * as XLSX from 'xlsx';
+import * as XLSX from "xlsx";
 
 export const exportXLSX = (
-  heading: Array<string>, 
-  datasheet: Array<any>, 
-  fileName: string, 
+  heading: Array<string>,
+  datasheet: Array<any>,
+  fileName: string,
   wrap?: Array<number> | null,
-  title?: Array<any>,
+  title?: Array<any>
 ) => {
   let excel = [heading, ...datasheet];
 
   if (title) {
-    excel = [...title, ...excel]
+    excel = [...title, ...excel];
   }
 
   const wb = XLSX.utils.book_new();
@@ -18,7 +18,7 @@ export const exportXLSX = (
   XLSX.utils.book_append_sheet(wb, ws, fileName);
 
   if (wrap && Object.keys(ws).length > 0) {
-    const range = XLSX.utils.decode_range(ws['!ref'] as string);
+    const range = XLSX.utils.decode_range(ws["!ref"] as string);
     wrap.forEach((col: number) => {
       for (let row = range.s.r + 1; row <= range.e.r; row++) {
         const cell = XLSX.utils.encode_cell({ r: row, c: col });
@@ -30,7 +30,6 @@ export const exportXLSX = (
       }
     });
   }
-  
 
-  XLSX.writeFile(wb, fileName.concat('.xlsx'))
-}
+  XLSX.writeFile(wb, fileName.concat(".xlsx"));
+};

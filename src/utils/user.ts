@@ -43,7 +43,9 @@ export const listUser = async (reqQuery: any) => {
 export const listStudentInClass = async (classId: string, project: string) => {
   try {
     await refreshToken();
-    const result = await axios.get(`${url}/class/${classId}`, { params: { project }});
+    const result = await axios.get(`${url}/class/${classId}`, {
+      params: { project },
+    });
     return {
       data: result.data.data,
     };
@@ -107,9 +109,9 @@ export const updateUser = async (name: string, surname: string) => {
       statusCode: 400,
       message: "Update user error",
       errorMsg: error.response.data.message,
-    }
+    };
   }
-}
+};
 
 export const joinClass = async (reqBody: any) => {
   try {

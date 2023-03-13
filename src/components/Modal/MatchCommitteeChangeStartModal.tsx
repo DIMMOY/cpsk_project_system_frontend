@@ -5,7 +5,10 @@ import Modal from "@mui/material/Modal";
 import { useMediaQuery } from "react-responsive";
 import moment from "moment";
 import { theme } from "../../styles/theme";
-import { changeStartDateOfMatchCommitteeInProject, setDateMatchCommittee } from "../../utils/matchCommittee";
+import {
+  changeStartDateOfMatchCommitteeInProject,
+  setDateMatchCommittee,
+} from "../../utils/matchCommittee";
 
 interface ModalProps {
   open: boolean;

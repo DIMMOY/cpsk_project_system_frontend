@@ -1,7 +1,10 @@
 import axios from "axios";
 import { refreshToken } from "./auth";
 
-export const createMatchCommitteeInClass = async (classId: string, name: string) => {
+export const createMatchCommitteeInClass = async (
+  classId: string,
+  name: string
+) => {
   try {
     await refreshToken();
     const url = `${
@@ -24,34 +27,34 @@ export const createMatchCommitteeInClass = async (classId: string, name: string)
 };
 
 export const listMatchCommitteeInClass = async (
-    reqQuery: any,
-    classId: string
-  ) => {
-    try {
-      await refreshToken();
-      const url = `${
-        process.env.REACT_APP_API_BASE_URL_CLIENT as string
-      }/class/${classId}/committee`;
-      const resAxios = await axios.get(url, { params: reqQuery });
-      return {
-        statusCode: resAxios.data.statusCode,
-        message: resAxios.data.message,
-        data: resAxios.data.data,
-      };
-    } catch (error) {
-      console.error(error);
-      return {
-        statusCode: 400,
-        message: "List match committee error",
-        errorMsg: "ค้นหา match committee ในคลาสผิดพลาด กรุณาลองใหม่ในภายหลัง",
-        error,
-      };
-    }
-  };
+  reqQuery: any,
+  classId: string
+) => {
+  try {
+    await refreshToken();
+    const url = `${
+      process.env.REACT_APP_API_BASE_URL_CLIENT as string
+    }/class/${classId}/committee`;
+    const resAxios = await axios.get(url, { params: reqQuery });
+    return {
+      statusCode: resAxios.data.statusCode,
+      message: resAxios.data.message,
+      data: resAxios.data.data,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 400,
+      message: "List match committee error",
+      errorMsg: "ค้นหา match committee ในคลาสผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      error,
+    };
+  }
+};
 
 export const getMatchCommitteeInClass = async (
   classId: string,
-  committeeId: string,
+  committeeId: string
 ) => {
   try {
     await refreshToken();
@@ -75,7 +78,11 @@ export const getMatchCommitteeInClass = async (
   }
 };
 
-export const createMatchCommitteeHasGroupInClass = async (classId: string, committeeId: string, userId: Array<string>) => {
+export const createMatchCommitteeHasGroupInClass = async (
+  classId: string,
+  committeeId: string,
+  userId: Array<string>
+) => {
   try {
     await refreshToken();
     const url = `${
@@ -97,7 +104,11 @@ export const createMatchCommitteeHasGroupInClass = async (classId: string, commi
   }
 };
 
-export const deleteMatchCommitteeHasGroupInClass = async (classId: string, committeeId: string, groupId: string) => {
+export const deleteMatchCommitteeHasGroupInClass = async (
+  classId: string,
+  committeeId: string,
+  groupId: string
+) => {
   try {
     await refreshToken();
     const url = `${
@@ -119,18 +130,22 @@ export const deleteMatchCommitteeHasGroupInClass = async (classId: string, commi
   }
 };
 
-export const createMatchCommitteeHasGroupToProject = async (classId: string, committeeId: string, groudId: string, createP: Array<string>, deleteP: Array<string>) => {
+export const createMatchCommitteeHasGroupToProject = async (
+  classId: string,
+  committeeId: string,
+  groudId: string,
+  createP: Array<string>,
+  deleteP: Array<string>
+) => {
   try {
     await refreshToken();
     const url = `${
       process.env.REACT_APP_API_BASE_URL_CLIENT as string
     }/class/${classId}/committee/${committeeId}/group/${groudId}`;
-    const resAxios = await axios.post(url, 
-      { 
-        createInGroup: createP,
-        deleteInGroup: deleteP,
-      }
-    );
+    const resAxios = await axios.post(url, {
+      createInGroup: createP,
+      deleteInGroup: deleteP,
+    });
     return {
       statusCode: resAxios.data.statusCode,
       message: resAxios.data.message,
@@ -140,7 +155,8 @@ export const createMatchCommitteeHasGroupToProject = async (classId: string, com
     return {
       statusCode: 400,
       message: "Create match committee has group to project error",
-      errorMsg: "สร้าง match committee has group to project ผิดพลาด กรุณาลองใหม่ในภายหลัง",
+      errorMsg:
+        "สร้าง match committee has group to project ผิดพลาด กรุณาลองใหม่ในภายหลัง",
       error,
     };
   }
@@ -169,11 +185,17 @@ export const setDateMatchCommittee = async (reqBody: any) => {
   }
 };
 
-export const changeStartDateOfMatchCommitteeInProject = async (reqBody: any) => {
+export const changeStartDateOfMatchCommitteeInProject = async (
+  reqBody: any
+) => {
   try {
     await refreshToken();
     const { startDate, projectId, matchCommitteeId } = reqBody;
-    const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/project/${projectId as string}/committee/${matchCommitteeId as string}/date`;
+    const url = `${
+      process.env.REACT_APP_API_BASE_URL_CLIENT as string
+    }/project/${projectId as string}/committee/${
+      matchCommitteeId as string
+    }/date`;
     await axios.patch(url, { startDate });
     return {
       statusCode: 200,

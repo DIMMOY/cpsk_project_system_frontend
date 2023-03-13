@@ -16,7 +16,12 @@ interface ModalProps {
   currentClass: any;
 }
 
-const ClassCreateModal = ({ open, onClose, refresh, currentClass }: ModalProps) => {
+const ClassCreateModal = ({
+  open,
+  onClose,
+  refresh,
+  currentClass,
+}: ModalProps) => {
   const [majorSelect, setMajorSelect] = useState<string>("ALL");
   const [className, setClassName] = useState<string | null>(null);
   const [completeSelect, setCompleteSelect] = useState<string>("false");
@@ -36,7 +41,7 @@ const ClassCreateModal = ({ open, onClose, refresh, currentClass }: ModalProps) 
         setCompleteSelect("false");
       }
     }
-  }, [open, currentClass])
+  }, [open, currentClass]);
 
   const handleClassNameChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -47,12 +52,12 @@ const ClassCreateModal = ({ open, onClose, refresh, currentClass }: ModalProps) 
 
   const handleMajorSelectChange = (event: SelectChangeEvent) => {
     setMajorSelect(event.target.value as string);
-    if (currentClass) setCanSubmit(true)
+    if (currentClass) setCanSubmit(true);
   };
 
   const handleCompleteSelectChange = (event: SelectChangeEvent) => {
     setCompleteSelect(event.target.value as string);
-    if (currentClass) setCanSubmit(true)
+    if (currentClass) setCanSubmit(true);
   };
 
   const handleSubmitClass = async () => {
@@ -71,7 +76,7 @@ const ClassCreateModal = ({ open, onClose, refresh, currentClass }: ModalProps) 
         return;
       }
     } else {
-      res = await updateClass(currentClass._id, reqBody)
+      res = await updateClass(currentClass._id, reqBody);
       if (res.statusCode !== 200) {
         console.error(res.errorMsg);
         return;
@@ -175,8 +180,8 @@ const ClassCreateModal = ({ open, onClose, refresh, currentClass }: ModalProps) 
             }}
             onChange={handleClassNameChange}
           />
-          <Box sx={{ display: "flex", flexDirection: "row"}}>
-            <Box sx={{marginRight: "1.5rem"}}>
+          <Box sx={{ display: "flex", flexDirection: "row" }}>
+            <Box sx={{ marginRight: "1.5rem" }}>
               <Typography
                 id="class-description"
                 sx={{
@@ -209,9 +214,8 @@ const ClassCreateModal = ({ open, onClose, refresh, currentClass }: ModalProps) 
                 </Select>
               </FormControl>
             </Box>
-            {
-              currentClass ?
-                <Box>
+            {currentClass ? (
+              <Box>
                 <Typography
                   id="class-description"
                   sx={{
@@ -242,9 +246,10 @@ const ClassCreateModal = ({ open, onClose, refresh, currentClass }: ModalProps) 
                     <MenuItem value={"true"}>เสร็จสิ้น</MenuItem>
                   </Select>
                 </FormControl>
-                </Box> :
-                <></>
-            }
+              </Box>
+            ) : (
+              <></>
+            )}
           </Box>
           <Button
             onClick={handleCancel}

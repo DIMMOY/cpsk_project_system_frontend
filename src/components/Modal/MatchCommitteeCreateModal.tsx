@@ -53,9 +53,9 @@ const MatchCommitteeCreateModal = ({
   };
   const handleSubmit = async () => {
     setLoading(true);
-    const res = await createMatchCommitteeInClass(classId, matchCommitteeName)
+    const res = await createMatchCommitteeInClass(classId, matchCommitteeName);
     if (res.statusCode !== 201) {
-      console.error(res.error)
+      console.error(res.error);
     }
     setTimeout(() => {
       onClose();

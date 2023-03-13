@@ -12,10 +12,7 @@ interface ModalProps {
   onClose: () => void;
 }
 
-const LeaveProjectModal = ({
-  open,
-  onClose,
-}: ModalProps) => {
+const LeaveProjectModal = ({ open, onClose }: ModalProps) => {
   const [text, setText] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { project, classroom } = applicationStore;
@@ -24,20 +21,20 @@ const LeaveProjectModal = ({
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-      setText(event.target.value as string);
-    };
+    setText(event.target.value as string);
+  };
 
   const handleSubmit = async () => {
     setLoading(true);
-    const res = await leaveProject(classroom._id, project._id)
+    const res = await leaveProject(classroom._id, project._id);
     if (res.statusCode !== 200) {
-      console.error(res.error)
+      console.error(res.error);
     } else {
       applicationStore.setProject(null);
     }
     setTimeout(() => {
       onClose();
-      navigate('/');
+      navigate("/");
     }, 1000);
     setTimeout(() => {
       setText("");

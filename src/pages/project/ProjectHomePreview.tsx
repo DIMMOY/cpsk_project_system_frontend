@@ -5,7 +5,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import GroupsIcon from "@mui/icons-material/Groups";
 import GradingIcon from "@mui/icons-material/Grading";
 import { ProjectPreviewButton } from "../../styles/layout/_button";
-import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsIcon from "@mui/icons-material/Settings";
 import { useMediaQuery } from "react-responsive";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -49,7 +49,6 @@ const ProjectHomePreview = observer(
       ? window.location.pathname.slice(0, -1)
       : window.location.pathname;
 
-
     useEffect(() => {
       async function getData() {
         const pathname = currentPathName.split("/");
@@ -59,10 +58,12 @@ const ProjectHomePreview = observer(
         if (checkRole.data) {
           const { data } = checkRole;
           // check role is advisor in this project or not
-          setIsAdvisor(data.filter((e: any) => e.role === 2).length ? true : false)
+          setIsAdvisor(
+            data.filter((e: any) => e.role === 2).length ? true : false
+          );
         }
         const projectData = await findProjectInClass(classId, projectId);
-        console.log(projectData.data)
+        console.log(projectData.data);
         if (!projectData.data) {
           setNotFound(0);
         } else {
@@ -79,19 +80,29 @@ const ProjectHomePreview = observer(
         setDescription(project.description);
         if (project.committees && project.committees.length) {
           const today = new Date();
-          const mergeMatchCommitee: any = {}
-          const filterCommittees = project.committees.filter((data: any) => 
-            {
-              const startDate = new Date(data.matchCommitteeId.startDate);
-              return startDate.getTime() > today.getTime() && startDate.getTime() - today.getTime() <= 604800000
-            }
-          )
+          const mergeMatchCommitee: any = {};
+          const filterCommittees = project.committees.filter((data: any) => {
+            const startDate = new Date(data.matchCommitteeId.startDate);
+            return (
+              startDate.getTime() > today.getTime() &&
+              startDate.getTime() - today.getTime() <= 604800000
+            );
+          });
           filterCommittees.forEach((data: any) => {
-            mergeMatchCommitee[data.matchCommitteeId._id] = mergeMatchCommitee[data.matchCommitteeId._id] ?
-              [...mergeMatchCommitee[data.matchCommitteeId._id], data] : [(new Date(data.matchCommitteeId.startDate)).getTime(), data.matchCommitteeId.name,data]
-          })
-          const sortMatchCommittee = Object.values(mergeMatchCommitee).sort((a: any, b: any) => a[0] - b[0])
-          setCommittees(sortMatchCommittee)
+            mergeMatchCommitee[data.matchCommitteeId._id] = mergeMatchCommitee[
+              data.matchCommitteeId._id
+            ]
+              ? [...mergeMatchCommitee[data.matchCommitteeId._id], data]
+              : [
+                  new Date(data.matchCommitteeId.startDate).getTime(),
+                  data.matchCommitteeId.name,
+                  data,
+                ];
+          });
+          const sortMatchCommittee = Object.values(mergeMatchCommitee).sort(
+            (a: any, b: any) => a[0] - b[0]
+          );
+          setCommittees(sortMatchCommittee);
         }
         setNotFound(1);
       } else {
@@ -107,21 +118,20 @@ const ProjectHomePreview = observer(
       return (
         <ProjectPreviewContainer>
           <ProjectPreviewDetail>
-            {
-              currentRole === 0 ? 
-              <IconButton 
+            {currentRole === 0 ? (
+              <IconButton
                 sx={{
                   position: "absolute",
                   right: "1rem",
-                  top: "1rem"
+                  top: "1rem",
                 }}
-                onClick={() => navigate('/project')}
+                onClick={() => navigate("/project")}
               >
                 <SettingsIcon fontSize="large"></SettingsIcon>
               </IconButton>
-              :
+            ) : (
               <></>
-            }
+            )}
             <Typography
               sx={{
                 fontSize: isMidScreen ? 45 : 30,
@@ -146,43 +156,52 @@ const ProjectHomePreview = observer(
             >
               {nameEN}
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column"}}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography
                 sx={{
                   fontSize: isMidScreen ? 30 : 20,
                   fontWeight: 500,
                   color: theme.color.text.secondary,
-                  
                 }}
               >
-                {`${showMore && description.length > maxLength ? `${description.slice(0, 200)}...` : description}`}
+                {`${
+                  showMore && description.length > maxLength
+                    ? `${description.slice(0, 200)}...`
+                    : description
+                }`}
               </Typography>
-              {
-                showMore && description.length > maxLength ?
+              {showMore && description.length > maxLength ? (
                 <Typography
                   sx={{
                     fontSize: isMidScreen ? 30 : 20,
                     fontWeight: 500,
                     color: theme.color.text.primary,
                     cursor: "pointer",
-                    textDecoration: 'underline',
+                    textDecoration: "underline",
                     width: "7rem",
                   }}
                   onClick={() => setShowMore(false)}
                 >
-                เพิ่มเติม
-              </Typography> : <></>
-              }
+                  เพิ่มเติม
+                </Typography>
+              ) : (
+                <></>
+              )}
             </Box>
-            { 
-              committees.length && currentRole === 0 ?
-              <Box sx={{ display: "flex", flexDirection: "column", marginTop: "1rem"}}>
+            {committees.length && currentRole === 0 ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  marginTop: "1rem",
+                }}
+              >
                 <Typography
                   sx={{
                     fontSize: isMidScreen ? 30 : 20,
                     fontWeight: 500,
                     color: theme.color.text.error,
-                    marginRight: "1.25rem"
+                    marginRight: "1.25rem",
                   }}
                 >
                   มีรายละเอียดการสอบเข้ามาใหม่ !
@@ -192,23 +211,32 @@ const ProjectHomePreview = observer(
                     fontSize: isMidScreen ? 20 : 15,
                     fontWeight: 500,
                     color: theme.color.text.secondary,
-                    marginRight: "1.25rem"
+                    marginRight: "1.25rem",
                   }}
                 >
-                  {`${committees[0][1] as string} วันที่ ${moment(committees[0][0]).format("DD/MM/YYYY HH:mm น.")}`}
+                  {`${committees[0][1] as string} วันที่ ${moment(
+                    committees[0][0]
+                  ).format("DD/MM/YYYY HH:mm น.")}`}
                 </Typography>
                 <Typography
                   sx={{
                     fontSize: isMidScreen ? 20 : 15,
                     fontWeight: 500,
                     color: theme.color.text.secondary,
-                    marginRight: "1.25rem"
+                    marginRight: "1.25rem",
                   }}
                 >
-                  {`กรรมการ: ${committees[0].slice(2).map((data: any) => data.displayName).join(', ') as string}`}
+                  {`กรรมการ: ${
+                    committees[0]
+                      .slice(2)
+                      .map((data: any) => data.displayName)
+                      .join(", ") as string
+                  }`}
                 </Typography>
-              </Box> : <></>
-            }
+              </Box>
+            ) : (
+              <></>
+            )}
           </ProjectPreviewDetail>
           <Box sx={{ textAlign: "center" }}>
             <Link
@@ -247,11 +275,14 @@ const ProjectHomePreview = observer(
                 </ProjectPreviewButton>
               </Link>
             )}
-            <Link to={
-                  currentRole === 0
-                    ? "/assessment"
-                    : `${currentPathName}/assessment`
-                } style={{ textDecoration: "none" }}>
+            <Link
+              to={
+                currentRole === 0
+                  ? "/assessment"
+                  : `${currentPathName}/assessment`
+              }
+              style={{ textDecoration: "none" }}
+            >
               <ProjectPreviewButton
                 isBigScreen={isBigScreen}
                 onClick={scrollTop}

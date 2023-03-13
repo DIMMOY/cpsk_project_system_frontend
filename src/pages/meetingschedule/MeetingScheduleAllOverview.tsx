@@ -1,5 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Box, IconButton, SelectChangeEvent, Table, TableBody, TableCell, TableHead, TableRow, Typography, MenuItem, InputLabel, FormControl, Select, TableContainer } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  SelectChangeEvent,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Select,
+  TableContainer,
+} from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AdminCommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
 import { useMediaQuery } from "react-responsive";
@@ -9,7 +24,10 @@ import { theme } from "../../styles/theme";
 import { observer } from "mobx-react";
 import NotFound from "../other/NotFound";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { listMeetingScheduleInClass, listProjectSendMeetingScheduleInClass } from "../../utils/meetingSchedule";
+import {
+  listMeetingScheduleInClass,
+  listProjectSendMeetingScheduleInClass,
+} from "../../utils/meetingSchedule";
 
 const MeetingScheduleAllOverview = observer(() => {
   const navigate = useNavigate();
@@ -33,9 +51,7 @@ const MeetingScheduleAllOverview = observer(() => {
     )
       ? search.get("sort")
       : "nameTH";
-  const [sortSelect, setSortSelect] = useState<string>(
-    sortCheck || "nameTH"
-  );
+  const [sortSelect, setSortSelect] = useState<string>(sortCheck || "nameTH");
   const [notFound, setNotFound] = useState<number>(2);
 
   const isBigScreen = useMediaQuery({ query: "(min-width: 900px)" });
@@ -50,7 +66,8 @@ const MeetingScheduleAllOverview = observer(() => {
   const classId = pathname[2];
 
   const getData = async () => {
-    const sendMeetingScheduletData = await listProjectSendMeetingScheduleInClass(null, classId, sortSelect);
+    const sendMeetingScheduletData =
+      await listProjectSendMeetingScheduleInClass(null, classId, sortSelect);
 
     if (!sendMeetingScheduletData?.data) {
       setNotFound(0);
@@ -77,7 +94,7 @@ const MeetingScheduleAllOverview = observer(() => {
     // if (!applicationStore.classroom)
     applicationStore.setIsShowMenuSideBar(true);
     getData();
-    setNotFound(1)
+    setNotFound(1);
   }, [sortSelect]);
 
   const handleSortChange = (event: SelectChangeEvent) => {
@@ -88,16 +105,20 @@ const MeetingScheduleAllOverview = observer(() => {
     });
   };
 
-
   if (notFound === 1) {
     return (
       <AdminCommonPreviewContainer>
         <Sidebar />
         <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-          <Box sx={{ display: "flex", padding: "0 auto", alignItems: "center", marginBottom: "1.25rem" }}>
-            <Link
-              to={`/class/${classId}/meeting-schedule`}
-            >
+          <Box
+            sx={{
+              display: "flex",
+              padding: "0 auto",
+              alignItems: "center",
+              marginBottom: "1.25rem",
+            }}
+          >
+            <Link to={`/class/${classId}/meeting-schedule`}>
               <IconButton
                 disableRipple
                 sx={{
@@ -112,63 +133,100 @@ const MeetingScheduleAllOverview = observer(() => {
               </IconButton>
             </Link>
 
-            <Typography sx={{ color: theme.color.text.primary, fontSize: "calc(30px + 0.2vw)", fontWeight: 600, }}> 
+            <Typography
+              sx={{
+                color: theme.color.text.primary,
+                fontSize: "calc(30px + 0.2vw)",
+                fontWeight: 600,
+              }}
+            >
               ภาพรวม รายงานพบอาจารย์ที่ปรึกษา
             </Typography>
           </Box>
-          
+
           <Box sx={{ maxWidth: "100%", overflowX: "auto", maxHeight: 700 }}>
             <Table stickyHeader>
               <TableHead>
-                <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, fontWeight: 600}}>โปรเจกต์</TableCell>
-                {
-                  meetingSchedules.map((data: any) => (
-                    <TableCell 
-                      key={data._id} 
-                      align="center" 
-                      sx={{fontSize: 20, color: theme.color.text.secondary, fontWeight: 600}}
-                    >
-                      {data.name}
-                    </TableCell>
-                  ))
-                }
+                <TableCell
+                  sx={{
+                    fontSize: 20,
+                    color: theme.color.text.secondary,
+                    fontWeight: 600,
+                  }}
+                >
+                  โปรเจกต์
+                </TableCell>
+                {meetingSchedules.map((data: any) => (
+                  <TableCell
+                    key={data._id}
+                    align="center"
+                    sx={{
+                      fontSize: 20,
+                      color: theme.color.text.secondary,
+                      fontWeight: 600,
+                    }}
+                  >
+                    {data.name}
+                  </TableCell>
+                ))}
               </TableHead>
               <TableBody>
-              {
-                  projects.map((data) => (
-                    <TableRow 
-                      key={data._id}
+                {projects.map((data) => (
+                  <TableRow
+                    key={data._id}
+                    sx={{
+                      "&:hover": { background: theme.color.button.default },
+                    }}
+                    onClick={() =>
+                      navigate(
+                        `/class/${classId}/project/${
+                          data._id as string
+                        }/document`
+                      )
+                    }
+                  >
+                    <TableCell
                       sx={{
-                        "&:hover": { background: theme.color.button.default },
+                        fontSize: 18,
+                        color: theme.color.text.secondary,
+                        fontWeight: 500,
                       }}
-                      onClick={() => navigate(`/class/${classId}/project/${data._id as string}/document`)}
                     >
-                      <TableCell sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}>
-                        {data.nameTH}
+                      {data.nameTH}
+                    </TableCell>
+                    {meetingSchedules.map((mt: any) => (
+                      <TableCell
+                        key={data._id + mt._id}
+                        align="center"
+                        sx={{
+                          fontSize: 20,
+                          color: data.meetingSchedule.find(
+                            (e: any) => e._id.toString() === mt._id.toString()
+                          )
+                            ? statusList[
+                                data.meetingSchedule.find(
+                                  (e: any) =>
+                                    e._id.toString() === mt._id.toString()
+                                ).sendStatus
+                              ].color
+                            : statusList[0].color,
+                          fontWeight: 600,
+                        }}
+                      >
+                        {data.meetingSchedule.find(
+                          (e: any) => e._id.toString() === mt._id.toString()
+                        )
+                          ? statusList[
+                              data.meetingSchedule.find(
+                                (e: any) =>
+                                  e._id.toString() === mt._id.toString()
+                              ).sendStatus
+                            ].message
+                          : statusList[0].message}
                       </TableCell>
-                      {
-                        meetingSchedules.map((mt: any) => (
-                          <TableCell 
-                            key={data._id + mt._id} 
-                            align="center" 
-                            sx={{
-                              fontSize: 20, 
-                              color: data.meetingSchedule.find((e: any) => e._id.toString() === mt._id.toString()) ? 
-                                statusList[data.meetingSchedule.find((e: any) => e._id.toString() === mt._id.toString()).sendStatus].color : 
-                                statusList[0].color, 
-                              fontWeight: 600
-                            }}>
-                            {data.meetingSchedule.find((e: any) => e._id.toString() === mt._id.toString()) ? 
-                              statusList[data.meetingSchedule.find((e: any) => e._id.toString() === mt._id.toString()).sendStatus].message : 
-                              statusList[0].message
-                            }
-                          </TableCell>
-                        ))
-                      }
-                    </TableRow>
-                  ))
-                }
-                
+                    ))}
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </Box>

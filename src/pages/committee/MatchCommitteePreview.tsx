@@ -7,7 +7,12 @@ import InputLabel from "@mui/material/InputLabel";
 import AddIcon from "@mui/icons-material/Add";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AdminCommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
-import { ActivateButton, CancelButton, EditButton, ListPreviewButton } from "../../styles/layout/_button";
+import {
+  ActivateButton,
+  CancelButton,
+  EditButton,
+  ListPreviewButton,
+} from "../../styles/layout/_button";
 import { useMediaQuery } from "react-responsive";
 import applicationStore from "../../stores/applicationStore";
 import Sidebar from "../../components/Sidebar/Sidebar";
@@ -16,7 +21,10 @@ import { theme } from "../../styles/theme";
 import { observer } from "mobx-react";
 import NotFound from "../other/NotFound";
 import MatchCommitteeCreateModal from "../../components/Modal/MatchCommitteeCreateModal";
-import { disableMatchCommitteeInClass, listMatchCommitteeInClass } from "../../utils/matchCommittee";
+import {
+  disableMatchCommitteeInClass,
+  listMatchCommitteeInClass,
+} from "../../utils/matchCommittee";
 import moment from "moment";
 import MatchCommitteeStartModal from "../../components/Modal/MatchCommitteeStartModal";
 import CancelModal from "../../components/Modal/CancelModal";
@@ -46,18 +54,22 @@ const MatchCommitteePreview = observer(() => {
   const [openCreate, setOpenCreate] = useState<boolean>(false);
   const [openStart, setOpenStart] = useState<boolean>(false);
   const [openCancel, setOpenCancel] = useState<boolean>(false);
-  const [currentMatchCommitteeName, setCurrentMatchCommitteeName] = useState<string>('')
-  const [currentMatchCommitteeId, setCurrentMatchCommitteeId] = useState<string>('')
-  const [currentStartDate, setCurrentStartDate] = useState<string | null>(null)
-
+  const [currentMatchCommitteeName, setCurrentMatchCommitteeName] =
+    useState<string>("");
+  const [currentMatchCommitteeId, setCurrentMatchCommitteeId] =
+    useState<string>("");
+  const [currentStartDate, setCurrentStartDate] = useState<string | null>(null);
 
   const getData = async () => {
-    const result = await listMatchCommitteeInClass({ sort: sortSelect }, classId);
+    const result = await listMatchCommitteeInClass(
+      { sort: sortSelect },
+      classId
+    );
     if (result.data) {
       setMatchCommittee(result.data as Array<any>);
       setNotFound(1);
     } else setNotFound(0);
-  }
+  };
 
   useEffect(() => {
     applicationStore.setIsShowMenuSideBar(true);
@@ -238,12 +250,7 @@ const MatchCommitteePreview = observer(() => {
                       zIndex: 2,
                     }}
                     onClick={(event) =>
-                      handleOpenSetDateModal(
-                        c.name,
-                        c._id,
-                        c.startDate,
-                        event
-                      )
+                      handleOpenSetDateModal(c.name, c._id, c.startDate, event)
                     }
                   >
                     แก้ไข

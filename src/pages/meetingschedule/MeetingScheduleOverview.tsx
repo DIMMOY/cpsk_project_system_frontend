@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Box, IconButton, SelectChangeEvent, Table, TableBody, TableCell, TableHead, TableRow, Typography, MenuItem, InputLabel, FormControl, Select } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  SelectChangeEvent,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Select,
+} from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AdminCommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
 import { useMediaQuery } from "react-responsive";
@@ -33,9 +47,7 @@ const MeetingScheduleOverview = observer(() => {
     )
       ? search.get("sort")
       : "nameTH";
-  const [sortSelect, setSortSelect] = useState<string>(
-    sortCheck || "nameTH"
-  );
+  const [sortSelect, setSortSelect] = useState<string>(sortCheck || "nameTH");
   const [notFound, setNotFound] = useState<number>(2);
 
   const isBigScreen = useMediaQuery({ query: "(min-width: 900px)" });
@@ -50,7 +62,12 @@ const MeetingScheduleOverview = observer(() => {
   const meetingScheduleId = pathname[5];
 
   const getData = async () => {
-    const sendMeetingScheduletData = await listProjectSendMeetingScheduleInClass(meetingScheduleId, classId, sortSelect);
+    const sendMeetingScheduletData =
+      await listProjectSendMeetingScheduleInClass(
+        meetingScheduleId,
+        classId,
+        sortSelect
+      );
 
     if (!sendMeetingScheduletData?.data) {
       setNotFound(0);
@@ -65,7 +82,7 @@ const MeetingScheduleOverview = observer(() => {
     // if (!applicationStore.classroom)
     applicationStore.setIsShowMenuSideBar(true);
     getData();
-    setNotFound(1)
+    setNotFound(1);
   }, [sortSelect]);
 
   const handleSortChange = (event: SelectChangeEvent) => {
@@ -76,16 +93,20 @@ const MeetingScheduleOverview = observer(() => {
     });
   };
 
-
   if (notFound === 1) {
     return (
       <AdminCommonPreviewContainer>
         <Sidebar />
         <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-          <Box sx={{ display: "flex", padding: "0 auto", alignItems: "center", marginBottom: "1.25rem" }}>
-            <Link
-              to={`/class/${classId}/meeting-schedule`}
-            >
+          <Box
+            sx={{
+              display: "flex",
+              padding: "0 auto",
+              alignItems: "center",
+              marginBottom: "1.25rem",
+            }}
+          >
+            <Link to={`/class/${classId}/meeting-schedule`}>
               <IconButton
                 disableRipple
                 sx={{
@@ -100,40 +121,102 @@ const MeetingScheduleOverview = observer(() => {
               </IconButton>
             </Link>
 
-            <Typography sx={{ color: theme.color.text.primary, fontSize: "calc(30px + 0.2vw)", fontWeight: 600, }}> 
+            <Typography
+              sx={{
+                color: theme.color.text.primary,
+                fontSize: "calc(30px + 0.2vw)",
+                fontWeight: 600,
+              }}
+            >
               {meetingSchedule.name}
             </Typography>
           </Box>
 
-          <Table sx={{ width: isBigScreen ? "60%" : "100%"}}>
+          <Table sx={{ width: isBigScreen ? "60%" : "100%" }}>
             <TableHead>
-              <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "50%", fontWeight: 600}}>โปรเจกต์</TableCell>
-              <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "20%", fontWeight: 600}}>สถานะ</TableCell>
-              <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "30%", fontWeight: 600}}>รายละเอียด</TableCell>
+              <TableCell
+                sx={{
+                  fontSize: 20,
+                  color: theme.color.text.secondary,
+                  width: "50%",
+                  fontWeight: 600,
+                }}
+              >
+                โปรเจกต์
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{
+                  fontSize: 20,
+                  color: theme.color.text.secondary,
+                  width: "20%",
+                  fontWeight: 600,
+                }}
+              >
+                สถานะ
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontSize: 20,
+                  color: theme.color.text.secondary,
+                  width: "30%",
+                  fontWeight: 600,
+                }}
+              >
+                รายละเอียด
+              </TableCell>
             </TableHead>
             <TableBody>
-              {
-                projects.map((data) => (
-                  <TableRow 
-                    key={data._id}
+              {projects.map((data) => (
+                <TableRow
+                  key={data._id}
+                  sx={{
+                    "&:hover": { background: theme.color.button.default },
+                  }}
+                  onClick={() =>
+                    navigate(
+                      `/class/${classId}/project/${
+                        data._id as string
+                      }/meeting-schedule/${meetingSchedule._id as string}`
+                    )
+                  }
+                >
+                  <TableCell
                     sx={{
-                      "&:hover": { background: theme.color.button.default },
+                      fontSize: 18,
+                      color: theme.color.text.secondary,
+                      fontWeight: 500,
                     }}
-                    onClick={() => navigate(`/class/${classId}/project/${data._id as string}/meeting-schedule/${meetingSchedule._id as string}`)}
                   >
-                    <TableCell sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}>
-                      {data.nameTH}
-                    </TableCell>
-                    <TableCell align="center" sx={{fontSize: 20, color: data.meetingSchedule.length ? statusList[data.meetingSchedule[0].sendStatus].color : statusList[0].color, fontWeight: 500}}> 
-                      {data.meetingSchedule.length ? statusList[data.meetingSchedule[0].sendStatus].message : "ยังไม่ส่ง" }
-                    </TableCell>
-                    <TableCell sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}> 
-                      {data.meetingSchedule.length ? data.meetingSchedule[0].detail : "-"}
-                    </TableCell>
-                  </TableRow>
-                ))
-              }
-              
+                    {data.nameTH}
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      fontSize: 20,
+                      color: data.meetingSchedule.length
+                        ? statusList[data.meetingSchedule[0].sendStatus].color
+                        : statusList[0].color,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {data.meetingSchedule.length
+                      ? statusList[data.meetingSchedule[0].sendStatus].message
+                      : "ยังไม่ส่ง"}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 18,
+                      color: theme.color.text.secondary,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {data.meetingSchedule.length
+                      ? data.meetingSchedule[0].detail
+                      : "-"}
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </Box>

@@ -21,7 +21,10 @@ import CancelModal from "../../components/Modal/CancelModal";
 import { theme } from "../../styles/theme";
 import { observer } from "mobx-react";
 import NotFound from "../other/NotFound";
-import { disableAssessmentInClass, listAssessmentInClass } from "../../utils/assessment";
+import {
+  disableAssessmentInClass,
+  listAssessmentInClass,
+} from "../../utils/assessment";
 import AssessmentStartModal from "../../components/Modal/AssessmentStartModal";
 import { listMatchCommitteeInClass } from "../../utils/matchCommittee";
 
@@ -58,9 +61,9 @@ const AssessmentPreview = observer(() => {
   const [openCancel, setOpenCancel] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
-  const [lastAssessmentName, setLastAssessmentName] = useState<
-    string | null
-  >(null);
+  const [lastAssessmentName, setLastAssessmentName] = useState<string | null>(
+    null
+  );
   const [lastAssessment, setLastAssessment] = useState<any>(null);
   const [notFound, setNotFound] = useState<number>(2);
 
@@ -76,8 +79,11 @@ const AssessmentPreview = observer(() => {
         { sort: sortSelect, status: statusSelect },
         classId
       );
-      const committeeData = await listMatchCommitteeInClass({ sort: 'createdAtASC' }, classId);
-      setMatchCommittees(committeeData.data ? committeeData.data : [])
+      const committeeData = await listMatchCommitteeInClass(
+        { sort: "createdAtASC" },
+        classId
+      );
+      setMatchCommittees(committeeData.data ? committeeData.data : []);
     } else if (isAdvisor && currentRole === 1) {
       assessmentData = await listAssessmentInClass(
         { sort: sortSelect, status: "true" },
@@ -122,7 +128,7 @@ const AssessmentPreview = observer(() => {
     event: any
   ) => {
     event.stopPropagation();
-    setLastAssessmentName(assessment.name)
+    setLastAssessmentName(assessment.name);
     setLastAssessment(assessment);
     setStartDate(startDate);
     setEndDate(endDate);
@@ -237,7 +243,11 @@ const AssessmentPreview = observer(() => {
               <ListPreviewButton
                 key={c._id}
                 sx={{ zIndex: 1 }}
-                onClick={() => c.statusInClass ? navigate(`/class/${classId}/assessment/overview/${c._id}`) : {}}
+                onClick={() =>
+                  c.statusInClass
+                    ? navigate(`/class/${classId}/assessment/overview/${c._id}`)
+                    : {}
+                }
               >
                 <Typography
                   sx={{
@@ -288,12 +298,7 @@ const AssessmentPreview = observer(() => {
                       zIndex: 2,
                     }}
                     onClick={(event) =>
-                      handleOpenSetDateModal(
-                        c,
-                        c.startDate,
-                        c.endDate,
-                        event
-                      )
+                      handleOpenSetDateModal(c, c.startDate, c.endDate, event)
                     }
                   >
                     แก้ไข

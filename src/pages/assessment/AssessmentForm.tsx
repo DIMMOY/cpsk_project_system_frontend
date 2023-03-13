@@ -21,7 +21,12 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { LoadingButton } from "@mui/lab";
-import { createAssessment, createSendAssessment, getProjectHasAssessmentInClass as getProjectHasAssessmentInClass, updateAssessment } from "../../utils/assessment";
+import {
+  createAssessment,
+  createSendAssessment,
+  getProjectHasAssessmentInClass as getProjectHasAssessmentInClass,
+  updateAssessment,
+} from "../../utils/assessment";
 import NotFound from "../other/NotFound";
 import { checkRoleInProject } from "../../utils/project";
 
@@ -40,15 +45,22 @@ const AssessmentForm = () => {
   const [projectNameTH, setProjectNameTH] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [feedBack, setFeedBack] = useState<boolean>(true);
-  const [feedBackInput, setFeedBackInput] = useState<string>('');
+  const [feedBackInput, setFeedBackInput] = useState<string>("");
   const [score, setScore] = useState<number>(5);
   const [autoCalculate, setAutoCalculate] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [notFound, setNotFound] = useState<number>(2);
   const [form, setForm] = useState<Array<any>>([
-    { question: "", description: "", weight: 1, limitScore: 5, type: 1, arrayChoice: [] },
+    {
+      question: "",
+      description: "",
+      weight: 1,
+      limitScore: 5,
+      type: 1,
+      arrayChoice: [],
+    },
   ]);
-  const [formInput, setFormInput] = useState<Array<any>>([])
+  const [formInput, setFormInput] = useState<Array<any>>([]);
   const [scrollToBottom, setScrollToBottom] = useState<number>(0);
   const isBigScreen = useMediaQuery({ query: "(min-width: 650px)" });
   const navigate = useNavigate();
@@ -63,75 +75,111 @@ const AssessmentForm = () => {
   const projectId = pathname[6];
 
   const roleCheck =
-    (search.get("role") === "advisor" || search.get("role") === "committee")
-      ? (search.get("role") === "advisor" ? 2 : 3)
+    search.get("role") === "advisor" || search.get("role") === "committee"
+      ? search.get("role") === "advisor"
+        ? 2
+        : 3
       : 2;
 
-  const matchCommitteeIdCheck =
-    search.get("matchCommittee")
-      ? search.get("matchCommittee")
-      : null;
+  const matchCommitteeIdCheck = search.get("matchCommittee")
+    ? search.get("matchCommittee")
+    : null;
 
   const getData = async () => {
-    const assessmentData = await getProjectHasAssessmentInClass(classId, assessmentId, projectId, roleCheck, matchCommitteeIdCheck);
+    const assessmentData = await getProjectHasAssessmentInClass(
+      classId,
+      assessmentId,
+      projectId,
+      roleCheck,
+      matchCommitteeIdCheck
+    );
     if (assessmentData.data) {
-      const { assessmentResults, assessment, project } = assessmentData.data
+      const { assessmentResults, assessment, project } = assessmentData.data;
       const { name, description, feedBack, form, score, assessBy } = assessment;
-      setName(name)
-      setProjectNameTH(project.nameTH)
-      setDescription(description)
-      setFeedBack(feedBack)
+      setName(name);
+      setProjectNameTH(project.nameTH);
+      setDescription(description);
+      setFeedBack(feedBack);
 
       const newForm: Array<any> = [];
-        const formInput: Array<any> = [];
-        form.forEach((data: any) => {
-          newForm.push({ 
-            ...data, 
-            arrayChoice: data.type === 1 && data.limitScore <= 5 ? Array(data.limitScore).fill(0) : null})
-          formInput.push('')
-        })
-      setForm(newForm)
+      const formInput: Array<any> = [];
+      form.forEach((data: any) => {
+        newForm.push({
+          ...data,
+          arrayChoice:
+            data.type === 1 && data.limitScore <= 5
+              ? Array(data.limitScore).fill(0)
+              : null,
+        });
+        formInput.push("");
+      });
+      setForm(newForm);
 
-      const assessmentResultByUser = assessmentResults.find((data: any) => user?.email === data.userId.email)
+      const assessmentResultByUser = assessmentResults.find(
+        (data: any) => user?.email === data.userId.email
+      );
       if (assessmentResultByUser) {
-        setFormInput(assessmentResultByUser.form)
-        setFeedBackInput(assessmentResultByUser.feedBack)
+        setFormInput(assessmentResultByUser.form);
+        setFeedBackInput(assessmentResultByUser.feedBack);
       } else {
-        setFormInput(formInput)
+        setFormInput(formInput);
       }
-      setScore(score)
-      setNotFound(1)
+      setScore(score);
+      setNotFound(1);
     } else {
-      setNotFound(0)
+      setNotFound(0);
     }
-  }
+  };
 
   useEffect(() => {
     if (currentRole == 0) navigate("/");
-    if ((roleCheck === 2 && matchCommitteeIdCheck) || (roleCheck === 3 && matchCommitteeIdCheck === '')) {
-      setNotFound(0)
+    if (
+      (roleCheck === 2 && matchCommitteeIdCheck) ||
+      (roleCheck === 3 && matchCommitteeIdCheck === "")
+    ) {
+      setNotFound(0);
     } else {
-      getData()
+      getData();
     }
   }, []);
 
   const handleOnSubmit = async () => {
-    const rawScore = formInput.map((score, index) => score * form[index].weight).reduce((a, b) => a + b);
-    const sumScore = (rawScore * score / form.map((data) => data.limitScore * data.weight).reduce((a, b) => a + b)).toFixed(2);
+    const rawScore = formInput
+      .map((score, index) => score * form[index].weight)
+      .reduce((a, b) => a + b);
+    const sumScore = (
+      (rawScore * score) /
+      form.map((data) => data.limitScore * data.weight).reduce((a, b) => a + b)
+    ).toFixed(2);
 
     setLoading(true);
 
-    const body = { rawScore, sumScore, form: formInput, feedBack: feedBackInput !== '' ? feedBackInput : null };
-    const res = await createSendAssessment(body, projectId, assessmentId, roleCheck, matchCommitteeIdCheck);
+    const body = {
+      rawScore,
+      sumScore,
+      form: formInput,
+      feedBack: feedBackInput !== "" ? feedBackInput : null,
+    };
+    const res = await createSendAssessment(
+      body,
+      projectId,
+      assessmentId,
+      roleCheck,
+      matchCommitteeIdCheck
+    );
 
     if (res.statusCode === 201) {
       setTimeout(() => {
         setLoading(false);
         navigate({
           pathname: `/class/${classId}/assessment/overview/${assessmentId}`,
-          search: `?role=${search.get("role") as string}${roleCheck === 3 ? `&matchCommittee=${matchCommitteeIdCheck as string}` : ''}`
+          search: `?role=${search.get("role") as string}${
+            roleCheck === 3
+              ? `&matchCommittee=${matchCommitteeIdCheck as string}`
+              : ""
+          }`,
         });
-      } , 1300);
+      }, 1300);
     } else {
       setTimeout(() => {
         setLoading(false);
@@ -139,20 +187,24 @@ const AssessmentForm = () => {
     }
   };
 
-  const handleInputScore = (indexQuestion: number, score: string, limitScore: number) => {
-    if (!isNaN(parseInt(score)) && score[0] !== '0') {
-      const intScore = parseInt(score as string)
-        if (intScore <= limitScore) {
-        const newForm = [...formInput ];
+  const handleInputScore = (
+    indexQuestion: number,
+    score: string,
+    limitScore: number
+  ) => {
+    if (!isNaN(parseInt(score)) && score[0] !== "0") {
+      const intScore = parseInt(score as string);
+      if (intScore <= limitScore) {
+        const newForm = [...formInput];
         newForm[indexQuestion] = intScore;
         setFormInput(newForm);
       }
-    } else if (score === '') {
-      const newForm = [...formInput ];
-      newForm[indexQuestion] = '';
+    } else if (score === "") {
+      const newForm = [...formInput];
+      newForm[indexQuestion] = "";
       setFormInput(newForm);
     }
-  }
+  };
 
   if (notFound === 1) {
     return (
@@ -293,7 +345,6 @@ const AssessmentForm = () => {
                   borderColor: theme.color.background.tertiary,
                 }}
               >
-
                 <Box
                   sx={{
                     width: isBigScreen ? "70%" : "100%",
@@ -384,56 +435,64 @@ const AssessmentForm = () => {
                     ลงคะแนน
                   </Typography>
 
-                  {
-                    data.type === 1 && data.limitScore <= 5 ?
+                  {data.type === 1 && data.limitScore <= 5 ? (
                     <RadioGroup
                       row
                       aria-labelledby="demo-row-radio-buttons-group-label"
                       name="row-radio-buttons-group"
-                      sx={{marginTop: "1rem"}}
+                      sx={{ marginTop: "1rem" }}
                     >
-                      {
-                        data.arrayChoice.map((_: any, index: number) => (
-                          <FormControlLabel 
-                            key={data.arrayChoice.length - index} 
-                            value={data.arrayChoice.length - index} 
-                            checked={formInput[indexForm] === data.arrayChoice.length - index}
-                            control={<Radio
+                      {data.arrayChoice.map((_: any, index: number) => (
+                        <FormControlLabel
+                          key={data.arrayChoice.length - index}
+                          value={data.arrayChoice.length - index}
+                          checked={
+                            formInput[indexForm] ===
+                            data.arrayChoice.length - index
+                          }
+                          control={
+                            <Radio
                               sx={{
-                                  padding: 0,
-                                  boxShadow: "none",
+                                padding: 0,
+                                boxShadow: "none",
+                                color: theme.color.background.secondary,
+                                "&.Mui-checked": {
                                   color: theme.color.background.secondary,
-                                  "&.Mui-checked": {
-                                      color: theme.color.background.secondary,
-                                  },
-                                  "& .MuiSvgIcon-root": { fontSize: 28 },
-                                  marginRight: "0.5rem"
+                                },
+                                "& .MuiSvgIcon-root": { fontSize: 28 },
+                                marginRight: "0.5rem",
                               }}
                               value={data.arrayChoice.length - index}
-                              onClick={() => handleInputScore(indexForm, (data.arrayChoice.length - index).toString(), data.limitScore)}
-                            />} 
-                            label={
-                              <Typography
-                                sx={{
-                                  fontSize: 20,
-                                  fontWeight: 500,
-                                  color: theme.color.text.secondary,
-                                }}
-                              >
-                                {data.arrayChoice.length - index}
-                              </Typography>
-                            } 
-                            sx ={{ 
-                              marginLeft: "1.5rem", 
-                              color: theme.color.text.secondary,
-                              fontSize: 20,
-                              fontWeight: 500,
-                            }}
-                          />
-                        ))
-                      }
+                              onClick={() =>
+                                handleInputScore(
+                                  indexForm,
+                                  (data.arrayChoice.length - index).toString(),
+                                  data.limitScore
+                                )
+                              }
+                            />
+                          }
+                          label={
+                            <Typography
+                              sx={{
+                                fontSize: 20,
+                                fontWeight: 500,
+                                color: theme.color.text.secondary,
+                              }}
+                            >
+                              {data.arrayChoice.length - index}
+                            </Typography>
+                          }
+                          sx={{
+                            marginLeft: "1.5rem",
+                            color: theme.color.text.secondary,
+                            fontSize: 20,
+                            fontWeight: 500,
+                          }}
+                        />
+                      ))}
                     </RadioGroup>
-                    : 
+                  ) : (
                     <TextField
                       required
                       id={`score-${indexForm}`}
@@ -454,9 +513,15 @@ const AssessmentForm = () => {
                           width: "8rem",
                         },
                       }}
-                    onChange={(event) => handleInputScore(indexForm, event.target.value, data.limitScore)}
+                      onChange={(event) =>
+                        handleInputScore(
+                          indexForm,
+                          event.target.value,
+                          data.limitScore
+                        )
+                      }
                     />
-                  }
+                  )}
                 </Box>
                 <Box>
                   <Typography
@@ -534,8 +599,7 @@ const AssessmentForm = () => {
             ))}
           </Box>
 
-          {
-            feedBack ? 
+          {feedBack ? (
             <>
               <Typography
                 sx={{
@@ -573,8 +637,10 @@ const AssessmentForm = () => {
                 }}
                 onChange={(e) => setFeedBackInput(e.target.value)}
               />
-            </> : <></>
-          }
+            </>
+          ) : (
+            <></>
+          )}
 
           <Box sx={{ display: "flex", justifyContent: "right" }}>
             <LoadingButton
@@ -595,7 +661,11 @@ const AssessmentForm = () => {
                 },
               }}
               onClick={handleOnSubmit}
-              disabled={formInput.filter((data: any) => data === '').length ? true : false}
+              disabled={
+                formInput.filter((data: any) => data === "").length
+                  ? true
+                  : false
+              }
             >
               ยืนยัน
             </LoadingButton>
@@ -604,9 +674,7 @@ const AssessmentForm = () => {
       </AdminCommonPreviewContainer>
     );
   } else if (notFound === 2) {
-    return (
-      <AdminCommonPreviewContainer/>
-    );
+    return <AdminCommonPreviewContainer />;
   } else {
     return <NotFound></NotFound>;
   }

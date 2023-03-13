@@ -8,7 +8,7 @@ import {
   TableHead,
   TableCell,
   TableBody,
-  TableRow
+  TableRow,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { AdminCommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
@@ -19,7 +19,11 @@ import { LoadingButton } from "@mui/lab";
 import SelectAdvisorToProjectDialog from "../../components/Dialog/SelectAdvisorToProjectDialog";
 import { listStudentInClass, listUser } from "../../utils/user";
 import SelectPartnerToProjectDialog from "../../components/Dialog/SelectPartnerToProjectDialog";
-import { createProjectInClass, findProjectInClassForStudent, updateProjectInClass } from "../../utils/project";
+import {
+  createProjectInClass,
+  findProjectInClassForStudent,
+  updateProjectInClass,
+} from "../../utils/project";
 import { observer } from "mobx-react";
 
 interface PreviewProps {
@@ -46,36 +50,41 @@ const ProjectEdit = observer(({ newProject }: PreviewProps) => {
   const navigate = useNavigate();
 
   const getAdvisors = async () => {
-    const result = await listUser({ n: 1 })
+    const result = await listUser({ n: 1 });
     if (result.data) {
-      setAdvisors(result.data)
+      setAdvisors(result.data);
     }
-  }
+  };
 
   const getStudents = async () => {
     const result = await listStudentInClass(classroom._id, "false");
     if (result.data) {
-      setPartners(result.data.length ? result.data.filter((e: any) => e.email !== user?.email) : [])
+      setPartners(
+        result.data.length
+          ? result.data.filter((e: any) => e.email !== user?.email)
+          : []
+      );
     }
-  }
+  };
 
   useEffect(() => {
-    console.log(classroom, project)
+    console.log(classroom, project);
     if (!newProject) {
       if (!project) {
         navigate("/");
       } else {
-        const { nameTH, nameEN, description, advisors, partners, _id } = project;
-        setId(_id)
-        setNameTH(nameTH)
-        setNameEN(nameEN)
-        setDescription(description)
-        setSelectedAdvisors(advisors.map((e: { _id: any; }) => e._id))
-        setListPartners(partners)
+        const { nameTH, nameEN, description, advisors, partners, _id } =
+          project;
+        setId(_id);
+        setNameTH(nameTH);
+        setNameEN(nameEN);
+        setDescription(description);
+        setSelectedAdvisors(advisors.map((e: { _id: any }) => e._id));
+        setListPartners(partners);
       }
     }
-    getAdvisors()
-    getStudents()
+    getAdvisors();
+    getStudents();
   }, []);
 
   useEffect(() => {
@@ -85,22 +94,37 @@ const ProjectEdit = observer(({ newProject }: PreviewProps) => {
   const handleSubmit = async () => {
     setLoading(true);
     if (newProject) {
-      const reqBody = { nameTH, nameEN, description, advisors: selectedAdvisors, partners: selectedPartners };
-      const createProject = await createProjectInClass(reqBody, classroom._id)
+      const reqBody = {
+        nameTH,
+        nameEN,
+        description,
+        advisors: selectedAdvisors,
+        partners: selectedPartners,
+      };
+      const createProject = await createProjectInClass(reqBody, classroom._id);
       if (createProject.statusCode === 201) {
         setTimeout(() => {
-          setLoading(false)
-          navigate(0)
-        }, 1300)
-      }
-      else setLoading(false)
+          setLoading(false);
+          navigate(0);
+        }, 1300);
+      } else setLoading(false);
     } else {
       if (id) {
-        const reqBody = { nameTH, nameEN, description, advisors: selectedAdvisors, partners: selectedPartners };
-        const updateProject = await updateProjectInClass(reqBody, classroom._id, id);
+        const reqBody = {
+          nameTH,
+          nameEN,
+          description,
+          advisors: selectedAdvisors,
+          partners: selectedPartners,
+        };
+        const updateProject = await updateProjectInClass(
+          reqBody,
+          classroom._id,
+          id
+        );
         if (updateProject.statusCode === 200) {
           setTimeout(async () => {
-            setLoading(false)
+            setLoading(false);
             // refresh data
             const projectInClassRes = await findProjectInClassForStudent(
               classroom._id
@@ -109,10 +133,10 @@ const ProjectEdit = observer(({ newProject }: PreviewProps) => {
               ? projectInClassRes.data
               : null;
             applicationStore.setProject(project);
-            navigate(0)
-            navigate('/')
-          }, 1300)
-        } else setLoading(false)
+            navigate(0);
+            navigate("/");
+          }, 1300);
+        } else setLoading(false);
       } else {
         console.error("project id not found");
         setLoading(false);
@@ -140,20 +164,20 @@ const ProjectEdit = observer(({ newProject }: PreviewProps) => {
   };
 
   const handleOpenSelectAdvisor = () => {
-    setOpenSelectAdvisor(true)
-  }
+    setOpenSelectAdvisor(true);
+  };
 
   const handleOpenSelectStudent = () => {
-    setOpenSelectPartner(true)
-  }
+    setOpenSelectPartner(true);
+  };
 
   const handleSubmitAdvisor = (advisors: Array<any>) => {
-    setSelectedAdvisors(advisors)
-  }
+    setSelectedAdvisors(advisors);
+  };
 
   const handleSubmitStudent = (students: Array<any>) => {
-    setSelectedPartners(students)
-  }
+    setSelectedPartners(students);
+  };
 
   return (
     <AdminCommonPreviewContainer>
@@ -274,7 +298,14 @@ const ProjectEdit = observer(({ newProject }: PreviewProps) => {
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <Box sx={{display: "flex", flexDirection: "row", marginBottom: newProject ? "1rem" : "0.5rem", marginTop: "0.5rem"}}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            marginBottom: newProject ? "1rem" : "0.5rem",
+            marginTop: "0.5rem",
+          }}
+        >
           <Typography
             sx={{
               fontSize: 30,
@@ -303,40 +334,66 @@ const ProjectEdit = observer(({ newProject }: PreviewProps) => {
             }}
             onClick={handleOpenSelectStudent}
           >
-            {newProject ? "แก้ไข" : "เพิ่ม" }
+            {newProject ? "แก้ไข" : "เพิ่ม"}
           </Button>
         </Box>
 
-        {
-            !newProject ? 
-            <Table sx={{width: isBigScreen ? "40rem" : "100%", marginBottom: "2rem"}}>
-              <TableHead>
-                <TableCell sx={{ color: theme.color.text.secondary, fontWeight: 500, fontSize: 20, width: "60%" }}>
-                  ชื่อ
-                </TableCell>
-                <TableCell sx={{ color: theme.color.text.secondary, fontWeight: 500, fontSize: 20, width: "40%" }}>
-                  อีเมล
-                </TableCell>
-              </TableHead>
-              <TableBody>
-                {
-                  listPartners.map((user, index) => (
-                    <TableRow key={index}>
-                    <TableCell sx={{ color: theme.color.text.secondary, fontWeight: 400, fontSize: 16 }}>
-                      {user.displayName}
-                    </TableCell>
-                    <TableCell sx={{ color: theme.color.text.secondary, fontWeight: 400, fontSize: 16 }}>
-                      {user.email}
-                    </TableCell>
-                    </TableRow>
-                  ))
-                }
-              </TableBody>
-            </Table> :
-            <></>
-          }
+        {!newProject ? (
+          <Table
+            sx={{ width: isBigScreen ? "40rem" : "100%", marginBottom: "2rem" }}
+          >
+            <TableHead>
+              <TableCell
+                sx={{
+                  color: theme.color.text.secondary,
+                  fontWeight: 500,
+                  fontSize: 20,
+                  width: "60%",
+                }}
+              >
+                ชื่อ
+              </TableCell>
+              <TableCell
+                sx={{
+                  color: theme.color.text.secondary,
+                  fontWeight: 500,
+                  fontSize: 20,
+                  width: "40%",
+                }}
+              >
+                อีเมล
+              </TableCell>
+            </TableHead>
+            <TableBody>
+              {listPartners.map((user, index) => (
+                <TableRow key={index}>
+                  <TableCell
+                    sx={{
+                      color: theme.color.text.secondary,
+                      fontWeight: 400,
+                      fontSize: 16,
+                    }}
+                  >
+                    {user.displayName}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: theme.color.text.secondary,
+                      fontWeight: 400,
+                      fontSize: 16,
+                    }}
+                  >
+                    {user.email}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <></>
+        )}
 
-        <Box sx={{display: "flex", flexDirection: "row"}}>
+        <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Typography
             sx={{
               fontSize: 30,
@@ -367,7 +424,6 @@ const ProjectEdit = observer(({ newProject }: PreviewProps) => {
           >
             แก้ไข
           </Button>
-
         </Box>
 
         <SelectAdvisorToProjectDialog
@@ -378,7 +434,7 @@ const ProjectEdit = observer(({ newProject }: PreviewProps) => {
           selectedAdvisors={selectedAdvisors}
         />
 
-        <SelectPartnerToProjectDialog 
+        <SelectPartnerToProjectDialog
           open={openSelectPartner}
           onClose={() => setOpenSelectPartner(false)}
           students={partners}

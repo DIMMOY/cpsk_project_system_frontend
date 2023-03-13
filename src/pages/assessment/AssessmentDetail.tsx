@@ -16,7 +16,11 @@ import { observer } from "mobx-react";
 import applicationStore from "../../stores/applicationStore";
 import NotFound from "../other/NotFound";
 import { checkRoleInProject } from "../../utils/project";
-import { getAssessmentInClass, listAllProjectHasAssessmentInProject, listAssessmentInClass } from "../../utils/assessment";
+import {
+  getAssessmentInClass,
+  listAllProjectHasAssessmentInProject,
+  listAssessmentInClass,
+} from "../../utils/assessment";
 import ShowScoreDialog from "../../components/Dialog/ShowScoreDialog";
 
 const useStyles = makeStyles({
@@ -33,13 +37,15 @@ interface PreviewProps {
 
 const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
   const [assessment, setAssessment] = useState<any>({});
-  const [projectHasAssessments, setProjectHasAssessments] = useState<Array<any>>([]);
+  const [projectHasAssessments, setProjectHasAssessments] = useState<
+    Array<any>
+  >([]);
   const [notFound, setNotFound] = useState<number>(2);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [currentScore, setCurrentScore] = useState<Array<number>>([]);
-  const [currentTitle, setCurrentTitle] = useState<string>('');
-  const [currentAssessBy, setCurrentAssessBy] = useState<string>('');
-  const [currentFeedBack, setCurrentFeedBack] = useState<string>('');
+  const [currentTitle, setCurrentTitle] = useState<string>("");
+  const [currentAssessBy, setCurrentAssessBy] = useState<string>("");
+  const [currentFeedBack, setCurrentFeedBack] = useState<string>("");
 
   const { currentRole, classroom, project } = applicationStore;
   const classes = useStyles();
@@ -58,12 +64,9 @@ const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
 
   const getData = async () => {
     if (isStudent && currentRole !== 0) {
-      navigate('/');
-    } 
-    const assessmentData = await getAssessmentInClass(
-      classId,
-      assessmentId,
-    );
+      navigate("/");
+    }
+    const assessmentData = await getAssessmentInClass(classId, assessmentId);
     if (!assessmentData.data) {
       setNotFound(0);
       return;
@@ -74,8 +77,8 @@ const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
 
     const projectHasAssessments = await listAllProjectHasAssessmentInProject(
       projectId,
-      assessmentId,
-    )
+      assessmentId
+    );
     if (!projectHasAssessments.data) {
       setNotFound(0);
       return;
@@ -83,20 +86,20 @@ const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
       setProjectHasAssessments(projectHasAssessments.data as Array<any>);
       setNotFound(1);
     }
-  }
+  };
 
   const handleOpenDialog = (
-    form: Array<number>, 
-    title: string, 
+    form: Array<number>,
+    title: string,
     assessBy: string,
-    feedBack: string,
+    feedBack: string
   ) => {
-    setCurrentScore(form)
-    setCurrentTitle(title)
-    setCurrentAssessBy(assessBy)
-    setCurrentFeedBack(feedBack)
-    setOpenDialog(true)
-  }
+    setCurrentScore(form);
+    setCurrentTitle(title);
+    setCurrentAssessBy(assessBy);
+    setCurrentFeedBack(feedBack);
+    setOpenDialog(true);
+  };
 
   useEffect(() => {
     getData();
@@ -145,23 +148,29 @@ const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
               color: theme.color.text.primary,
             }}
           >
-            {assessment.assessment ? assessment.assessment.name : ''}
+            {assessment.assessment ? assessment.assessment.name : ""}
           </Typography>
         </Box>
         <Box sx={{ flexDirection: "column", display: "flex" }}>
           {projectHasAssessments.map((data) => (
             <ListPreviewButton
               key={data._id}
-              onClick={() => (
-                currentRole !== 0 ?
-                  handleOpenDialog(
-                    data.form ? data.form : [], 
-                    data.assessBy === 1 ? "อาจารย์ที่ปรึกษา" : data.matchCommitteeId.name,
-                    `ประเมินโดย ${data.assessBy === 1 ? data.userId.displayName : "กรรมการคุมสอบ"}`,
-                    data.feedBack,
-                  ) :
-                  {}
-              )}
+              onClick={() =>
+                currentRole !== 0
+                  ? handleOpenDialog(
+                      data.form ? data.form : [],
+                      data.assessBy === 1
+                        ? "อาจารย์ที่ปรึกษา"
+                        : data.matchCommitteeId.name,
+                      `ประเมินโดย ${
+                        data.assessBy === 1
+                          ? data.userId.displayName
+                          : "กรรมการคุมสอบ"
+                      }`,
+                      data.feedBack
+                    )
+                  : {}
+              }
             >
               <Typography
                 sx={{
@@ -174,15 +183,19 @@ const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
                   color: theme.color.text.primary,
                 }}
               >
-                {data.assessBy === 1 ? "อาจารย์ที่ปรึกษา" : data.matchCommitteeId.name}
+                {data.assessBy === 1
+                  ? "อาจารย์ที่ปรึกษา"
+                  : data.matchCommitteeId.name}
               </Typography>
-              <Box sx={{
-                top: isBigScreen ? "1.5rem" : "1.95rem",
-                position: "absolute",
-                right: "calc(20px + 1vw)",
-                display: "flex",
-                flexDirection: "row",
-              }}>
+              <Box
+                sx={{
+                  top: isBigScreen ? "1.5rem" : "1.95rem",
+                  position: "absolute",
+                  right: "calc(20px + 1vw)",
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
                 <Typography
                   sx={{
                     marginRight: "0.5rem",
@@ -190,30 +203,30 @@ const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
                       ? "calc(30px + 0.2vw)"
                       : "calc(15px + 2vw)",
                     fontWeight: 600,
-                    color: theme.color.text.primary
+                    color: theme.color.text.primary,
                   }}
                 >
                   {data.sumScore}
                 </Typography>
                 <Typography
-                  sx={{      
+                  sx={{
                     marginRight: "0.5rem",
                     fontSize: isBigScreen
                       ? "calc(30px + 0.2vw)"
                       : "calc(15px + 2vw)",
                     fontWeight: 600,
-                    color: theme.color.text.secondary
+                    color: theme.color.text.secondary,
                   }}
                 >
                   {`/`}
                 </Typography>
                 <Typography
-                  sx={{      
+                  sx={{
                     fontSize: isBigScreen
                       ? "calc(30px + 0.2vw)"
                       : "calc(15px + 2vw)",
                     fontWeight: 600,
-                    color: theme.color.text.secondary
+                    color: theme.color.text.secondary,
                   }}
                 >
                   {assessment.assessment.score}
@@ -229,7 +242,11 @@ const AssessmentDetail = observer(({ isStudent }: PreviewProps) => {
                   fontWeight: 600,
                 }}
               >
-                {`ประเมินโดย ${data.assessBy === 1 ? data.userId.displayName : "กรรมการคุมสอบ"}`} 
+                {`ประเมินโดย ${
+                  data.assessBy === 1
+                    ? data.userId.displayName
+                    : "กรรมการคุมสอบ"
+                }`}
               </Typography>
             </ListPreviewButton>
           ))}

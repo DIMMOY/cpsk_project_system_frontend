@@ -213,8 +213,7 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
           {"แบบฟอร์มประเมิน ( * คือต้องใส่ )"}
         </Typography>
 
-        {
-          !newForm ? 
+        {!newForm ? (
           <Typography
             sx={{
               fontSize: 30,
@@ -224,8 +223,9 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
           >
             การแก้ไขจะมีผลต่อคลาสที่ยังไม่เคยเปิดใช้งานเท่านั้น !
           </Typography>
-          : <></>
-        }
+        ) : (
+          <></>
+        )}
 
         <Typography
           sx={{
@@ -356,7 +356,7 @@ const AssessmentEdit = ({ newForm }: PreviewProps) => {
                 color: theme.color.text.secondary,
               }}
             >
-              {'คิดคะแนนอัติโนมัติ (คะแนนรวมจะเท่ากับคะแนนดิบ)' }
+              {"คิดคะแนนอัติโนมัติ (คะแนนรวมจะเท่ากับคะแนนดิบ)"}
             </Typography>
           </Box>
           <TextField

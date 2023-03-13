@@ -8,8 +8,7 @@ const HaveClassRoute = observer(() => {
   const { classroom, currentRole, isStudent } = applicationStore;
   if (currentRole === 0 && isStudent)
     return classroom ? <Outlet /> : <ClassJoining />;
-  else
-    return <Outlet />
+  else return <Outlet />;
 });
 
 export default HaveClassRoute;

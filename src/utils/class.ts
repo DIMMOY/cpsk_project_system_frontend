@@ -81,7 +81,9 @@ export const getClassById = async (id: string) => {
 export const leaveClass = async (classId: string) => {
   try {
     await refreshToken();
-    const url = `${process.env.REACT_APP_API_BASE_URL_CLIENT as string}/class/${classId}/leave`;
+    const url = `${
+      process.env.REACT_APP_API_BASE_URL_CLIENT as string
+    }/class/${classId}/leave`;
     const resAxios = await axios.delete(url);
     return {
       statusCode: resAxios.data.statusCode,
@@ -96,4 +98,4 @@ export const leaveClass = async (classId: string) => {
       error,
     };
   }
-}
+};

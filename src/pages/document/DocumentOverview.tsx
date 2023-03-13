@@ -1,13 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Box, IconButton, SelectChangeEvent, Table, TableBody, TableCell, TableHead, TableRow, Typography, MenuItem, InputLabel, FormControl, Select } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  SelectChangeEvent,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Select,
+} from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AdminCommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
 import { useMediaQuery } from "react-responsive";
 import applicationStore from "../../stores/applicationStore";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import {
-  listProjectSendDocumentInClass,
-} from "../../utils/document";
+import { listProjectSendDocumentInClass } from "../../utils/document";
 import { theme } from "../../styles/theme";
 import { observer } from "mobx-react";
 import NotFound from "../other/NotFound";
@@ -34,9 +46,7 @@ const DocumentOverview = observer(() => {
     )
       ? search.get("sort")
       : "nameTH";
-  const [sortSelect, setSortSelect] = useState<string>(
-    sortCheck || "nameTH"
-  );
+  const [sortSelect, setSortSelect] = useState<string>(sortCheck || "nameTH");
   const [notFound, setNotFound] = useState<number>(2);
 
   const isBigScreen = useMediaQuery({ query: "(min-width: 900px)" });
@@ -51,7 +61,11 @@ const DocumentOverview = observer(() => {
   const documentId = pathname[5];
 
   const getData = async () => {
-    const sendDocumentData = await listProjectSendDocumentInClass(documentId, classId, sortSelect);
+    const sendDocumentData = await listProjectSendDocumentInClass(
+      documentId,
+      classId,
+      sortSelect
+    );
 
     if (!sendDocumentData?.data) {
       setNotFound(0);
@@ -75,16 +89,20 @@ const DocumentOverview = observer(() => {
     });
   };
 
-
   if (notFound === 1) {
     return (
       <AdminCommonPreviewContainer>
         <Sidebar />
         <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-          <Box sx={{ display: "flex", padding: "0 auto", alignItems: "center", marginBottom: "1.25rem" }}>
-            <Link
-              to={`/class/${classId}/document`}
-            >
+          <Box
+            sx={{
+              display: "flex",
+              padding: "0 auto",
+              alignItems: "center",
+              marginBottom: "1.25rem",
+            }}
+          >
+            <Link to={`/class/${classId}/document`}>
               <IconButton
                 disableRipple
                 sx={{
@@ -99,36 +117,81 @@ const DocumentOverview = observer(() => {
               </IconButton>
             </Link>
 
-            <Typography sx={{ color: theme.color.text.primary, fontSize: "calc(30px + 0.2vw)", fontWeight: 600, }}> 
+            <Typography
+              sx={{
+                color: theme.color.text.primary,
+                fontSize: "calc(30px + 0.2vw)",
+                fontWeight: 600,
+              }}
+            >
               {document.name}
             </Typography>
           </Box>
 
-          <Table sx={{ width: isBigScreen ? "60%" : "100%"}}>
+          <Table sx={{ width: isBigScreen ? "60%" : "100%" }}>
             <TableHead>
-              <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "70%", fontWeight: 600}}>โปรเจกต์</TableCell>
-              <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "30%", fontWeight: 600}}>สถานะ</TableCell>
+              <TableCell
+                sx={{
+                  fontSize: 20,
+                  color: theme.color.text.secondary,
+                  width: "70%",
+                  fontWeight: 600,
+                }}
+              >
+                โปรเจกต์
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{
+                  fontSize: 20,
+                  color: theme.color.text.secondary,
+                  width: "30%",
+                  fontWeight: 600,
+                }}
+              >
+                สถานะ
+              </TableCell>
             </TableHead>
             <TableBody>
-              {
-                projects.map((data) => (
-                  <TableRow 
-                    key={data._id}
+              {projects.map((data) => (
+                <TableRow
+                  key={data._id}
+                  sx={{
+                    "&:hover": { background: theme.color.button.default },
+                  }}
+                  onClick={() =>
+                    navigate(
+                      `/class/${classId}/project/${
+                        data._id as string
+                      }/document/${document._id as string}`
+                    )
+                  }
+                >
+                  <TableCell
                     sx={{
-                      "&:hover": { background: theme.color.button.default },
+                      fontSize: 18,
+                      color: theme.color.text.secondary,
+                      fontWeight: 500,
                     }}
-                    onClick={() => navigate(`/class/${classId}/project/${data._id as string}/document/${document._id as string}`)}
                   >
-                    <TableCell sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}>
-                      {data.nameTH}
-                    </TableCell>
-                    <TableCell align="center" sx={{fontSize: 20, color: data.document.length ? statusList[data.document[0].sendStatus].color : statusList[0].color, fontWeight: 600}}> 
-                      {data.document.length ? statusList[data.document[0].sendStatus].message : "ยังไม่ส่ง" }
-                    </TableCell>
-                  </TableRow>
-                ))
-              }
-              
+                    {data.nameTH}
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      fontSize: 20,
+                      color: data.document.length
+                        ? statusList[data.document[0].sendStatus].color
+                        : statusList[0].color,
+                      fontWeight: 600,
+                    }}
+                  >
+                    {data.document.length
+                      ? statusList[data.document[0].sendStatus].message
+                      : "ยังไม่ส่ง"}
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </Box>

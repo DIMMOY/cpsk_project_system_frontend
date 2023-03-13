@@ -10,8 +10,7 @@ const HaveProjectOrDisplayNameRoute = observer(() => {
   const { project, currentRole, isStudent, user } = applicationStore;
   if (currentRole === 0 && isStudent) {
     return project ? <Outlet /> : <ProjectEdit newProject={true} />;
-  } else
-    return <Outlet />
+  } else return <Outlet />;
 });
 
 export default HaveProjectOrDisplayNameRoute;

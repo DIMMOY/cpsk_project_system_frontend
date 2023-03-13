@@ -31,10 +31,12 @@ const MatchCommitteeStartModal = ({
 
   useEffect(() => {
     if (open)
-      setStartDate(moment(defaultStartDate ? defaultStartDate : new Date()).format(
-        "YYYY-MM-DDTHH:mm"
-      ))
-  }, [open])
+      setStartDate(
+        moment(defaultStartDate ? defaultStartDate : new Date()).format(
+          "YYYY-MM-DDTHH:mm"
+        )
+      );
+  }, [open]);
 
   const handleStartDateChange = (newDate: string | null) => {
     const date = newDate ? moment(newDate).format("YYYY-MM-DDTHH:mm") : null;

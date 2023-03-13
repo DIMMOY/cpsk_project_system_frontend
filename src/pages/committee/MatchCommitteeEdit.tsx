@@ -21,9 +21,16 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import AddIcon from "@mui/icons-material/Add";
 import { listUser } from "../../utils/user";
 import SelectAdvisorToGroupDialog from "../../components/Dialog/SelectAdvisorToGroupDialog";
-import { deleteMatchCommitteeHasGroupInClass, getMatchCommitteeInClass } from "../../utils/matchCommittee";
+import {
+  deleteMatchCommitteeHasGroupInClass,
+  getMatchCommitteeInClass,
+} from "../../utils/matchCommittee";
 import NotFound from "../other/NotFound";
-import { ActivateButton, CancelButton, EditButton } from "../../styles/layout/_button";
+import {
+  ActivateButton,
+  CancelButton,
+  EditButton,
+} from "../../styles/layout/_button";
 import { listProjectInClass } from "../../utils/project";
 import AddCommitteeToProject from "../../components/Dialog/AddCommitteeToProject";
 import AddCommitteeToProjectOnlyOne from "../../components/Dialog/AddCommitteeToProjectOnlyOne";
@@ -50,15 +57,23 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
   const [projectFilter, setProjectFilter] = useState<any>([]);
   const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
   const [currentIndexDelete, setCurrentIndexDelete] = useState<number>(0);
-  const [currentGroupIdDelete, setCurrentGroupIdDelete] = useState<string>('');
+  const [currentGroupIdDelete, setCurrentGroupIdDelete] = useState<string>("");
 
   const [scrollToBottom, setScrollToBottom] = useState<number>(0);
-  const [openAddGroup, setOpenAddGroup] = useState<boolean>(false)
-  const [openAddGroupToProject, setOpenAddGroupToProject] = useState<boolean>(false)
-  const [openAddGroupToProjectOnlyOne, setOpenAddGroupToProjectOnlyOne] = useState<boolean>(false)
+  const [openAddGroup, setOpenAddGroup] = useState<boolean>(false);
+  const [openAddGroupToProject, setOpenAddGroupToProject] =
+    useState<boolean>(false);
+  const [openAddGroupToProjectOnlyOne, setOpenAddGroupToProjectOnlyOne] =
+    useState<boolean>(false);
 
   // XLSX
-  const heading = ["ลำดับ", "ชื่อโปรเจกต์ภาษาไทย", "นิสิต", "อาจารย์ที่ปรึกษา", "กรรมการคุมสอบ"]
+  const heading = [
+    "ลำดับ",
+    "ชื่อโปรเจกต์ภาษาไทย",
+    "นิสิต",
+    "อาจารย์ที่ปรึกษา",
+    "กรรมการคุมสอบ",
+  ];
   const [datasheet, setDataSheet] = useState<Array<any>>([]);
 
   const currentPathName = window.location.pathname.endsWith("/")
@@ -67,42 +82,58 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
 
   const pathname = currentPathName.split("/");
   const classId = pathname[2];
-  const matchCommitteeId = pathname[4]
-  ;
+  const matchCommitteeId = pathname[4];
   const handleSortChange = (event: SelectChangeEvent) => {
     setSortSelect(event.target.value as string);
   };
 
-  const handleOnAddGroupToProject = (groudId: any, projectFilter: Array<any>, index: number) => {
+  const handleOnAddGroupToProject = (
+    groudId: any,
+    projectFilter: Array<any>,
+    index: number
+  ) => {
     setCurrentGroup(groudId);
     setOpenAddGroupToProject(true);
-    setProjectFilter(projectFilter)
-    setCurrentIndextGroup(index)
-  }
+    setProjectFilter(projectFilter);
+    setCurrentIndextGroup(index);
+  };
 
   const handleOnAddGroupToProjectOnlyOne = (project: any, index: number) => {
     setCurrentProject(project);
     setOpenAddGroupToProjectOnlyOne(true);
-    setCurrentIndextProject(index)
-  }
+    setCurrentIndextProject(index);
+  };
 
   const getData = async () => {
-    const matchCommittee = await getMatchCommitteeInClass(classId, matchCommitteeId)
-    const projects = await listProjectInClass({ sort: sortSelect, matchCommitteeId }, classId)
+    const matchCommittee = await getMatchCommitteeInClass(
+      classId,
+      matchCommitteeId
+    );
+    const projects = await listProjectInClass(
+      { sort: sortSelect, matchCommitteeId },
+      classId
+    );
     const advisors = await listUser({ n: 1 });
     if (!matchCommittee.data || !projects.data || !advisors.data) {
-      setNotFound(0)
+      setNotFound(0);
     } else {
-      setMatchCommittee(matchCommittee.data)
-      const advisorHasGroup = matchCommittee.data?.committeeGroup.map((group: { userId: any; }) => group.userId.map((user: { _id: string; }) => user._id))
+      setMatchCommittee(matchCommittee.data);
+      const advisorHasGroup = matchCommittee.data?.committeeGroup.map(
+        (group: { userId: any }) =>
+          group.userId.map((user: { _id: string }) => user._id)
+      );
       const scanAdvisors: Array<any> = [];
       advisors.data.forEach((advisor: any) => {
-        if (!advisorHasGroup.find((subArr: string | any[]) => subArr.includes(advisor.userId._id))) {
-          scanAdvisors.push(advisor)
+        if (
+          !advisorHasGroup.find((subArr: string | any[]) =>
+            subArr.includes(advisor.userId._id)
+          )
+        ) {
+          scanAdvisors.push(advisor);
         }
-      })
-      setAdvisors(scanAdvisors)
-      setProjects(projects.data)
+      });
+      setAdvisors(scanAdvisors);
+      setProjects(projects.data);
 
       const datasheetInput: Array<any> = [];
       projects.data.forEach((data: any, index: number) => {
@@ -110,35 +141,39 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
           index + 1,
           data.nameTH,
           data.student
-            .map((user: any) => user.displayName ? user.displayName : "...")
-            .join('\n'),
+            .map((user: any) => (user.displayName ? user.displayName : "..."))
+            .join("\n"),
           data.advisor
-            .map((user: any) => user.displayName ? user.displayName : "...")
-            .join('\n'),
+            .map((user: any) => (user.displayName ? user.displayName : "..."))
+            .join("\n"),
           data.committee
-            .map((user: any) => user.displayName ? user.displayName : "...")
-            .join('\n'),  
-        ])
-      })
+            .map((user: any) => (user.displayName ? user.displayName : "..."))
+            .join("\n"),
+        ]);
+      });
       setDataSheet(datasheetInput);
 
-      setNotFound(1)
+      setNotFound(1);
     }
-  }
+  };
 
   const handleDelete = async () => {
-    await deleteMatchCommitteeHasGroupInClass(classId, matchCommittee._id, currentGroupIdDelete);
-    getData()
-  }
+    await deleteMatchCommitteeHasGroupInClass(
+      classId,
+      matchCommittee._id,
+      currentGroupIdDelete
+    );
+    getData();
+  };
 
   const handleOpenDeleteModal = async (id: string, index: number) => {
     setCurrentGroupIdDelete(id);
     setCurrentIndexDelete(index);
     setOpenCancelModal(true);
-  }
+  };
 
   useEffect(() => {
-    getData()
+    getData();
   }, [sortSelect]);
 
   useEffect(() => {
@@ -160,7 +195,13 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
             {matchCommittee.name}
           </Typography>
 
-          <Box sx={{ display: "flex", flexDirection: "row", marginBottom: "1.5rem" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              marginBottom: "1.5rem",
+            }}
+          >
             <Typography
               sx={{
                 fontSize: 30,
@@ -205,10 +246,10 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
               onClose={() => setOpenAddGroupToProject(false)}
               refresh={() => getData()}
               projects={projects}
-              ordGroup={currentIndexGroup} 
-              matchCommitteeId={matchCommitteeId} 
-              matchCommitteeHasGroup={currentGroup} 
-              projectsInGroup={projectFilter}            
+              ordGroup={currentIndexGroup}
+              matchCommitteeId={matchCommitteeId}
+              matchCommitteeHasGroup={currentGroup}
+              projectsInGroup={projectFilter}
             />
 
             <AddCommitteeToProjectOnlyOne
@@ -219,7 +260,6 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
               ordGroup={currentIndexProject}
               project={currentProject}
             />
-
           </Box>
 
           <CancelModal
@@ -230,81 +270,158 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
             onSubmit={handleDelete}
           />
 
-
-          <Box 
-            sx={{ 
-              marginBottom: "2rem", 
-              width: isBigScreen ? "60%" : "100%", 
-              display: "flex", 
+          <Box
+            sx={{
+              marginBottom: "2rem",
+              width: isBigScreen ? "60%" : "100%",
+              display: "flex",
               justifyContent: "center",
               maxHeight: "30rem",
               overflowY: "auto",
             }}
           >
-            {
-              matchCommittee.committeeGroup.length ?
-              (
-                <Table>
-                  <TableHead>
-                    <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "10%", fontWeight: 600}}>กลุ่ม</TableCell>
-                    <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "50%", fontWeight: 600}}>รายชื่ออาจารย์</TableCell>
-                    <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "10%", fontWeight: 600}}>จำนวน</TableCell>
-                    <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "20%", fontWeight: 600}}></TableCell>
-                    <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "10%", fontWeight: 600}}></TableCell>
-                  </TableHead>
-                  <TableBody>
-                      {
-                        matchCommittee.committeeGroup.map((data: any, index: number) => (
-                          <TableRow key={data._id}>
-                            <TableCell align="center">
-                              <Typography 
-                                sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
-                              >
-                                {index + 1}
-                              </Typography>
-                            </TableCell>
-                            <TableCell>
-                              {data.userId.map((user: any) => (
-                                <Typography
-                                  key={data._id + " " + user._id} 
-                                  sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
-                                >
-                                  {user.displayName ? user.displayName : "..."}
-                                </Typography>
-                              ))}
-                            </TableCell>
-                            <TableCell align="center">
-                              <Typography 
-                                  sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
-                              >
-                                {projects.filter((project: { committeeGroupId: any; }) => project.committeeGroupId && project.committeeGroupId._id.toString() === data._id.toString()).length}
-                              </Typography>
-                            </TableCell>
-                            <TableCell align="center">
-                              <ActivateButton 
-                                sx={{ width: "7rem" }} 
-                                onClick={() => handleOnAddGroupToProject(data, projects.filter((project: { committeeGroupId: any; }) => 
-                                  project.committeeGroupId && project.committeeGroupId._id.toString() === data._id.toString()), index + 1)}
-                              >
-                                โปรเจกต์
-                              </ActivateButton>
-                            </TableCell>
-                            <TableCell align="center">
-                              <CancelButton 
-                                sx={{ width: "1rem" }}
-                                onClick={() => handleOpenDeleteModal(data._id, index + 1)}
-                              >
-                                ลบ
-                              </CancelButton>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      }
-                  </TableBody>
-                </Table> 
-              ) : 
-              <Typography sx={{fontSize: 20, color: theme.color.text.secondary}}>ยังไม่มีกลุ่ม</Typography>
-            }
+            {matchCommittee.committeeGroup.length ? (
+              <Table>
+                <TableHead>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      fontSize: 20,
+                      color: theme.color.text.secondary,
+                      width: "10%",
+                      fontWeight: 600,
+                    }}
+                  >
+                    กลุ่ม
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 20,
+                      color: theme.color.text.secondary,
+                      width: "50%",
+                      fontWeight: 600,
+                    }}
+                  >
+                    รายชื่ออาจารย์
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      fontSize: 20,
+                      color: theme.color.text.secondary,
+                      width: "10%",
+                      fontWeight: 600,
+                    }}
+                  >
+                    จำนวน
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      fontSize: 20,
+                      color: theme.color.text.secondary,
+                      width: "20%",
+                      fontWeight: 600,
+                    }}
+                  ></TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      fontSize: 20,
+                      color: theme.color.text.secondary,
+                      width: "10%",
+                      fontWeight: 600,
+                    }}
+                  ></TableCell>
+                </TableHead>
+                <TableBody>
+                  {matchCommittee.committeeGroup.map(
+                    (data: any, index: number) => (
+                      <TableRow key={data._id}>
+                        <TableCell align="center">
+                          <Typography
+                            sx={{
+                              fontSize: 18,
+                              color: theme.color.text.secondary,
+                              fontWeight: 500,
+                            }}
+                          >
+                            {index + 1}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          {data.userId.map((user: any) => (
+                            <Typography
+                              key={data._id + " " + user._id}
+                              sx={{
+                                fontSize: 18,
+                                color: theme.color.text.secondary,
+                                fontWeight: 500,
+                              }}
+                            >
+                              {user.displayName ? user.displayName : "..."}
+                            </Typography>
+                          ))}
+                        </TableCell>
+                        <TableCell align="center">
+                          <Typography
+                            sx={{
+                              fontSize: 18,
+                              color: theme.color.text.secondary,
+                              fontWeight: 500,
+                            }}
+                          >
+                            {
+                              projects.filter(
+                                (project: { committeeGroupId: any }) =>
+                                  project.committeeGroupId &&
+                                  project.committeeGroupId._id.toString() ===
+                                    data._id.toString()
+                              ).length
+                            }
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                          <ActivateButton
+                            sx={{ width: "7rem" }}
+                            onClick={() =>
+                              handleOnAddGroupToProject(
+                                data,
+                                projects.filter(
+                                  (project: { committeeGroupId: any }) =>
+                                    project.committeeGroupId &&
+                                    project.committeeGroupId._id.toString() ===
+                                      data._id.toString()
+                                ),
+                                index + 1
+                              )
+                            }
+                          >
+                            โปรเจกต์
+                          </ActivateButton>
+                        </TableCell>
+                        <TableCell align="center">
+                          <CancelButton
+                            sx={{ width: "1rem" }}
+                            onClick={() =>
+                              handleOpenDeleteModal(data._id, index + 1)
+                            }
+                          >
+                            ลบ
+                          </CancelButton>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  )}
+                </TableBody>
+              </Table>
+            ) : (
+              <Typography
+                sx={{ fontSize: 20, color: theme.color.text.secondary }}
+              >
+                ยังไม่มีกลุ่ม
+              </Typography>
+            )}
           </Box>
 
           <Box sx={{ display: "flex", flexDirection: "row" }}>
@@ -314,35 +431,35 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
                 fontWeight: 600,
                 color: theme.color.text.secondary,
                 marginRight: "1rem",
-                marginBottom: "1.5rem"
+                marginBottom: "1.5rem",
               }}
             >
               ภาพรวมการจับกลุ่ม
             </Typography>
           </Box>
 
-          <Box sx={{display: "flex", flexDirection: "row"}}>
+          <Box sx={{ display: "flex", flexDirection: "row" }}>
             <FormControl sx={{ marginRight: "1.5rem", position: "relative" }}>
-                <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
-                <Select
-                  labelId="select-sort-label"
-                  id="select-sort"
-                  value={sortSelect}
-                  onChange={handleSortChange}
-                  label="จัดเรียงโดย"
-                  sx={{
-                    borderRadius: "10px",
-                    color: theme.color.background.primary,
-                    height: 45,
-                    fontWeight: 500,
-                    width: 180,
-                    marginBottom: "1.5rem"
-                  }}
-                >
-                  <MenuItem value={"name"}>ชื่อโปรเจกต์</MenuItem>
-                  <MenuItem value={"advisor"}>อาจารย์ที่ปรึกษา</MenuItem>
-                  <MenuItem value={"committee"}>กรรมการคุมสอบ</MenuItem>
-                </Select>
+              <InputLabel id="select-sort-label">จัดเรียงโดย</InputLabel>
+              <Select
+                labelId="select-sort-label"
+                id="select-sort"
+                value={sortSelect}
+                onChange={handleSortChange}
+                label="จัดเรียงโดย"
+                sx={{
+                  borderRadius: "10px",
+                  color: theme.color.background.primary,
+                  height: 45,
+                  fontWeight: 500,
+                  width: 180,
+                  marginBottom: "1.5rem",
+                }}
+              >
+                <MenuItem value={"name"}>ชื่อโปรเจกต์</MenuItem>
+                <MenuItem value={"advisor"}>อาจารย์ที่ปรึกษา</MenuItem>
+                <MenuItem value={"committee"}>กรรมการคุมสอบ</MenuItem>
+              </Select>
             </FormControl>
 
             <Button
@@ -359,101 +476,169 @@ const MatchCommitteeEdit = ({ newForm }: PreviewProps) => {
                 padding: isBigScreen ? 1 : 0.5,
                 marginRight: "1.5rem",
               }}
-              onClick={() => exportXLSX(heading, datasheet, matchCommittee.name, [2, 3, 4])}
+              onClick={() =>
+                exportXLSX(heading, datasheet, matchCommittee.name, [2, 3, 4])
+              }
             >
               ดาวน์โหลด
             </Button>
           </Box>
 
-          <Box 
-            sx={{ 
-              marginBottom: "2rem", 
-              width: isBigScreen ? (projects.length ? "80%" : "40rem") : "100%", 
-              display: "flex", 
+          <Box
+            sx={{
+              marginBottom: "2rem",
+              width: isBigScreen ? (projects.length ? "80%" : "40rem") : "100%",
+              display: "flex",
               justifyContent: "center",
               maxHeight: "30rem",
               overflow: "auto",
             }}
           >
-            {
-              projects.length ?
-              (
-                <Table>
-                  <TableHead>
-                    <TableCell align="center" sx={{fontSize: 20, color: theme.color.text.secondary, width: "10%", fontWeight: 600}}>ลำดับ</TableCell>
-                    <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "30%", fontWeight: 600}}>ชื่อโปรเจกต์ภาษาไทย</TableCell>
-                    <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "20%", fontWeight: 600}}>นิสิต</TableCell>
-                    <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "20%", fontWeight: 600}}>อาจารย์ที่ปรึกษา</TableCell>
-                    <TableCell sx={{fontSize: 20, color: theme.color.text.secondary, width: "20%", fontWeight: 600}}>กรรมการคุมสอบ</TableCell>
-                    <TableCell align="center"></TableCell>
-                  </TableHead>
-                  <TableBody>
-                      {
-                        projects.map((data: any, index: number) => (
-                          <TableRow key={data._id}>
-                            <TableCell align="center">
-                              <Typography 
-                                sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
-                              >
-                                {index + 1}
-                              </Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Typography 
-                                  sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
-                              >
-                                {data.nameTH}
-                              </Typography>
-                            </TableCell>
-                            <TableCell>
-                              {data.student.map((user: any) => (
-                                <Typography
-                                  key={data._id + " " + user._id} 
-                                  sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
-                                >
-                                  {user.displayName ? user.displayName : "..."}
-                                </Typography>
-                              ))}
-                            </TableCell>
-                            <TableCell>
-                              {data.advisor.map((user: any) => (
-                                <Typography
-                                  key={data._id + " " + user._id} 
-                                  sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
-                                >
-                                  {user.displayName ? user.displayName : "..."}
-                                </Typography>
-                              ))}
-                            </TableCell>
-                            <TableCell>
-                              {data.committee.map((user: any) => (
-                                <Typography
-                                  key={data._id + " " + user._id} 
-                                  sx={{fontSize: 18, color: theme.color.text.secondary, fontWeight: 500}}
-                                >
-                                  {user.displayName ? user.displayName : "..."}
-                                </Typography>
-                              ))}
-                            </TableCell>
-                            <TableCell align="center">
-                              <EditButton 
-                                sx={{ width: "1rem" }} 
-                                onClick={() => 
-                                  handleOnAddGroupToProjectOnlyOne(data, index + 1)}
-                              >
-                                แก้ไข
-                              </EditButton>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      }
-                  </TableBody>
-                </Table> 
-              ) : 
-              <Typography sx={{fontSize: 20, color: theme.color.text.secondary}}>ยังไม่โปรเจกต์ในคลาส</Typography>
-            }
+            {projects.length ? (
+              <Table>
+                <TableHead>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      fontSize: 20,
+                      color: theme.color.text.secondary,
+                      width: "10%",
+                      fontWeight: 600,
+                    }}
+                  >
+                    ลำดับ
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 20,
+                      color: theme.color.text.secondary,
+                      width: "30%",
+                      fontWeight: 600,
+                    }}
+                  >
+                    ชื่อโปรเจกต์ภาษาไทย
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 20,
+                      color: theme.color.text.secondary,
+                      width: "20%",
+                      fontWeight: 600,
+                    }}
+                  >
+                    นิสิต
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 20,
+                      color: theme.color.text.secondary,
+                      width: "20%",
+                      fontWeight: 600,
+                    }}
+                  >
+                    อาจารย์ที่ปรึกษา
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 20,
+                      color: theme.color.text.secondary,
+                      width: "20%",
+                      fontWeight: 600,
+                    }}
+                  >
+                    กรรมการคุมสอบ
+                  </TableCell>
+                  <TableCell align="center"></TableCell>
+                </TableHead>
+                <TableBody>
+                  {projects.map((data: any, index: number) => (
+                    <TableRow key={data._id}>
+                      <TableCell align="center">
+                        <Typography
+                          sx={{
+                            fontSize: 18,
+                            color: theme.color.text.secondary,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {index + 1}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography
+                          sx={{
+                            fontSize: 18,
+                            color: theme.color.text.secondary,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {data.nameTH}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        {data.student.map((user: any) => (
+                          <Typography
+                            key={data._id + " " + user._id}
+                            sx={{
+                              fontSize: 18,
+                              color: theme.color.text.secondary,
+                              fontWeight: 500,
+                            }}
+                          >
+                            {user.displayName ? user.displayName : "..."}
+                          </Typography>
+                        ))}
+                      </TableCell>
+                      <TableCell>
+                        {data.advisor.map((user: any) => (
+                          <Typography
+                            key={data._id + " " + user._id}
+                            sx={{
+                              fontSize: 18,
+                              color: theme.color.text.secondary,
+                              fontWeight: 500,
+                            }}
+                          >
+                            {user.displayName ? user.displayName : "..."}
+                          </Typography>
+                        ))}
+                      </TableCell>
+                      <TableCell>
+                        {data.committee.map((user: any) => (
+                          <Typography
+                            key={data._id + " " + user._id}
+                            sx={{
+                              fontSize: 18,
+                              color: theme.color.text.secondary,
+                              fontWeight: 500,
+                            }}
+                          >
+                            {user.displayName ? user.displayName : "..."}
+                          </Typography>
+                        ))}
+                      </TableCell>
+                      <TableCell align="center">
+                        <EditButton
+                          sx={{ width: "1rem" }}
+                          onClick={() =>
+                            handleOnAddGroupToProjectOnlyOne(data, index + 1)
+                          }
+                        >
+                          แก้ไข
+                        </EditButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <Typography
+                sx={{ fontSize: 20, color: theme.color.text.secondary }}
+              >
+                ยังไม่โปรเจกต์ในคลาส
+              </Typography>
+            )}
           </Box>
-
         </Box>
       </CommonPreviewContainer>
     );

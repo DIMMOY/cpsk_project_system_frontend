@@ -357,10 +357,10 @@ export const NavBar = observer(() => {
           }}
           sx={{ top: "0.5rem" }}
         >
-          <MenuItem 
-            onClick={() => { 
-              navigate('/profile') 
-              handleClose()
+          <MenuItem
+            onClick={() => {
+              navigate("/profile");
+              handleClose();
             }}
           >
             ตั้งค่า
