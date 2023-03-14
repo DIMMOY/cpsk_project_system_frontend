@@ -107,12 +107,12 @@ export const refreshToken = async () => {
       applicationStore.setExpiredTime(
         new Date(accessToken.expirationTime).getTime() - 120000
       );
-      console.log(
-        "REFRESH: " +
-          new Date(accessToken.expirationTime) +
-          " " +
-          new Date(expiredTime)
-      );
+      // console.log(
+      //   "REFRESH: " +
+      //     new Date(accessToken.expirationTime) +
+      //     " " +
+      //     new Date(expiredTime)
+      // );
     }
   }
 };

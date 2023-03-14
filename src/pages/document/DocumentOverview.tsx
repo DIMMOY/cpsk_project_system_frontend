@@ -81,14 +81,6 @@ const DocumentOverview = observer(() => {
     getData();
   }, [sortSelect]);
 
-  const handleSortChange = (event: SelectChangeEvent) => {
-    setSortSelect(event.target.value as string);
-    navigate({
-      pathname: window.location.pathname,
-      search: `?sort=${event.target.value}`,
-    });
-  };
-
   if (notFound === 1) {
     return (
       <AdminCommonPreviewContainer>
@@ -128,24 +120,34 @@ const DocumentOverview = observer(() => {
             </Typography>
           </Box>
 
-          <Table sx={{ width: isBigScreen ? "60%" : "100%" }}>
+          <Table sx={{ width: isBigScreen ? "80%" : "100%" }}>
             <TableHead>
               <TableCell
                 sx={{
                   fontSize: 20,
                   color: theme.color.text.secondary,
-                  width: "70%",
+                  width: "50%",
                   fontWeight: 600,
                 }}
               >
                 โปรเจกต์
               </TableCell>
               <TableCell
-                align="center"
                 sx={{
                   fontSize: 20,
                   color: theme.color.text.secondary,
                   width: "30%",
+                  fontWeight: 600,
+                }}
+              >
+                นิสิต
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{
+                  fontSize: 20,
+                  color: theme.color.text.secondary,
+                  width: "20%",
                   fontWeight: 600,
                 }}
               >
@@ -175,6 +177,20 @@ const DocumentOverview = observer(() => {
                     }}
                   >
                     {data.nameTH}
+                  </TableCell>
+                  <TableCell>
+                    {data.students.map((user: any) => (
+                      <Typography
+                        key={data._id + " " + user._id}
+                        sx={{
+                          fontSize: 18,
+                          color: theme.color.text.secondary,
+                          fontWeight: 500,
+                        }}
+                      >
+                        {user.displayName ? user.displayName : "..."}
+                      </Typography>
+                    ))}
                   </TableCell>
                   <TableCell
                     align="center"

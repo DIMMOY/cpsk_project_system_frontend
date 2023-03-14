@@ -68,7 +68,6 @@ const ProjectEdit = observer(({ newProject }: PreviewProps) => {
   };
 
   useEffect(() => {
-    console.log(classroom, project);
     if (!newProject) {
       if (!project) {
         navigate("/");

@@ -63,7 +63,6 @@ const ProjectHomePreview = observer(
           );
         }
         const projectData = await findProjectInClass(classId, projectId);
-        console.log(projectData.data);
         if (!projectData.data) {
           setNotFound(0);
         } else {

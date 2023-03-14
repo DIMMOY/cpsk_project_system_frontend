@@ -83,7 +83,7 @@ export default function Login() {
               marginBottom: 1,
             }}
           >
-            Login
+            Sign In
           </Typography>
           <Typography
             sx={{

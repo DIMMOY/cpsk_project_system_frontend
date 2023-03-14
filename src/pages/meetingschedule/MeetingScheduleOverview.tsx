@@ -9,10 +9,6 @@ import {
   TableHead,
   TableRow,
   Typography,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  Select,
 } from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AdminCommonPreviewContainer } from "../../styles/layout/_preview/_previewCommon";
@@ -132,17 +128,27 @@ const MeetingScheduleOverview = observer(() => {
             </Typography>
           </Box>
 
-          <Table sx={{ width: isBigScreen ? "60%" : "100%" }}>
+          <Table sx={{ width: isBigScreen ? "80%" : "100%" }}>
             <TableHead>
               <TableCell
                 sx={{
                   fontSize: 20,
                   color: theme.color.text.secondary,
-                  width: "50%",
+                  width: "30%",
                   fontWeight: 600,
                 }}
               >
                 โปรเจกต์
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontSize: 20,
+                  color: theme.color.text.secondary,
+                  width: "20%",
+                  fontWeight: 600,
+                }}
+              >
+                นิสิต
               </TableCell>
               <TableCell
                 align="center"
@@ -189,6 +195,20 @@ const MeetingScheduleOverview = observer(() => {
                     }}
                   >
                     {data.nameTH}
+                  </TableCell>
+                  <TableCell>
+                    {data.students.map((user: any) => (
+                      <Typography
+                        key={data._id + " " + user._id}
+                        sx={{
+                          fontSize: 18,
+                          color: theme.color.text.secondary,
+                          fontWeight: 500,
+                        }}
+                      >
+                        {user.displayName ? user.displayName : "..."}
+                      </Typography>
+                    ))}
                   </TableCell>
                   <TableCell
                     align="center"

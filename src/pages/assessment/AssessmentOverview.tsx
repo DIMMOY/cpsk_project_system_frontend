@@ -448,11 +448,21 @@ const AssessmentOverview = observer(() => {
                     sx={{
                       fontSize: 20,
                       color: theme.color.text.secondary,
-                      width: "40%",
+                      width: "20%",
                       fontWeight: 600,
                     }}
                   >
                     โปรเจกต์
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 20,
+                      color: theme.color.text.secondary,
+                      width: "20%",
+                      fontWeight: 600,
+                    }}
+                  >
+                    นิสิต
                   </TableCell>
                   <TableCell
                     align="center"
@@ -518,17 +528,18 @@ const AssessmentOverview = observer(() => {
                   <Fragment key={data._id}>
                     <TableRow>
                       <TableCell
-                        rowSpan={
-                          data.assessmentResults.length
-                            ? data.assessmentResults.length +
-                              1 +
-                              (!data.assessmentResults.find(
-                                (data: any) => data.userId.email === user?.email
-                              ) && currentRole === 1
-                                ? 1
-                                : 0)
-                            : 2
-                        }
+                      rowSpan={
+                        data.assessmentResults.length
+                          ? data.assessmentResults.length +
+                            1 +
+                            (!data.assessmentResults.find(
+                              (data: any) => data.userId.email === user?.email
+                            ) && currentRole === 1
+                              ? 1
+                              : 0)
+                          : 2
+                      }
+                        
                         sx={{
                           fontSize: 18,
                           color: theme.color.text.secondary,
@@ -536,6 +547,32 @@ const AssessmentOverview = observer(() => {
                         }}
                       >
                         {data.nameTH}
+                      </TableCell>
+                      <TableCell
+                      rowSpan={
+                        data.assessmentResults.length
+                          ? data.assessmentResults.length +
+                            1 +
+                            (!data.assessmentResults.find(
+                              (data: any) => data.userId.email === user?.email
+                            ) && currentRole === 1
+                              ? 1
+                              : 0)
+                          : 2
+                      }
+                      >
+                        {data.students.map((user: any) => (
+                          <Typography
+                            key={data._id + " " + user._id}
+                            sx={{
+                              fontSize: 18,
+                              color: theme.color.text.secondary,
+                              fontWeight: 500,
+                            }}
+                          >
+                            {user.displayName ? user.displayName : "..."}
+                          </Typography>
+                        ))}
                       </TableCell>
                     </TableRow>
                     {currentRole === 1 &&

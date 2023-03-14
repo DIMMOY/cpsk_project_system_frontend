@@ -56,7 +56,6 @@ const AdminRoleSetting = observer(() => {
   };
 
   const deleteAdvisor = (index: number) => {
-    console.log([...advisorDelete, advisors[index]]);
     setAdvisorDelete([...advisorDelete, advisors[index]]);
     const removeAdvisor = advisors.filter((_, i) => i !== index);
     setAdvisors(removeAdvisor);
@@ -64,7 +63,6 @@ const AdminRoleSetting = observer(() => {
 
   const submitToSubmitAdmin = async () => {
     const userId = adminDelete.map((e) => e.userId._id);
-    console.log({ userId, role: 2 });
     const res = await deleteRoleInUser({ userId, role: 2 });
     if (res.statusCode !== 200) {
       console.error(res.message);

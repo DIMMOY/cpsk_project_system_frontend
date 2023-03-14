@@ -163,6 +163,16 @@ const DocumentAllOverview = observer(() => {
                 >
                   โปรเจกต์
                 </TableCell>
+                <TableCell
+                  sx={{
+                    fontSize: 20,
+                    color: theme.color.text.secondary,
+                    width: "20%",
+                    fontWeight: 600,
+                  }}
+                >
+                  นิสิต
+                </TableCell>
                 {documents.map((data: any) => (
                   <TableCell
                     key={data._id}
@@ -202,6 +212,20 @@ const DocumentAllOverview = observer(() => {
                     >
                       {data.nameTH}
                     </TableCell>
+                    <TableCell>
+                    {data.students.map((user: any) => (
+                      <Typography
+                        key={data._id + " " + user._id}
+                        sx={{
+                          fontSize: 18,
+                          color: theme.color.text.secondary,
+                          fontWeight: 500,
+                        }}
+                      >
+                        {user.displayName ? user.displayName : "..."}
+                      </Typography>
+                    ))}
+                  </TableCell>
                     {documents.map((document) => (
                       <TableCell
                         key={data._id + document._id}
