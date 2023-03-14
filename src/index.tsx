@@ -18,6 +18,11 @@ onAuthStateChanged(firebaseAuth, async (user) => {
     const accessToken = await user.getIdTokenResult();
     axios.defaults.headers.common["Authorization"] =
       "Bearer " + accessToken.token;
+    axios.defaults.headers.common["Access-Control-Allow-Credentials"] = "true";
+    axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
+    axios.defaults.headers.common["Access-Control-Allow-Methods"] = "GET,OPTIONS,PATCH,DELETE,POST,PUT";
+    axios.defaults.headers.common["Access-Control-Allow-Headers"] = "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version";
+    
     applicationStore.setExpiredTime(
       new Date(accessToken.expirationTime).getTime() - 120000
     );
